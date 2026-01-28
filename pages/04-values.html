@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>価値観ワーク | 自己理解の教科書</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 8px;
+      max-height: 400px;
+      overflow-y: auto;
+      padding: var(--spacing-sm);
+      background: var(--gray-light);
+      border-radius: var(--radius-sm);
+    }
+    .value-tag {
+      padding: 8px 12px;
+      background: var(--white);
+      border: 2px solid #e0e0e0;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .value-tag:hover {
+      border-color: var(--primary-orange);
+    }
+    .value-tag.selected {
+      background: var(--primary-orange);
+      border-color: var(--primary-orange);
+      color: var(--white);
+    }
+    .category-title {
+      background: var(--light-orange);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border-radius: var(--radius-sm);
+      font-weight: bold;
+      margin: var(--spacing-md) 0 var(--spacing-sm);
+      color: var(--primary-brown);
+    }
+    .selected-values {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 50px;
+      padding: var(--spacing-sm);
+      background: var(--light-yellow);
+      border-radius: var(--radius-sm);
+      margin-top: var(--spacing-sm);
+    }
+    .selected-value {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      background: var(--primary-orange);
+      color: var(--white);
+      border-radius: 20px;
+      font-size: 0.9rem;
+    }
+    .selected-value .remove {
+      cursor: pointer;
+      opacity: 0.8;
+    }
+    .selected-value .remove:hover {
+      opacity: 1;
+    }
+    .priority-list {
+      counter-reset: priority;
+    }
+    .priority-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm);
+      background: var(--white);
+      border: 2px solid #e0e0e0;
+      border-radius: var(--radius-sm);
+      margin-bottom: var(--spacing-xs);
+      cursor: grab;
+    }
+    .priority-item:active {
+      cursor: grabbing;
+    }
+    .priority-item::before {
+      counter-increment: priority;
+      content: counter(priority);
+      width: 28px;
+      height: 28px;
+      background: var(--primary-orange);
+      color: var(--white);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    .priority-item.dragging {
+      opacity: 0.5;
+    }
+    .feedback-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+    .feedback-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+    .feedback-item .label {
+      width: 30px;
+      height: 30px;
+      background: var(--primary-orange);
+      color: var(--white);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    .feedback-item input {
+      flex: 1;
+      padding: var(--spacing-sm);
+      border: 2px solid #e0e0e0;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+    }
+    .feedback-item input:focus {
+      outline: none;
+      border-color: var(--primary-orange);
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <header class="page-header">
+    <h1><span class="icon">💎</span> 自己理解ワーク①：価値観</h1>
+    <a href="https://drive.google.com/file/d/1Xlk49qzu269dSn6QymlWW8dCS2JJCD4e/view" target="_blank" class="video-link">
+      解説動画はこちら
+    </a>
+  </header>
+
+  <div class="container">
+    <!-- Q1 -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text">
+          <span class="question-number">Q1</span>
+          幼少期から現在までで「楽しかった・夢中だった・満たされた」経験をできる限り書き出そう
+        </div>
+        <div class="question-hint">満たされたときに【何を大事にしていたか】が価値観のヒント！</div>
+        <div class="question-example">人の話を聞いて「スッキリした！」と言われた時が満たされた</div>
+        <textarea id="q1" placeholder="思い出せる限り書き出してみましょう..."></textarea>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text">
+          <span class="question-number">Q2</span>
+          今までの人生で特に印象に残っている「イラっとしたこと」を書き出してください！
+        </div>
+        <div class="question-hint">怒り・違和感には【守りたい価値観】が隠れている！</div>
+        <div class="question-example">外注先の年配のスタッフが不平不満を言いながら仕事していて、気分悪かった</div>
+        <textarea id="q2" placeholder="イラっとした体験を書き出してみましょう..."></textarea>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text">
+          <span class="question-number">Q3</span>
+          今の仕事をやめるとしたらどう思いますか？
+        </div>
+        <div class="question-hint">仕事の中に【使命感／大事にしている感覚】が見える</div>
+        <div class="question-example">もっとたくさんの人を助けてあげたい！今辞めたら、悩みが解決できない人がたくさんいて心配</div>
+        <textarea id="q3" placeholder="正直な気持ちを書いてみましょう..."></textarea>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text">
+          <span class="question-number">Q4</span>
+          過去の印象に残っている出来事をできるだけたくさんあげてください！
+        </div>
+        <div class="question-hint">過去を通して「一貫して大事にしてきた価値観」が見えてくる！</div>
+
+        <div style="margin-top: var(--spacing-md);">
+          <label style="font-weight: bold; color: var(--primary-brown);">幼稚園・保育園</label>
+          <textarea id="q4-1" placeholder="例）自分のクラスの担任より他のクラスの先生が好きだった"></textarea>
+        </div>
+
+        <div style="margin-top: var(--spacing-md);">
+          <label style="font-weight: bold; color: var(--primary-brown);">小学生</label>
+          <textarea id="q4-2" placeholder="例）毎日学校終わりにみんなで公園で遊ぶのが好きだった"></textarea>
+        </div>
+
+        <div style="margin-top: var(--spacing-md);">
+          <label style="font-weight: bold; color: var(--primary-brown);">中学校</label>
+          <textarea id="q4-3" placeholder="例）引っ越した学校で女の子と仲良く話してたら、からかわれて幼稚な人たちだなと思った"></textarea>
+        </div>
+
+        <div style="margin-top: var(--spacing-md);">
+          <label style="font-weight: bold; color: var(--primary-brown);">高校</label>
+          <textarea id="q4-4" placeholder="例）バンドを組んで文化祭で初めてライブした時の衝撃と高揚感が最高だった"></textarea>
+        </div>
+
+        <div style="margin-top: var(--spacing-md);">
+          <label style="font-weight: bold; color: var(--primary-brown);">大学・短大・専門</label>
+          <textarea id="q4-5" placeholder="例）バンド活動ばかりしていて、大学に行かなくなりバイトばかりしていた"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text">
+          <span class="question-number">Q6</span>
+          尊敬する人を1人あげてください
+        </div>
+        <div class="question-hint">「自分が求めている・なりたい姿」＝価値観の現れ！</div>
+        <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: var(--spacing-sm);">
+          （身近な人、芸能人、歴史上の人物、ドラマの登場人物、漫画やゲームの登場人物など 誰でもOK）
+        </p>
+        <textarea id="q6-1" placeholder="尊敬する人の名前..." style="min-height: 60px;"></textarea>
+
+        <div style="margin-top: var(--spacing-sm);">
+          <label style="font-weight: bold; color: var(--primary-brown);">その人のどんなところが尊敬できますか？</label>
+          <textarea id="q6-2" placeholder="例）人をまとめるのが上手→リーダー"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text">
+          <span class="question-number">Q7</span>
+          身の回りにいる5人以上から【自分はどんなことに価値を感じている人に見えているか】を聞き出してください
+        </div>
+        <div class="question-hint">自己認識と他者認識を照らし合わせて、価値観の確信度を高める！</div>
+        <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: var(--spacing-sm);">
+          家族、友達、職場の人、発信者仲間など いろんなジャンルの人から聞いてください
+        </p>
+
+        <div class="feedback-list">
+          <div class="feedback-item">
+            <div class="label">1</div>
+            <input type="text" id="q7-1" placeholder="例）奥さん→仕事を通して得られる経験">
+          </div>
+          <div class="feedback-item">
+            <div class="label">2</div>
+            <input type="text" id="q7-2" placeholder="誰から？→何と言われた？">
+          </div>
+          <div class="feedback-item">
+            <div class="label">3</div>
+            <input type="text" id="q7-3" placeholder="誰から？→何と言われた？">
+          </div>
+          <div class="feedback-item">
+            <div class="label">4</div>
+            <input type="text" id="q7-4" placeholder="誰から？→何と言われた？">
+          </div>
+          <div class="feedback-item">
+            <div class="label">5</div>
+            <input type="text" id="q7-5" placeholder="誰から？→何と言われた？">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text">
+          <span class="question-number">Q8</span>
+          Q1〜7を見返して、どんなキーワード（価値観）が共通してますか？
+        </div>
+        <div class="question-hint">下のリストから選んでください（これ以外に思いついた価値観でもOK）</div>
+
+        <p style="margin: var(--spacing-sm) 0; font-weight: bold;">選んだ価値観：</p>
+        <div class="selected-values" id="selectedValues">
+          <span style="color: var(--gray);">下から選択してください</span>
+        </div>
+
+        <div class="category-title">人間関係・つながり</div>
+        <div class="values-grid" id="values-relationship"></div>
+
+        <div class="category-title">成長・学び</div>
+        <div class="values-grid" id="values-growth"></div>
+
+        <div class="category-title">情熱・達成</div>
+        <div class="values-grid" id="values-passion"></div>
+
+        <div class="category-title">安心・安定</div>
+        <div class="values-grid" id="values-stability"></div>
+
+        <div class="category-title">表現・クリエイティブ</div>
+        <div class="values-grid" id="values-creative"></div>
+
+        <div class="category-title">自立・マインド</div>
+        <div class="values-grid" id="values-independence"></div>
+
+        <div class="category-title">仕事・スキル・影響力</div>
+        <div class="values-grid" id="values-work"></div>
+
+        <div class="category-title">貢献・社会性</div>
+        <div class="values-grid" id="values-contribution"></div>
+
+        <div class="category-title">環境・ライフスタイル</div>
+        <div class="values-grid" id="values-lifestyle"></div>
+
+        <div class="category-title">理念・信条・世界観</div>
+        <div class="values-grid" id="values-philosophy"></div>
+
+        <div style="margin-top: var(--spacing-md);">
+          <label style="font-weight: bold; color: var(--primary-brown);">その他の価値観（自由記入）</label>
+          <input type="text" id="q8-other" placeholder="リストにない価値観があれば入力" style="width: 100%; padding: var(--spacing-sm); border: 2px solid #e0e0e0; border-radius: var(--radius-sm);">
+        </div>
+      </div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text">
+          <span class="question-number">Q9</span>
+          Q8で出てきたワードを5つ以上のジャンル別に分けてみよう
+        </div>
+        <div class="question-hint">ジャンル化すると、自分の行動・仕事・選択と結びつけやすくなる！</div>
+        <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: var(--spacing-sm);">
+          イメージは本屋さんの本棚です。例えば「人間関係」というジャンルならどのワードが当てはまるかを考えてみてください
+        </p>
+        <textarea id="q9" placeholder="例）【人間関係】というジャンルなら「正直」「誠実」「コミュニケーション」などなど"></textarea>
+      </div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text">
+          <span class="question-number">Q10</span>
+          5つ以上のジャンル分けできたら、優先順位をつけてみよう
+        </div>
+        <div class="question-hint">この優先順位が"判断軸"になる！</div>
+        <textarea id="q10" placeholder="例）①理想②スキル③環境④人間関係⑤自己理解"></textarea>
+      </div>
+    </div>
+
+    <!-- まとめ -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text">
+          <span class="question-number">📝</span>
+          自分の価値観の説明書を作ってみよう
+        </div>
+        <textarea id="summary" placeholder="例）私は◯◯がないと不安になる　私は◯◯があると満たされる　私は〇〇な人と一緒にいると安心する　私は〇〇を大切にできる仕事がしたい" style="min-height: 150px;"></textarea>
+      </div>
+
+      <div style="background: var(--light-green); padding: var(--spacing-md); border-radius: var(--radius-md); margin-top: var(--spacing-md);">
+        <p style="text-align: center; font-size: 1.1rem; color: #2e7d32;">
+          <strong>ワークお疲れ様でした！</strong>
+        </p>
+        <p style="text-align: center; margin-top: var(--spacing-sm);">
+          あなたが大切にしている価値観は、これまでの人生を通してあなた自身が選び取ってきた"信念のタネ"です。<br>
+          あなたの価値観は、迷ったときに立ち返れる【心のコンパス】になってくれます。
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav-bottom">
+    <a href="03-personality.html" class="btn btn-secondary">← 前へ</a>
+    <button class="btn btn-save" onclick="saveData()">保存する</button>
+    <a href="05-talent.html" class="btn btn-primary">次へ →</a>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Lark API連携 -->
+  <script src="../js/lark-api.js"></script>
+  <script src="../js/lark-config.js"></script>
+  <script src="../js/data-sync.js"></script>
+
+  <script>
+    // 価値観リスト
+    const valuesData = {
+      relationship: ["信頼", "誠実", "優しさ", "思いやり", "協力", "共感", "家族", "仲間", "絆", "尊重"],
+      growth: ["向上心", "探究心", "好奇心", "自己成長", "成果", "努力", "学び続ける", "資格・知識", "成熟", "上達"],
+      passion: ["達成感", "挑戦", "やりきる", "情熱", "夢中", "野心", "継続", "競争", "勝利", "高みを目指す"],
+      stability: ["安定", "安心感", "平穏", "健康", "継続性", "確実性", "貯金", "習慣", "規則正しさ", "セーフティネット"],
+      creative: ["自由", "自己表現", "芸術", "美意識", "発信", "書くこと", "話すこと", "センス", "感性", "クリエイティブ"],
+      independence: ["自由意志", "主体性", "自立", "自信", "本音で生きる", "素直さ", "覚悟", "自己受容", "自己責任", "選択の自由"],
+      work: ["プロ意識", "専門性", "生産性", "実行力", "行動力", "分析力", "決断力", "信念", "結果主義", "影響力"],
+      contribution: ["人の役に立つ", "社会貢献", "教える", "育てる", "支援", "感謝される", "誰かのために", "与える", "つなげる", "奉仕"],
+      lifestyle: ["自然との共生", "オーガニック", "シンプルライフ", "スローライフ", "地元愛", "グローバル視点", "ミニマリズム", "サステナブル", "時間の余白", "空間美"],
+      philosophy: ["正義", "公平", "多様性", "信仰・スピリチュアル", "哲学", "一貫性", "信念を曲げない", "本質志向", "理想追求", "世界を変える"]
+    };
+
+    let selectedValues = [];
+
+    // 価値観タグを生成
+    function renderValueTags() {
+      Object.keys(valuesData).forEach(category => {
+        const container = document.getElementById(`values-${category}`);
+        if (container) {
+          valuesData[category].forEach(value => {
+            const tag = document.createElement('div');
+            tag.className = 'value-tag';
+            tag.textContent = value;
+            tag.onclick = () => toggleValue(value, tag);
+            container.appendChild(tag);
+          });
+        }
+      });
+    }
+
+    // 価値観の選択/解除
+    function toggleValue(value, tagEl) {
+      const index = selectedValues.indexOf(value);
+      if (index === -1) {
+        selectedValues.push(value);
+        tagEl.classList.add('selected');
+      } else {
+        selectedValues.splice(index, 1);
+        tagEl.classList.remove('selected');
+      }
+      updateSelectedDisplay();
+    }
+
+    // 選択された価値観を表示
+    function updateSelectedDisplay() {
+      const container = document.getElementById('selectedValues');
+      if (selectedValues.length === 0) {
+        container.innerHTML = '<span style="color: var(--gray);">下から選択してください</span>';
+      } else {
+        container.innerHTML = selectedValues.map(v =>
+          `<span class="selected-value">${v}<span class="remove" onclick="removeValue('${v}')">×</span></span>`
+        ).join('');
+      }
+      updateProgress();
+    }
+
+    // 価値観を削除
+    function removeValue(value) {
+      const index = selectedValues.indexOf(value);
+      if (index !== -1) {
+        selectedValues.splice(index, 1);
+        document.querySelectorAll('.value-tag').forEach(tag => {
+          if (tag.textContent === value) tag.classList.remove('selected');
+        });
+        updateSelectedDisplay();
+      }
+    }
+
+    // 進捗更新
+    function updateProgress() {
+      const fields = ['q1', 'q2', 'q3', 'q4-1', 'q4-2', 'q4-3', 'q4-4', 'q4-5', 'q6-1', 'q6-2', 'q7-1', 'q9', 'q10', 'summary'];
+      let filled = 0;
+      fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.value.trim()) filled++;
+      });
+      if (selectedValues.length > 0) filled++;
+
+      const progress = (filled / (fields.length + 1)) * 100;
+      document.getElementById('progressBar').style.width = progress + '%';
+    }
+
+    // データ保存
+    function saveData() {
+      const data = {
+        q1: document.getElementById('q1').value,
+        q2: document.getElementById('q2').value,
+        q3: document.getElementById('q3').value,
+        q4: {
+          kindergarten: document.getElementById('q4-1').value,
+          elementary: document.getElementById('q4-2').value,
+          junior: document.getElementById('q4-3').value,
+          high: document.getElementById('q4-4').value,
+          university: document.getElementById('q4-5').value
+        },
+        q6: {
+          person: document.getElementById('q6-1').value,
+          reason: document.getElementById('q6-2').value
+        },
+        q7: [
+          document.getElementById('q7-1').value,
+          document.getElementById('q7-2').value,
+          document.getElementById('q7-3').value,
+          document.getElementById('q7-4').value,
+          document.getElementById('q7-5').value
+        ],
+        q8: {
+          selected: selectedValues,
+          other: document.getElementById('q8-other').value
+        },
+        q9: document.getElementById('q9').value,
+        q10: document.getElementById('q10').value,
+        summary: document.getElementById('summary').value,
+        timestamp: new Date().toISOString()
+      };
+
+      localStorage.setItem('selfUnderstanding_values', JSON.stringify(data));
+      showToast('保存しました！', 'success');
+    }
+
+    // データ読み込み
+    function loadData() {
+      const saved = localStorage.getItem('selfUnderstanding_values');
+      if (saved) {
+        const data = JSON.parse(saved);
+
+        document.getElementById('q1').value = data.q1 || '';
+        document.getElementById('q2').value = data.q2 || '';
+        document.getElementById('q3').value = data.q3 || '';
+
+        if (data.q4) {
+          document.getElementById('q4-1').value = data.q4.kindergarten || '';
+          document.getElementById('q4-2').value = data.q4.elementary || '';
+          document.getElementById('q4-3').value = data.q4.junior || '';
+          document.getElementById('q4-4').value = data.q4.high || '';
+          document.getElementById('q4-5').value = data.q4.university || '';
+        }
+
+        if (data.q6) {
+          document.getElementById('q6-1').value = data.q6.person || '';
+          document.getElementById('q6-2').value = data.q6.reason || '';
+        }
+
+        if (data.q7) {
+          data.q7.forEach((v, i) => {
+            const el = document.getElementById(`q7-${i+1}`);
+            if (el) el.value = v || '';
+          });
+        }
+
+        if (data.q8) {
+          selectedValues = data.q8.selected || [];
+          document.getElementById('q8-other').value = data.q8.other || '';
+          // 選択状態を復元
+          selectedValues.forEach(value => {
+            document.querySelectorAll('.value-tag').forEach(tag => {
+              if (tag.textContent === value) tag.classList.add('selected');
+            });
+          });
+          updateSelectedDisplay();
+        }
+
+        document.getElementById('q9').value = data.q9 || '';
+        document.getElementById('q10').value = data.q10 || '';
+        document.getElementById('summary').value = data.summary || '';
+
+        updateProgress();
+      }
+    }
+
+    // トースト
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast ' + type + ' show';
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // 入力イベントで進捗更新
+    document.querySelectorAll('textarea, input').forEach(el => {
+      el.addEventListener('input', updateProgress);
+    });
+
+    // 初期化
+    document.addEventListener('DOMContentLoaded', () => {
+      renderValueTags();
+      loadData();
+    });
+  </script>
+</body>
+</html>

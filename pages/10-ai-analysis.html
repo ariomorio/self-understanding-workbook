@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI自己分析 | 自己理解の教科書</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .ai-header {
+      background: linear-gradient(135deg, #673ab7, #9c27b0);
+      padding: var(--spacing-lg);
+      border-radius: var(--radius-lg);
+      text-align: center;
+      color: var(--white);
+      margin-bottom: var(--spacing-lg);
+    }
+    .ai-header .emoji { font-size: 3rem; margin-bottom: var(--spacing-sm); }
+    .data-summary {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md);
+      margin-bottom: var(--spacing-md);
+      box-shadow: var(--shadow-sm);
+    }
+    .data-summary h3 {
+      color: var(--primary-brown);
+      margin-bottom: var(--spacing-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+    .data-item {
+      display: flex;
+      justify-content: space-between;
+      padding: var(--spacing-xs) 0;
+      border-bottom: 1px solid #eee;
+    }
+    .data-item:last-child { border-bottom: none; }
+    .data-item .label { color: var(--text-light); }
+    .data-item .value { font-weight: bold; }
+    .data-item .value.complete { color: var(--primary-green); }
+    .data-item .value.incomplete { color: var(--gray); }
+    .analysis-btn {
+      display: block;
+      width: 100%;
+      background: linear-gradient(135deg, #673ab7, #9c27b0);
+      color: var(--white);
+      padding: var(--spacing-md);
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-bottom: var(--spacing-lg);
+    }
+    .analysis-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .analysis-btn:disabled {
+      background: var(--gray);
+      cursor: not-allowed;
+    }
+    .analysis-result {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md);
+      box-shadow: var(--shadow-sm);
+      display: none;
+    }
+    .analysis-result.show { display: block; }
+    .analysis-result h3 {
+      color: #673ab7;
+      margin-bottom: var(--spacing-md);
+      text-align: center;
+    }
+    .analysis-section {
+      background: var(--gray-light);
+      padding: var(--spacing-md);
+      border-radius: var(--radius-sm);
+      margin-bottom: var(--spacing-md);
+    }
+    .analysis-section h4 {
+      color: var(--primary-brown);
+      margin-bottom: var(--spacing-sm);
+    }
+    .export-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      background: var(--primary-green);
+      color: var(--white);
+      padding: var(--spacing-sm) var(--spacing-md);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-weight: bold;
+      cursor: pointer;
+      margin-right: var(--spacing-sm);
+      margin-bottom: var(--spacing-sm);
+    }
+    .export-btn:hover { opacity: 0.9; }
+    .copy-prompt-box {
+      background: #f5f5f5;
+      padding: var(--spacing-md);
+      border-radius: var(--radius-sm);
+      margin-top: var(--spacing-md);
+      position: relative;
+    }
+    .copy-prompt-box pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-size: 0.85rem;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: var(--primary-orange);
+      color: var(--white);
+      border: none;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="page-header" style="background: linear-gradient(135deg, #673ab7, #9c27b0);">
+    <h1><span class="icon">🤖</span> AI自己分析</h1>
+  </header>
+
+  <div class="container">
+    <div class="ai-header">
+      <div class="emoji">🤖</div>
+      <h2>入力したデータをAIが総合分析</h2>
+      <p>これまでのワークの回答をもとに<br>あなたの自己理解を深めるサポートをします</p>
+    </div>
+
+    <!-- データ状況 -->
+    <div class="data-summary">
+      <h3>📊 入力データの状況</h3>
+      <div class="data-item">
+        <span class="label">性格診断</span>
+        <span class="value" id="status-personality">未入力</span>
+      </div>
+      <div class="data-item">
+        <span class="label">価値観ワーク</span>
+        <span class="value" id="status-values">未入力</span>
+      </div>
+      <div class="data-item">
+        <span class="label">才能ワーク</span>
+        <span class="value" id="status-talent">未入力</span>
+      </div>
+      <div class="data-item">
+        <span class="label">情熱ワーク</span>
+        <span class="value" id="status-passion">未入力</span>
+      </div>
+      <div class="data-item">
+        <span class="label">使命・判断軸ワーク</span>
+        <span class="value" id="status-mission">未入力</span>
+      </div>
+      <div class="data-item">
+        <span class="label">人生の説明書</span>
+        <span class="value" id="status-life-manual">未入力</span>
+      </div>
+    </div>
+
+    <!-- AI分析用プロンプト生成 -->
+    <div class="data-summary">
+      <h3>🎯 AIに分析してもらう</h3>
+      <p style="margin-bottom: var(--spacing-md);">以下のボタンで、入力データをおさるAIや他のAIに貼り付けられる形式で出力します。</p>
+
+      <button class="export-btn" onclick="generatePrompt()">
+        📋 分析用プロンプトを生成
+      </button>
+
+      <button class="export-btn" onclick="exportJSON()" style="background: #2196f3;">
+        💾 JSONでエクスポート
+      </button>
+
+      <button class="export-btn" onclick="clearAllData()" style="background: #f44336;">
+        🗑️ データをリセット
+      </button>
+
+      <div class="copy-prompt-box" id="promptBox" style="display: none;">
+        <button class="copy-btn" onclick="copyPrompt()">コピー</button>
+        <pre id="promptText"></pre>
+      </div>
+    </div>
+
+    <!-- Lark Base連携 -->
+    <div class="data-summary">
+      <h3>🔗 Lark Base連携（準備中）</h3>
+      <p>今後、入力データをLark Baseに自動保存・同期する機能を追加予定です。</p>
+      <ul style="padding-left: var(--spacing-md); margin-top: var(--spacing-sm); color: var(--text-light);">
+        <li>ワークの回答をクラウドに自動バックアップ</li>
+        <li>複数デバイスでの同期</li>
+        <li>AIによる継続的な分析とフィードバック</li>
+      </ul>
+    </div>
+
+    <!-- 分析結果 -->
+    <div class="analysis-result" id="analysisResult">
+      <h3>📈 分析結果</h3>
+      <div class="analysis-section" id="resultContent">
+        <!-- 分析結果がここに表示される -->
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav-bottom">
+    <a href="09-life-manual.html" class="btn btn-secondary">← 前へ</a>
+    <a href="../index.html" class="btn btn-primary">目次へ戻る</a>
+  </nav>
+  <div class="toast" id="toast"></div>
+
+  <!-- Lark API連携 -->
+  <script src="../js/lark-api.js"></script>
+  <script src="../js/lark-config.js"></script>
+  <script src="../js/data-sync.js"></script>
+
+  <script>
+    // データ状況をチェック
+    function checkDataStatus() {
+      const pages = ['personality', 'values', 'talent', 'passion', 'mission', 'life-manual'];
+
+      pages.forEach(page => {
+        const data = localStorage.getItem(`selfUnderstanding_${page}`);
+        const statusEl = document.getElementById(`status-${page}`);
+        if (data) {
+          statusEl.textContent = '✅ 入力済み';
+          statusEl.classList.add('complete');
+        } else {
+          statusEl.textContent = '❌ 未入力';
+          statusEl.classList.add('incomplete');
+        }
+      });
+    }
+
+    // すべてのデータを取得
+    function getAllData() {
+      const data = {};
+      const keys = ['personality', 'values', 'talent', 'passion', 'mission', 'life-manual'];
+
+      keys.forEach(key => {
+        const stored = localStorage.getItem(`selfUnderstanding_${key}`);
+        if (stored) {
+          data[key] = JSON.parse(stored);
+        }
+      });
+
+      data.userName = localStorage.getItem('selfUnderstanding_userName') || '匿名';
+      return data;
+    }
+
+    // 分析用プロンプトを生成
+    function generatePrompt() {
+      const data = getAllData();
+
+      let prompt = `# 自己理解ワーク 分析依頼\n\n`;
+      prompt += `ユーザー名: ${data.userName}\n\n`;
+
+      // 性格診断
+      if (data.personality) {
+        prompt += `## 性格診断結果\n`;
+        prompt += `- タイプ: ${data.personality.resultType || '未診断'}\n`;
+        prompt += `- うさぎ（短期集中型）: ${data.personality.scores?.usagi || 0}点\n`;
+        prompt += `- かめ（長期分散型）: ${data.personality.scores?.kame || 0}点\n`;
+        prompt += `- キリギリス（快楽追求型）: ${data.personality.scores?.kirigirisu || 0}点\n`;
+        prompt += `- アリ（リスク回避型）: ${data.personality.scores?.ari || 0}点\n\n`;
+      }
+
+      // 価値観
+      if (data.values) {
+        prompt += `## 価値観ワーク\n`;
+        prompt += `### 満たされた体験\n${data.values.q1 || '未入力'}\n\n`;
+        prompt += `### イラっとした体験\n${data.values.q2 || '未入力'}\n\n`;
+        prompt += `### 選んだ価値観\n${data.values.q8?.selected?.join(', ') || '未選択'}\n\n`;
+        prompt += `### 価値観の説明書\n${data.values.summary || '未入力'}\n\n`;
+      }
+
+      // 才能
+      if (data.talent) {
+        prompt += `## 才能ワーク\n`;
+        prompt += `### 感謝された体験\n${data.talent.q1 || '未入力'}\n\n`;
+        prompt += `### 選んだ才能\n${data.talent.q7?.join(', ') || '未選択'}\n\n`;
+        prompt += `### 才能の優先順位\n${data.talent.q8 || '未入力'}\n\n`;
+        prompt += `### 才能の説明書\n${data.talent.q9 || '未入力'}\n\n`;
+      }
+
+      // 情熱
+      if (data.passion) {
+        prompt += `## 情熱ワーク\n`;
+        prompt += `### つい見てしまうコンテンツ\n${data.passion.q1 || '未入力'}\n\n`;
+        prompt += `### 時間を忘れる話題\n${data.passion.q2 || '未入力'}\n\n`;
+        prompt += `### 情熱チェック結果: ${data.passion.q7?.filter(a => a === 'yes').length || 0}/10 YES\n\n`;
+        prompt += `### 情熱を一言で\n${data.passion.q11 || '未入力'}\n\n`;
+      }
+
+      // 使命
+      if (data.mission) {
+        prompt += `## 使命・判断軸ワーク\n`;
+        prompt += `### 自分らしさワード\n${data.mission.coreWords || '未入力'}\n\n`;
+        prompt += `### 人生の目的\n${data.mission.lifePurpose || '未入力'}\n\n`;
+        prompt += `### 人生の使命\n${data.mission.lifeMission || '未入力'}\n\n`;
+        prompt += `### 人生の判断軸\n${data.mission.lifeCompass || '未入力'}\n\n`;
+      }
+
+      // 人生の説明書
+      if (data['life-manual']) {
+        prompt += `## 人生の説明書\n`;
+        prompt += `${data['life-manual'].finalManual || '未入力'}\n\n`;
+      }
+
+      prompt += `---\n\n`;
+      prompt += `上記の自己理解ワークの結果を分析して、以下についてアドバイスをください：\n`;
+      prompt += `1. この人の強みと特徴のまとめ\n`;
+      prompt += `2. SNS発信で活かせるテーマや切り口\n`;
+      prompt += `3. 商品・サービス化するならどんな形が合いそうか\n`;
+      prompt += `4. 今後のアクションプランの提案\n`;
+
+      document.getElementById('promptText').textContent = prompt;
+      document.getElementById('promptBox').style.display = 'block';
+      showToast('プロンプトを生成しました', 'success');
+    }
+
+    // プロンプトをコピー
+    function copyPrompt() {
+      const text = document.getElementById('promptText').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('コピーしました！', 'success');
+      });
+    }
+
+    // JSONエクスポート
+    function exportJSON() {
+      const data = getAllData();
+      const json = JSON.stringify(data, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `self-understanding-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+
+      URL.revokeObjectURL(url);
+      showToast('エクスポートしました', 'success');
+    }
+
+    // データリセット
+    function clearAllData() {
+      if (confirm('すべてのデータを削除しますか？この操作は取り消せません。')) {
+        const keys = ['personality', 'values', 'talent', 'passion', 'mission', 'life-manual', 'userName'];
+        keys.forEach(key => {
+          localStorage.removeItem(`selfUnderstanding_${key}`);
+        });
+        checkDataStatus();
+        showToast('データをリセットしました', 'success');
+      }
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast ' + type + ' show';
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    document.addEventListener('DOMContentLoaded', checkDataStatus);
+  </script>
+</body>
+</html>

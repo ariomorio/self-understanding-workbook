@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>人生の説明書 | 自己理解の教科書</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .life-header {
+      background: linear-gradient(135deg, #4caf50, #81c784);
+      padding: var(--spacing-lg);
+      border-radius: var(--radius-lg);
+      text-align: center;
+      color: var(--white);
+      margin-bottom: var(--spacing-lg);
+    }
+    .life-header .emoji { font-size: 3rem; margin-bottom: var(--spacing-sm); }
+    .prep-section {
+      background: #fff3e0;
+      padding: var(--spacing-md);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--spacing-lg);
+      border-left: 4px solid #ff9800;
+    }
+    .prep-section h3 { color: #e65100; margin-bottom: var(--spacing-sm); }
+    .prep-section ol { padding-left: var(--spacing-md); }
+    .prep-section li { margin-bottom: var(--spacing-sm); }
+    .manual-item {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md);
+      margin-bottom: var(--spacing-md);
+      box-shadow: var(--shadow-sm);
+      border-left: 4px solid var(--primary-green);
+    }
+    .manual-item h4 {
+      color: #2e7d32;
+      margin-bottom: var(--spacing-xs);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+    .manual-item .num {
+      width: 28px; height: 28px;
+      background: var(--primary-green);
+      color: var(--white);
+      border-radius: var(--radius-full);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: bold; flex-shrink: 0;
+    }
+    .manual-item p {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      margin-bottom: var(--spacing-sm);
+    }
+    .manual-item textarea { min-height: 100px; }
+    .final-result {
+      background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+      padding: var(--spacing-lg);
+      border-radius: var(--radius-lg);
+      margin-top: var(--spacing-lg);
+    }
+    .final-result h3 {
+      text-align: center;
+      color: #2e7d32;
+      margin-bottom: var(--spacing-md);
+    }
+    .final-result textarea {
+      min-height: 300px;
+      background: var(--white);
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+
+  <header class="page-header" style="background: linear-gradient(135deg, #4caf50, #81c784);">
+    <h1><span class="icon">🌱</span> あなたの人生の説明書</h1>
+    <a href="https://drive.google.com/file/d/1OcUi0au5ZOg5q8q5KdmBt5WwWlY991FR/view" target="_blank" class="video-link">解説動画はこちら</a>
+  </header>
+
+  <div class="container">
+    <div class="life-header">
+      <div class="emoji">🌱</div>
+      <h2>すべてのワークを統合して<br>あなただけの「人生の説明書」を作ろう</h2>
+    </div>
+
+    <div class="prep-section">
+      <h3>📋 事前準備</h3>
+      <ol>
+        <li><strong>「価値観・才能・情熱・使命/判断軸」のワークシート</strong>をそれぞれPDFやスクショで保存して、まとめておさるAIにアップロードしてください</li>
+        <li><strong>なりたい自分ワークの「5年後〜半年後の目標と理由」</strong>のパートをそれぞれPDFやスクショで保存して、まとめておさるAIにアップロードしてください</li>
+        <li>さらに、自分の思考のクセや意思決定の傾向を知るために、<strong>性格診断（うさぎリスなど）の結果</strong>もおさるAIにアップロードしてください</li>
+        <li><strong>おさるAIに、以下のテンプレートを読み込ませて作成してもらってください</strong></li>
+      </ol>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">13項目のテンプレート</h2>
+      <p style="margin-bottom: var(--spacing-md);">以下の項目を埋めていくか、おさるAIに作成してもらいましょう</p>
+
+      <div class="manual-item">
+        <h4><span class="num">1</span> わたしの特徴・性格</h4>
+        <p>→ 自分をひとことで言うと？どういう場面で力を発揮する？</p>
+        <textarea id="item1" placeholder="例）私は〇〇な性格で、特に〇〇な場面で力を発揮します..."></textarea>
+      </div>
+
+      <div class="manual-item">
+        <h4><span class="num">2</span> わたしの強み・才能（〇〇する力）</h4>
+        <p>→ 無意識にやっちゃうこと／「得意」と言われるけど自覚がないことは？</p>
+        <textarea id="item2" placeholder="例）私の強みは〇〇する力です..."></textarea>
+      </div>
+
+      <div class="manual-item">
+        <h4><span class="num">3</span> 課題・つまずきポイント</h4>
+        <p>→ どんな時に自己否定しやすい？モヤるポイントは？</p>
+        <textarea id="item3" placeholder="例）私は〇〇な時に落ち込みやすく..."></textarea>
+      </div>
+
+      <div class="manual-item">
+        <h4><span class="num">4</span> やる気がなくなるトリガー & 復活スイッチ</h4>
+        <p>→ 自分が"落ちたサイン"と"戻るコツ"を知っておこう！</p>
+        <textarea id="item4" placeholder="例）やる気が下がるのは〇〇な時。復活するには〇〇が効果的..."></textarea>
+      </div>
+
+      <div class="manual-item">
+        <h4><span class="num">5</span> 大切にしたい価値観TOP5</h4>
+        <p>→ 自分の「幸せの条件」や「人生の判断基準」</p>
+        <textarea id="item5" placeholder="例）①自由 ②成長 ③つながり ④貢献 ⑤挑戦..."></textarea>
+      </div>
+
+      <div class="manual-item">
+        <h4><span class="num">6</span> 情熱を感じるテーマ・分野</h4>
+        <p>→ 続けても苦じゃないこと、エネルギーが湧くことは？</p>
+        <textarea id="item6" placeholder="例）私が情熱を感じるのは〇〇の分野です..."></textarea>
+      </div>
+
+      <div class="manual-item">
+        <h4><span class="num">7</span> 自分に合う働き方・環境</h4>
+        <p>→ チームプレイ派？一人で集中派？静かな空間？マルチ？シングル？</p>
+        <textarea id="item7" placeholder="例）私に合う働き方は〇〇で、〇〇な環境だとパフォーマンスが上がります..."></textarea>
+      </div>
+
+      <div class="manual-item">
+        <h4><span class="num">8</span> 目指したい"生き方"</h4>
+        <p>→ どんな毎日が「わたしらしい」と感じる？</p>
+        <textarea id="item8" placeholder="例）私が目指したい生き方は〇〇です..."></textarea>
+      </div>
+
+      <div class="manual-item">
+        <h4><span class="num">9</span> 発信テーマにするなら？</h4>
+        <p>→ 「価値観×才能×情熱」のかけ算から抽出！</p>
+        <textarea id="item9" placeholder="例）私の発信テーマは〇〇×〇〇で..."></textarea>
+      </div>
+
+      <div class="manual-item">
+        <h4><span class="num">10</span> 誰に届けたい？（理想のフォロワー像）</h4>
+        <p>→ 昔の自分？今困ってる友達？理想の未来像の人？</p>
+        <textarea id="item10" placeholder="例）私が届けたいのは〇〇な人です..."></textarea>
+      </div>
+
+      <div class="manual-item">
+        <h4><span class="num">11</span> その人はどんな悩みを抱えてる？</h4>
+        <p>→ 共感ポイントを"感情"で書いてみよう（不安・焦り・孤独など）</p>
+        <textarea id="item11" placeholder="例）その人は〇〇で悩んでいて、〇〇な感情を抱えています..."></textarea>
+      </div>
+
+      <div class="manual-item">
+        <h4><span class="num">12</span> どんな価値・変化を届けられる？</h4>
+        <p>→ 自分だからこそできるサポートとは？</p>
+        <textarea id="item12" placeholder="例）私だからこそ届けられる価値は〇〇です..."></textarea>
+      </div>
+
+      <div class="manual-item">
+        <h4><span class="num">13</span> 商品やサービスにするなら？</h4>
+        <p>→ コンテンツ、セッション、講座…どんなカタチなら提供できそう？</p>
+        <textarea id="item13" placeholder="例）私のサービスは〇〇という形で提供できそうです..."></textarea>
+      </div>
+    </div>
+
+    <div class="final-result">
+      <h3>＼あなたの人生の説明書をここに貼り付けましょう／</h3>
+      <p style="text-align: center; margin-bottom: var(--spacing-md);">おさるAIで作成した「人生の説明書」をコピーして貼り付けてください</p>
+      <textarea id="finalManual" placeholder="おさるAIで作成した人生の説明書をここに貼り付け..."></textarea>
+    </div>
+
+    <div style="background: var(--light-green); padding: var(--spacing-lg); border-radius: var(--radius-md); margin-top: var(--spacing-lg); text-align: center;">
+      <p style="font-size: 1.2rem; color: #2e7d32; margin-bottom: var(--spacing-md);">
+        <strong>🎉 おめでとうございます！</strong>
+      </p>
+      <p>この「わたしの人生の説明書」は、<br>あなたの人生の選択に迷ったとき、自分を信じて進むための<strong>"心のコンパス"</strong>になります🧭</p>
+      <p style="margin-top: var(--spacing-md);">定期的に見返すことで、"成長した自分"とも再会できます。</p>
+      <p style="margin-top: var(--spacing-md); font-size: 1.1rem;"><strong>大丈夫。あなたは、あなたでいい🌱</strong><br>あなたらしい人生を、心から応援しています！</p>
+    </div>
+  </div>
+
+  <nav class="nav-bottom">
+    <a href="08-become.html" class="btn btn-secondary">← 前へ</a>
+    <button class="btn btn-save" onclick="saveData()">保存する</button>
+    <a href="10-ai-analysis.html" class="btn btn-primary">AI分析 →</a>
+  </nav>
+  <div class="toast" id="toast"></div>
+
+  <!-- Lark API連携 -->
+  <script src="../js/lark-api.js"></script>
+  <script src="../js/lark-config.js"></script>
+  <script src="../js/data-sync.js"></script>
+
+  <script>
+    function updateProgress() {
+      const items = [];
+      for (let i = 1; i <= 13; i++) items.push(`item${i}`);
+      items.push('finalManual');
+
+      let filled = 0;
+      items.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.value.trim()) filled++;
+      });
+      const progress = (filled / items.length) * 100;
+      document.getElementById('progressBar').style.width = progress + '%';
+    }
+
+    function saveData() {
+      const data = {};
+      for (let i = 1; i <= 13; i++) {
+        data[`item${i}`] = document.getElementById(`item${i}`).value;
+      }
+      data.finalManual = document.getElementById('finalManual').value;
+      data.timestamp = new Date().toISOString();
+
+      localStorage.setItem('selfUnderstanding_life-manual', JSON.stringify(data));
+      showToast('保存しました！', 'success');
+    }
+
+    function loadData() {
+      const saved = localStorage.getItem('selfUnderstanding_life-manual');
+      if (saved) {
+        const data = JSON.parse(saved);
+        for (let i = 1; i <= 13; i++) {
+          const el = document.getElementById(`item${i}`);
+          if (el && data[`item${i}`]) el.value = data[`item${i}`];
+        }
+        if (data.finalManual) {
+          document.getElementById('finalManual').value = data.finalManual;
+        }
+        updateProgress();
+      }
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast ' + type + ' show';
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    document.querySelectorAll('textarea').forEach(el => {
+      el.addEventListener('input', updateProgress);
+    });
+
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>

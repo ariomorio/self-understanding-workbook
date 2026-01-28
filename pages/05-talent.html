@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>才能ワーク | 自己理解の教科書</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .talent-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 8px;
+      max-height: 350px;
+      overflow-y: auto;
+      padding: var(--spacing-sm);
+      background: var(--gray-light);
+      border-radius: var(--radius-sm);
+    }
+    .talent-tag {
+      padding: 8px 10px;
+      background: var(--white);
+      border: 2px solid #e0e0e0;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .talent-tag:hover { border-color: var(--primary-orange); }
+    .talent-tag.selected {
+      background: var(--primary-orange);
+      border-color: var(--primary-orange);
+      color: var(--white);
+    }
+    .category-title {
+      background: var(--light-orange);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border-radius: var(--radius-sm);
+      font-weight: bold;
+      margin: var(--spacing-md) 0 var(--spacing-sm);
+      color: var(--primary-brown);
+      font-size: 0.9rem;
+    }
+    .selected-talents {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 50px;
+      padding: var(--spacing-sm);
+      background: var(--light-yellow);
+      border-radius: var(--radius-sm);
+      margin-top: var(--spacing-sm);
+    }
+    .selected-talent {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      background: var(--primary-orange);
+      color: var(--white);
+      border-radius: 20px;
+      font-size: 0.9rem;
+    }
+    .selected-talent .remove { cursor: pointer; opacity: 0.8; }
+    .feedback-list { display: flex; flex-direction: column; gap: var(--spacing-sm); }
+    .feedback-item { display: flex; align-items: center; gap: var(--spacing-sm); }
+    .feedback-item .label {
+      width: 30px; height: 30px;
+      background: var(--primary-orange);
+      color: var(--white);
+      border-radius: var(--radius-full);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: bold; flex-shrink: 0;
+    }
+    .feedback-item input {
+      flex: 1;
+      padding: var(--spacing-sm);
+      border: 2px solid #e0e0e0;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+    }
+    .feedback-item input:focus { outline: none; border-color: var(--primary-orange); }
+  </style>
+</head>
+<body>
+  <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+
+  <header class="page-header">
+    <h1><span class="icon">✨</span> 自己理解ワーク②：才能</h1>
+    <a href="https://drive.google.com/file/d/1Mv5gujTT9NjigInWLMBrHHoVuOIYih0m/view" target="_blank" class="video-link">解説動画はこちら</a>
+  </header>
+
+  <div class="container">
+    <!-- 才能とは -->
+    <div class="section">
+      <h2 class="section-title">才能の正体を知る</h2>
+      <div style="background: var(--light-yellow); padding: var(--spacing-md); border-radius: var(--radius-sm);">
+        <p><strong>🔍 才能とは？</strong></p>
+        <p>「才能＝人より自然にできてしまう"無意識の強み"」のこと。</p>
+        <p style="margin-top: var(--spacing-sm);">努力してないのに成果が出たり、感謝されたり、頼まれたりすることがそのサイン。<br>「自分では普通」「何もしてない」と思ってることが、実はあなたの才能かもしれないんです。</p>
+      </div>
+    </div>
+
+    <!-- Q1 -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text"><span class="question-number">Q1</span>これまで人に感謝された体験を3つ以上書き出してみよう</div>
+        <div class="question-hint">「ありがとう」の裏側に才能が眠っている！</div>
+        <div class="question-example">友達の相談にのって感謝された</div>
+        <textarea id="q1" placeholder="感謝された体験を書き出してみましょう..."></textarea>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text"><span class="question-number">Q2</span>人から「なんでそんなにできるの!?」と驚かれたことは？</div>
+        <div class="question-hint">自分にとっては"普通"。でも人からすると"才能"かもしれない。</div>
+        <div class="question-example">率先してオフ会の企画をする</div>
+        <textarea id="q2" placeholder="驚かれたことを書き出してみましょう..."></textarea>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text"><span class="question-number">Q3</span>あなたが「つい手を出しちゃうこと」って何？</div>
+        <div class="question-hint">無意識でやってしまう＝才能の種。頼まれてもないのに自然とやってしまう行動を探る</div>
+        <div class="question-example">資料のデザインを整えたくなる</div>
+        <textarea id="q3" placeholder="つい手を出してしまうことは..."></textarea>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text"><span class="question-number">Q4</span>「時間を忘れるほど夢中になれること」は何？</div>
+        <div class="question-hint">夢中＝才能が自然に流れている時間</div>
+        <div class="question-example">スライドをいじってたら気づいたら3時間</div>
+        <textarea id="q4" placeholder="夢中になれることは..."></textarea>
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text"><span class="question-number">Q5</span>「褒められてもピンとこないこと」は何？</div>
+        <div class="question-hint">才能ある人は「いや、普通なんだけど…」と思いがち。それ、まさに才能かも！</div>
+        <div class="question-example">「説明がわかりやすいね！」とよく言われる</div>
+        <textarea id="q5" placeholder="褒められてもピンとこないことは..."></textarea>
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text"><span class="question-number">Q6</span>身の回りにいる5人以上から【あなたの強み、得意そうなこと】を聞いてみよう</div>
+        <div class="question-hint">自己評価だけでなく、他者の印象にも才能のヒントが隠れてる！</div>
+        <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: var(--spacing-sm);">
+          家族、友達、職場の人、発信者仲間など いろんなジャンルの人から聞いてください
+        </p>
+        <div class="feedback-list">
+          <div class="feedback-item"><div class="label">1</div><input type="text" id="q6-1" placeholder="例）友達→すぐに行動するところ"></div>
+          <div class="feedback-item"><div class="label">2</div><input type="text" id="q6-2" placeholder="誰から？→何と言われた？"></div>
+          <div class="feedback-item"><div class="label">3</div><input type="text" id="q6-3" placeholder="誰から？→何と言われた？"></div>
+          <div class="feedback-item"><div class="label">4</div><input type="text" id="q6-4" placeholder="誰から？→何と言われた？"></div>
+          <div class="feedback-item"><div class="label">5</div><input type="text" id="q6-5" placeholder="誰から？→何と言われた？"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text"><span class="question-number">Q7</span>Q1〜6を見返して、どんなキーワード（才能）が共通してますか？</div>
+        <div class="question-hint">下のリストから5つ以上選んでください（これ以外でもOK）</div>
+
+        <p style="margin: var(--spacing-sm) 0; font-weight: bold;">選んだ才能：</p>
+        <div class="selected-talents" id="selectedTalents">
+          <span style="color: var(--gray);">下から選択してください</span>
+        </div>
+
+        <div class="category-title">🔴 コミュニケーション系</div>
+        <div class="talent-grid" id="talents-communication"></div>
+
+        <div class="category-title">🔵 情報整理・分析系</div>
+        <div class="talent-grid" id="talents-analysis"></div>
+
+        <div class="category-title">🟢 発信・表現系</div>
+        <div class="talent-grid" id="talents-expression"></div>
+
+        <div class="category-title">🟡 サポート・裏方系</div>
+        <div class="talent-grid" id="talents-support"></div>
+
+        <div class="category-title">🟠 リーダーシップ・推進系</div>
+        <div class="talent-grid" id="talents-leadership"></div>
+
+        <div class="category-title">🟡 行動・実行系</div>
+        <div class="talent-grid" id="talents-action"></div>
+
+        <div class="category-title">🔴 人間関係・チーム系</div>
+        <div class="talent-grid" id="talents-team"></div>
+
+        <div class="category-title">🟢 人に与える力系</div>
+        <div class="talent-grid" id="talents-giving"></div>
+
+        <div class="category-title">🔴 クリエイティブ・発想系</div>
+        <div class="talent-grid" id="talents-creative"></div>
+
+        <div class="category-title">🔵 実行・継続・改善系</div>
+        <div class="talent-grid" id="talents-execution"></div>
+      </div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text"><span class="question-number">Q8</span>その5つに優先順位をつけてみよう！</div>
+        <div class="question-hint">「特に自分の核になってる」と思う順番で並べてみましょう！その順番があなたの「才能の判断軸」になります</div>
+        <textarea id="q8" placeholder="例）①やりきる力②調整する力③癒す力④共感する力⑤世界観を作る力"></textarea>
+      </div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text"><span class="question-number">Q9</span>「自分の才能の説明書」を作ろう（まとめワーク）</div>
+        <textarea id="q9" placeholder="例）
+・私は〇〇なときに力を発揮する
+・私は人より〇〇が得意だと感じる
+・私は〇〇な人をサポートするのが得意" style="min-height: 150px;"></textarea>
+      </div>
+
+      <div style="background: var(--light-green); padding: var(--spacing-md); border-radius: var(--radius-md); margin-top: var(--spacing-md);">
+        <p style="text-align: center; font-size: 1.1rem; color: #2e7d32;"><strong>ワークお疲れ様でした！</strong></p>
+        <p style="text-align: center; margin-top: var(--spacing-sm);">
+          あなたが「無意識にやっていたこと」の中に、すでにあなただけの才能が眠っていました。<br>
+          才能とは、頑張らなくても人の役に立てる力。<br>
+          その才能を信じて、小さくでも一歩ずつ活かしていこう🌱
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav-bottom">
+    <a href="04-values.html" class="btn btn-secondary">← 前へ</a>
+    <button class="btn btn-save" onclick="saveData()">保存する</button>
+    <a href="06-passion.html" class="btn btn-primary">次へ →</a>
+  </nav>
+  <div class="toast" id="toast"></div>
+
+  <!-- Lark API連携 -->
+  <script src="../js/lark-api.js"></script>
+  <script src="../js/lark-config.js"></script>
+  <script src="../js/data-sync.js"></script>
+
+  <script>
+    const talentsData = {
+      communication: ["聞き出す力", "共感する力", "寄り添う力", "話をまとめる力", "背中を押す力", "気持ちを言葉にする力", "和ませる力", "質問する力", "安心させる力", "本音を引き出す力"],
+      analysis: ["構造化する力", "図解する力", "情報をまとめる力", "要点を抽出する力", "深掘りする力", "分析する力", "違和感に気づく力", "問題点を見つける力", "ロジックで考える力", "整理整頓する力"],
+      expression: ["言語化する力", "ストーリーにする力", "魅せ方を考える力", "発信をデザインする力", "キャッチコピーを作る力", "コンセプトをつくる力", "世界観をつくる力", "想いを届ける力", "感情を表現する力", "イメージを形にする力"],
+      support: ["裏方に徹する力", "人を支える力", "事務をこなす力", "ミスを防ぐ力", "フォローする力", "縁の下で動く力", "丁寧に仕上げる力", "人の動きを読む力", "バックアップする力", "忍耐強く取り組む力"],
+      leadership: ["巻き込む力", "提案する力", "旗を立てる力", "意思決定する力", "主体的に動く力", "ビジョンを描く力", "目標に向けて動く力", "チームを引っ張る力", "周りを活性化させる力", "リスクをとる力"],
+      action: ["実行に移す力", "仕組み化する力", "やりきる力", "続ける力", "スピード感を出す力", "段取りする力", "優先順位をつける力", "ルールをつくる力", "タスクを管理する力", "計画を立てる力"],
+      team: ["空気を読む力", "役割を察する力", "協力する力", "仲間を大事にする力", "裏方に徹する力", "信頼関係を築く力", "相手の立場で考える力", "調整する力", "雰囲気を良くする力", "チームをまとめる力"],
+      giving: ["癒す力", "楽しませる力", "勇気づける力", "気づきを与える力", "感情を動かす力", "安心感を届ける力", "希望を伝える力", "背中を押す力", "信頼される力", "モチベーションを高める力"],
+      creative: ["アイデアを出す力", "ひらめく力", "抽象を具体にする力", "空想を形にする力", "直感で動く力", "新しい視点を持つ力", "感性でとらえる力", "独自の世界観を表現する力", "ゼロから作る力", "アレンジする力"],
+      execution: ["小さく始める力", "続ける仕組みを作る力", "改善する力", "こつこつ積み上げる力", "試して検証する力", "早く動く力", "粘り強くやる力", "最後までやり切る力", "自分を律する力", "毎日習慣化する力"]
+    };
+
+    let selectedTalents = [];
+
+    function renderTalentTags() {
+      Object.keys(talentsData).forEach(category => {
+        const container = document.getElementById(`talents-${category}`);
+        if (container) {
+          talentsData[category].forEach(talent => {
+            const tag = document.createElement('div');
+            tag.className = 'talent-tag';
+            tag.textContent = talent;
+            tag.onclick = () => toggleTalent(talent, tag);
+            container.appendChild(tag);
+          });
+        }
+      });
+    }
+
+    function toggleTalent(talent, tagEl) {
+      const index = selectedTalents.indexOf(talent);
+      if (index === -1) {
+        selectedTalents.push(talent);
+        tagEl.classList.add('selected');
+      } else {
+        selectedTalents.splice(index, 1);
+        tagEl.classList.remove('selected');
+      }
+      updateSelectedDisplay();
+    }
+
+    function updateSelectedDisplay() {
+      const container = document.getElementById('selectedTalents');
+      if (selectedTalents.length === 0) {
+        container.innerHTML = '<span style="color: var(--gray);">下から選択してください</span>';
+      } else {
+        container.innerHTML = selectedTalents.map(t =>
+          `<span class="selected-talent">${t}<span class="remove" onclick="removeTalent('${t}')">×</span></span>`
+        ).join('');
+      }
+      updateProgress();
+    }
+
+    function removeTalent(talent) {
+      const index = selectedTalents.indexOf(talent);
+      if (index !== -1) {
+        selectedTalents.splice(index, 1);
+        document.querySelectorAll('.talent-tag').forEach(tag => {
+          if (tag.textContent === talent) tag.classList.remove('selected');
+        });
+        updateSelectedDisplay();
+      }
+    }
+
+    function updateProgress() {
+      const fields = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6-1', 'q8', 'q9'];
+      let filled = 0;
+      fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.value.trim()) filled++;
+      });
+      if (selectedTalents.length > 0) filled++;
+      const progress = (filled / (fields.length + 1)) * 100;
+      document.getElementById('progressBar').style.width = progress + '%';
+    }
+
+    function saveData() {
+      const data = {
+        q1: document.getElementById('q1').value,
+        q2: document.getElementById('q2').value,
+        q3: document.getElementById('q3').value,
+        q4: document.getElementById('q4').value,
+        q5: document.getElementById('q5').value,
+        q6: [
+          document.getElementById('q6-1').value,
+          document.getElementById('q6-2').value,
+          document.getElementById('q6-3').value,
+          document.getElementById('q6-4').value,
+          document.getElementById('q6-5').value
+        ],
+        q7: selectedTalents,
+        q8: document.getElementById('q8').value,
+        q9: document.getElementById('q9').value,
+        timestamp: new Date().toISOString()
+      };
+      localStorage.setItem('selfUnderstanding_talent', JSON.stringify(data));
+      showToast('保存しました！', 'success');
+    }
+
+    function loadData() {
+      const saved = localStorage.getItem('selfUnderstanding_talent');
+      if (saved) {
+        const data = JSON.parse(saved);
+        document.getElementById('q1').value = data.q1 || '';
+        document.getElementById('q2').value = data.q2 || '';
+        document.getElementById('q3').value = data.q3 || '';
+        document.getElementById('q4').value = data.q4 || '';
+        document.getElementById('q5').value = data.q5 || '';
+        if (data.q6) {
+          data.q6.forEach((v, i) => {
+            const el = document.getElementById(`q6-${i+1}`);
+            if (el) el.value = v || '';
+          });
+        }
+        if (data.q7) {
+          selectedTalents = data.q7;
+          selectedTalents.forEach(talent => {
+            document.querySelectorAll('.talent-tag').forEach(tag => {
+              if (tag.textContent === talent) tag.classList.add('selected');
+            });
+          });
+          updateSelectedDisplay();
+        }
+        document.getElementById('q8').value = data.q8 || '';
+        document.getElementById('q9').value = data.q9 || '';
+        updateProgress();
+      }
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast ' + type + ' show';
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    document.querySelectorAll('textarea, input').forEach(el => {
+      el.addEventListener('input', updateProgress);
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderTalentTags();
+      loadData();
+    });
+  </script>
+</body>
+</html>

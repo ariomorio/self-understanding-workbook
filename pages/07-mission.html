@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>使命・判断軸ワーク | 自己理解の教科書</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .mv-section {
+      margin-bottom: var(--spacing-lg);
+    }
+    .mv-header {
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      font-weight: bold;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+    .mv-header.valley { background: linear-gradient(135deg, #e57373, #ef5350); }
+    .mv-header.mountain { background: linear-gradient(135deg, #ffd54f, #ffb300); }
+    .mv-content {
+      background: var(--white);
+      padding: var(--spacing-md);
+      border-radius: 0 0 var(--radius-md) var(--radius-md);
+      border: 2px solid #e0e0e0;
+      border-top: none;
+    }
+    .episode-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-sm);
+    }
+    @media (max-width: 768px) {
+      .episode-grid { grid-template-columns: 1fr; }
+    }
+    .episode-card {
+      background: var(--gray-light);
+      border-radius: var(--radius-sm);
+      padding: var(--spacing-sm);
+    }
+    .episode-card.valley { background: #ffebee; }
+    .episode-card.mountain { background: #fffde7; }
+    .episode-card h4 {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      margin-bottom: var(--spacing-xs);
+      text-align: center;
+    }
+    .episode-card textarea {
+      min-height: 80px;
+      font-size: 0.9rem;
+    }
+    .field-label {
+      font-weight: bold;
+      color: var(--primary-brown);
+      margin-bottom: var(--spacing-xs);
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+    .field-label.valley { color: #c62828; }
+    .field-label.mountain { color: #f57f17; }
+    .core-word-section {
+      background: linear-gradient(135deg, #e1bee7, #ce93d8);
+      padding: var(--spacing-md);
+      border-radius: var(--radius-md);
+      margin: var(--spacing-lg) 0;
+    }
+    .core-word-section h3 {
+      color: var(--white);
+      margin-bottom: var(--spacing-sm);
+    }
+    .final-section {
+      background: linear-gradient(135deg, #80deea, #4dd0e1);
+      padding: var(--spacing-md);
+      border-radius: var(--radius-md);
+    }
+    .final-section h3 {
+      color: var(--white);
+      margin-bottom: var(--spacing-md);
+    }
+    .final-item {
+      background: rgba(255,255,255,0.9);
+      padding: var(--spacing-md);
+      border-radius: var(--radius-sm);
+      margin-bottom: var(--spacing-sm);
+    }
+    .final-item h4 {
+      color: var(--primary-brown);
+      margin-bottom: var(--spacing-xs);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+    .final-item p {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-bottom: var(--spacing-sm);
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+
+  <header class="page-header">
+    <h1><span class="icon">🧭</span> 使命・判断軸ワーク</h1>
+    <a href="https://drive.google.com/file/d/1h2h95RzaSrxU6l-oTw-SBFg2uXP5bVWn/view" target="_blank" class="video-link">解説動画はこちら</a>
+  </header>
+
+  <div class="container">
+    <div class="section">
+      <h2 class="section-title">【目的】あなたの人生をより輝かせる「人生の目的・使命・判断軸」を導き出そう</h2>
+    </div>
+
+    <!-- ① 人生の谷 -->
+    <div class="mv-section">
+      <div class="mv-header valley">
+        <span style="font-size: 1.5rem;">📉</span>
+        ① 人生の【谷】と感じるエピソードを3つ書き出してください
+      </div>
+      <div class="mv-content">
+        <p style="margin-bottom: var(--spacing-md);">どんな感情になって、なぜそれが悲しかったのか</p>
+
+        <div class="episode-grid">
+          <div class="episode-card valley">
+            <h4>エピソード 1</h4>
+            <div class="field-label valley">いつ</div>
+            <input type="text" id="valley1-when" placeholder="時期や年齢" style="width:100%; padding:8px; margin-bottom:8px; border:2px solid #e0e0e0; border-radius:8px;">
+            <div class="field-label valley">何が起きたか？</div>
+            <textarea id="valley1-what" placeholder="最も辛かった場面を切り抜くと..."></textarea>
+            <div class="field-label valley">どんな感情になったか？</div>
+            <textarea id="valley1-emotion" placeholder="悲しい、悔しい、孤独..."></textarea>
+            <div class="field-label valley">なぜエネルギーが下がったのか？</div>
+            <textarea id="valley1-why" placeholder="大切にしていたものが..."></textarea>
+            <div class="field-label valley">エネルギーが上がり始めたきっかけは？</div>
+            <textarea id="valley1-recovery" placeholder="何がきっかけで回復した？"></textarea>
+            <div class="field-label valley">何を得るためにその体験をしたのか？</div>
+            <textarea id="valley1-learn" placeholder="今思えば、この経験から..."></textarea>
+          </div>
+
+          <div class="episode-card valley">
+            <h4>エピソード 2</h4>
+            <div class="field-label valley">いつ</div>
+            <input type="text" id="valley2-when" placeholder="時期や年齢" style="width:100%; padding:8px; margin-bottom:8px; border:2px solid #e0e0e0; border-radius:8px;">
+            <div class="field-label valley">何が起きたか？</div>
+            <textarea id="valley2-what" placeholder="最も辛かった場面を切り抜くと..."></textarea>
+            <div class="field-label valley">どんな感情になったか？</div>
+            <textarea id="valley2-emotion" placeholder="悲しい、悔しい、孤独..."></textarea>
+            <div class="field-label valley">なぜエネルギーが下がったのか？</div>
+            <textarea id="valley2-why" placeholder="大切にしていたものが..."></textarea>
+            <div class="field-label valley">エネルギーが上がり始めたきっかけは？</div>
+            <textarea id="valley2-recovery" placeholder="何がきっかけで回復した？"></textarea>
+            <div class="field-label valley">何を得るためにその体験をしたのか？</div>
+            <textarea id="valley2-learn" placeholder="今思えば、この経験から..."></textarea>
+          </div>
+
+          <div class="episode-card valley">
+            <h4>エピソード 3</h4>
+            <div class="field-label valley">いつ</div>
+            <input type="text" id="valley3-when" placeholder="時期や年齢" style="width:100%; padding:8px; margin-bottom:8px; border:2px solid #e0e0e0; border-radius:8px;">
+            <div class="field-label valley">何が起きたか？</div>
+            <textarea id="valley3-what" placeholder="最も辛かった場面を切り抜くと..."></textarea>
+            <div class="field-label valley">どんな感情になったか？</div>
+            <textarea id="valley3-emotion" placeholder="悲しい、悔しい、孤独..."></textarea>
+            <div class="field-label valley">なぜエネルギーが下がったのか？</div>
+            <textarea id="valley3-why" placeholder="大切にしていたものが..."></textarea>
+            <div class="field-label valley">エネルギーが上がり始めたきっかけは？</div>
+            <textarea id="valley3-recovery" placeholder="何がきっかけで回復した？"></textarea>
+            <div class="field-label valley">何を得るためにその体験をしたのか？</div>
+            <textarea id="valley3-learn" placeholder="今思えば、この経験から..."></textarea>
+          </div>
+        </div>
+
+        <div style="margin-top: var(--spacing-md); padding: var(--spacing-sm); background: #ffcdd2; border-radius: var(--radius-sm);">
+          <div class="field-label valley">▼ エネルギーが下がるのはどんなときか？</div>
+          <textarea id="valley-summary" placeholder="谷のエピソードから見えてきた共通点..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ② 人生の山 -->
+    <div class="mv-section">
+      <div class="mv-header mountain">
+        <span style="font-size: 1.5rem;">📈</span>
+        ② 人生の【山】と感じるエピソードを3つ書き出してください
+      </div>
+      <div class="mv-content">
+        <p style="margin-bottom: var(--spacing-md);">どんな感情になって、なぜそれが嬉しかったのか</p>
+
+        <div class="episode-grid">
+          <div class="episode-card mountain">
+            <h4>エピソード 1</h4>
+            <div class="field-label mountain">いつ</div>
+            <input type="text" id="mountain1-when" placeholder="時期や年齢" style="width:100%; padding:8px; margin-bottom:8px; border:2px solid #e0e0e0; border-radius:8px;">
+            <div class="field-label mountain">何が起きたか？</div>
+            <textarea id="mountain1-what" placeholder="最も嬉しかった場面を切り抜くと..."></textarea>
+            <div class="field-label mountain">どんな感情になったか？</div>
+            <textarea id="mountain1-emotion" placeholder="嬉しい、達成感、幸福..."></textarea>
+            <div class="field-label mountain">なぜエネルギーが上がったのか？</div>
+            <textarea id="mountain1-why" placeholder="大切にしていたものが満たされた..."></textarea>
+          </div>
+
+          <div class="episode-card mountain">
+            <h4>エピソード 2</h4>
+            <div class="field-label mountain">いつ</div>
+            <input type="text" id="mountain2-when" placeholder="時期や年齢" style="width:100%; padding:8px; margin-bottom:8px; border:2px solid #e0e0e0; border-radius:8px;">
+            <div class="field-label mountain">何が起きたか？</div>
+            <textarea id="mountain2-what" placeholder="最も嬉しかった場面を切り抜くと..."></textarea>
+            <div class="field-label mountain">どんな感情になったか？</div>
+            <textarea id="mountain2-emotion" placeholder="嬉しい、達成感、幸福..."></textarea>
+            <div class="field-label mountain">なぜエネルギーが上がったのか？</div>
+            <textarea id="mountain2-why" placeholder="大切にしていたものが満たされた..."></textarea>
+          </div>
+
+          <div class="episode-card mountain">
+            <h4>エピソード 3</h4>
+            <div class="field-label mountain">いつ</div>
+            <input type="text" id="mountain3-when" placeholder="時期や年齢" style="width:100%; padding:8px; margin-bottom:8px; border:2px solid #e0e0e0; border-radius:8px;">
+            <div class="field-label mountain">何が起きたか？</div>
+            <textarea id="mountain3-what" placeholder="最も嬉しかった場面を切り抜くと..."></textarea>
+            <div class="field-label mountain">どんな感情になったか？</div>
+            <textarea id="mountain3-emotion" placeholder="嬉しい、達成感、幸福..."></textarea>
+            <div class="field-label mountain">なぜエネルギーが上がったのか？</div>
+            <textarea id="mountain3-why" placeholder="大切にしていたものが満たされた..."></textarea>
+          </div>
+        </div>
+
+        <div style="margin-top: var(--spacing-md); padding: var(--spacing-sm); background: #fff9c4; border-radius: var(--radius-sm);">
+          <div class="field-label mountain">▼ エネルギーが上がるのはどんなときか？</div>
+          <textarea id="mountain-summary" placeholder="山のエピソードから見えてきた共通点..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ コアワード抽出 -->
+    <div class="core-word-section">
+      <h3>③【谷】と【山】に共通するコアワードを抽出しましょう</h3>
+      <p style="color: var(--white); margin-bottom: var(--spacing-sm);">エネルギーの上がり下がりからコアワードを抽出してみよう</p>
+      <div style="background: rgba(255,255,255,0.9); padding: var(--spacing-md); border-radius: var(--radius-sm);">
+        <div class="field-label">自分らしさワード</div>
+        <textarea id="core-words" placeholder="例）つながり、成長、自由、貢献、挑戦..." style="min-height: 100px;"></textarea>
+      </div>
+    </div>
+
+    <!-- ④ 使命・目的・判断軸 -->
+    <div class="final-section">
+      <h3>④ コアワードから、あなたの人生における【使命・目的・判断軸】を導き出そう</h3>
+      <p style="color: var(--white); margin-bottom: var(--spacing-md);">これからの人生の指針を発掘しましょう</p>
+
+      <div class="final-item">
+        <h4>📝 文章化</h4>
+        <p>自分らしさワードから見えてきた自分のこだわりをグルーピングしながら、文章にしてみよう</p>
+        <textarea id="verbalize" placeholder="自分の言葉で文章にしてみましょう..." style="min-height: 120px;"></textarea>
+      </div>
+
+      <div class="final-item">
+        <h4>🎯 【人生の目的】</h4>
+        <p>あなたはどんな人生を送れたら幸せなのか（エネルギーを内側に向けたもの）</p>
+        <textarea id="life-purpose" placeholder="私は〇〇な人生を送りたい..." style="min-height: 100px;"></textarea>
+      </div>
+
+      <div class="final-item">
+        <h4>🚀 【人生の使命】</h4>
+        <p>あなたの人生で何を成し遂げたいのか（エネルギーを外側に向けたもの）</p>
+        <textarea id="life-mission" placeholder="私は〇〇を成し遂げたい..." style="min-height: 100px;"></textarea>
+      </div>
+
+      <div class="final-item">
+        <h4>🧭 心のコンパス【人生の判断軸】</h4>
+        <p>現在もっとも大事にしている判断基準は何か</p>
+        <textarea id="life-compass" placeholder="迷ったときは〇〇を基準に決める..." style="min-height: 100px;"></textarea>
+      </div>
+    </div>
+
+    <div style="background: var(--light-green); padding: var(--spacing-md); border-radius: var(--radius-md); margin-top: var(--spacing-lg);">
+      <p style="text-align: center; font-size: 1.1rem; color: #2e7d32;"><strong>ワークお疲れ様でした！</strong></p>
+      <p style="text-align: center; margin-top: var(--spacing-sm);">
+        あなたの人生の山と谷から、あなただけの【使命・目的・判断軸】が見えてきました。<br>
+        これからの選択に迷ったとき、この言葉を思い出してください🧭
+      </p>
+    </div>
+  </div>
+
+  <nav class="nav-bottom">
+    <a href="06-passion.html" class="btn btn-secondary">← 前へ</a>
+    <button class="btn btn-save" onclick="saveData()">保存する</button>
+    <a href="08-become.html" class="btn btn-primary">次へ →</a>
+  </nav>
+  <div class="toast" id="toast"></div>
+
+  <!-- Lark API連携 -->
+  <script src="../js/lark-api.js"></script>
+  <script src="../js/lark-config.js"></script>
+  <script src="../js/data-sync.js"></script>
+
+  <script>
+    function updateProgress() {
+      const allInputs = document.querySelectorAll('textarea, input[type="text"]');
+      let filled = 0;
+      allInputs.forEach(el => {
+        if (el.value.trim()) filled++;
+      });
+      const progress = (filled / allInputs.length) * 100;
+      document.getElementById('progressBar').style.width = progress + '%';
+    }
+
+    function saveData() {
+      const data = {
+        valley: [
+          { when: document.getElementById('valley1-when').value, what: document.getElementById('valley1-what').value, emotion: document.getElementById('valley1-emotion').value, why: document.getElementById('valley1-why').value, recovery: document.getElementById('valley1-recovery').value, learn: document.getElementById('valley1-learn').value },
+          { when: document.getElementById('valley2-when').value, what: document.getElementById('valley2-what').value, emotion: document.getElementById('valley2-emotion').value, why: document.getElementById('valley2-why').value, recovery: document.getElementById('valley2-recovery').value, learn: document.getElementById('valley2-learn').value },
+          { when: document.getElementById('valley3-when').value, what: document.getElementById('valley3-what').value, emotion: document.getElementById('valley3-emotion').value, why: document.getElementById('valley3-why').value, recovery: document.getElementById('valley3-recovery').value, learn: document.getElementById('valley3-learn').value }
+        ],
+        valleySummary: document.getElementById('valley-summary').value,
+        mountain: [
+          { when: document.getElementById('mountain1-when').value, what: document.getElementById('mountain1-what').value, emotion: document.getElementById('mountain1-emotion').value, why: document.getElementById('mountain1-why').value },
+          { when: document.getElementById('mountain2-when').value, what: document.getElementById('mountain2-what').value, emotion: document.getElementById('mountain2-emotion').value, why: document.getElementById('mountain2-why').value },
+          { when: document.getElementById('mountain3-when').value, what: document.getElementById('mountain3-what').value, emotion: document.getElementById('mountain3-emotion').value, why: document.getElementById('mountain3-why').value }
+        ],
+        mountainSummary: document.getElementById('mountain-summary').value,
+        coreWords: document.getElementById('core-words').value,
+        verbalize: document.getElementById('verbalize').value,
+        lifePurpose: document.getElementById('life-purpose').value,
+        lifeMission: document.getElementById('life-mission').value,
+        lifeCompass: document.getElementById('life-compass').value,
+        timestamp: new Date().toISOString()
+      };
+      localStorage.setItem('selfUnderstanding_mission', JSON.stringify(data));
+      showToast('保存しました！', 'success');
+    }
+
+    function loadData() {
+      const saved = localStorage.getItem('selfUnderstanding_mission');
+      if (saved) {
+        const data = JSON.parse(saved);
+        if (data.valley) {
+          data.valley.forEach((v, i) => {
+            const n = i + 1;
+            document.getElementById(`valley${n}-when`).value = v.when || '';
+            document.getElementById(`valley${n}-what`).value = v.what || '';
+            document.getElementById(`valley${n}-emotion`).value = v.emotion || '';
+            document.getElementById(`valley${n}-why`).value = v.why || '';
+            document.getElementById(`valley${n}-recovery`).value = v.recovery || '';
+            document.getElementById(`valley${n}-learn`).value = v.learn || '';
+          });
+        }
+        document.getElementById('valley-summary').value = data.valleySummary || '';
+        if (data.mountain) {
+          data.mountain.forEach((m, i) => {
+            const n = i + 1;
+            document.getElementById(`mountain${n}-when`).value = m.when || '';
+            document.getElementById(`mountain${n}-what`).value = m.what || '';
+            document.getElementById(`mountain${n}-emotion`).value = m.emotion || '';
+            document.getElementById(`mountain${n}-why`).value = m.why || '';
+          });
+        }
+        document.getElementById('mountain-summary').value = data.mountainSummary || '';
+        document.getElementById('core-words').value = data.coreWords || '';
+        document.getElementById('verbalize').value = data.verbalize || '';
+        document.getElementById('life-purpose').value = data.lifePurpose || '';
+        document.getElementById('life-mission').value = data.lifeMission || '';
+        document.getElementById('life-compass').value = data.lifeCompass || '';
+        updateProgress();
+      }
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast ' + type + ' show';
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    document.querySelectorAll('textarea, input').forEach(el => {
+      el.addEventListener('input', updateProgress);
+    });
+
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>

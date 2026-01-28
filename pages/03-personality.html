@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>性格診断ワーク | 自己理解の教科書</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .diagnosis-table {
+      width: 100%;
+      margin-bottom: var(--spacing-md);
+    }
+    .diagnosis-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm);
+      background: var(--white);
+      border-radius: var(--radius-sm);
+      margin-bottom: var(--spacing-xs);
+      border: 1px solid #e0e0e0;
+    }
+    .diagnosis-row .num {
+      width: 28px;
+      height: 28px;
+      background: var(--primary-orange);
+      color: var(--white);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    .diagnosis-row .question {
+      flex: 1;
+      font-size: 0.95rem;
+    }
+    .diagnosis-row select {
+      width: 140px;
+      flex-shrink: 0;
+    }
+    .type-section {
+      margin-bottom: var(--spacing-lg);
+    }
+    .type-header {
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      font-weight: bold;
+      color: var(--white);
+    }
+    .type-header.usagi-kame { background: #ff9800; }
+    .type-header.ari-kirigirisu { background: #4caf50; }
+    .score-box {
+      display: flex;
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      flex-wrap: wrap;
+    }
+    .score-item {
+      flex: 1;
+      min-width: 140px;
+      text-align: center;
+      padding: var(--spacing-md);
+      border-radius: var(--radius-md);
+      background: var(--gray-light);
+    }
+    .score-item.active {
+      background: var(--light-orange);
+      border: 2px solid var(--primary-orange);
+    }
+    .score-item .label {
+      font-size: 0.9rem;
+      color: var(--text-light);
+    }
+    .score-item .value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--primary-brown);
+    }
+    .result-section {
+      margin-top: var(--spacing-lg);
+      padding: var(--spacing-md);
+      background: var(--light-yellow);
+      border-radius: var(--radius-md);
+      text-align: center;
+    }
+    .result-type {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary-brown);
+      margin: var(--spacing-sm) 0;
+    }
+    .type-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-lg);
+    }
+    .type-card {
+      padding: var(--spacing-md);
+      border-radius: var(--radius-md);
+      display: none;
+    }
+    .type-card.show { display: block; }
+    .type-card h3 {
+      margin-bottom: var(--spacing-sm);
+    }
+    .type-card ul {
+      padding-left: var(--spacing-md);
+      margin-bottom: var(--spacing-sm);
+    }
+    .type-card li {
+      margin-bottom: var(--spacing-xs);
+    }
+    @media (max-width: 600px) {
+      .diagnosis-row {
+        flex-wrap: wrap;
+      }
+      .diagnosis-row select {
+        width: 100%;
+        margin-top: var(--spacing-xs);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <header class="page-header">
+    <h1><span class="icon">🐰</span> 性格診断ワーク</h1>
+    <a href="https://drive.google.com/file/d/17EV82nU4Q7Ammt4h3IkjzA7cbn0xgIb_/view" target="_blank" class="video-link">
+      解説動画はこちら
+    </a>
+  </header>
+
+  <div class="container">
+    <!-- 説明 -->
+    <div class="section">
+      <h2 class="section-title">自分の性格タイプを診断しよう</h2>
+      <p>以下の20問に直感で答えてください。あなたの行動傾向と動機傾向が分かります。</p>
+    </div>
+
+    <!-- うさぎ vs かめ（行動傾向）-->
+    <div class="type-section">
+      <div class="type-header usagi-kame">行動傾向：うさぎ vs かめ</div>
+      <div class="section" style="border-radius: 0 0 var(--radius-md) var(--radius-md); margin-top: 0;">
+        <div class="diagnosis-table" id="behavior-questions">
+          <!-- Q1-10 will be inserted by JS -->
+        </div>
+        <div class="score-box">
+          <div class="score-item" id="usagi-score">
+            <div class="label">うさぎ（短期集中型）</div>
+            <div class="value"><span id="usagi-value">0</span>点</div>
+          </div>
+          <div class="score-item" id="kame-score">
+            <div class="label">かめ（長期分散型）</div>
+            <div class="value"><span id="kame-value">0</span>点</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- アリ vs キリギリス（動機傾向）-->
+    <div class="type-section">
+      <div class="type-header ari-kirigirisu">動機傾向：アリ vs キリギリス</div>
+      <div class="section" style="border-radius: 0 0 var(--radius-md) var(--radius-md); margin-top: 0;">
+        <div class="diagnosis-table" id="motivation-questions">
+          <!-- Q11-20 will be inserted by JS -->
+        </div>
+        <div class="score-box">
+          <div class="score-item" id="kirigirisu-score">
+            <div class="label">キリギリス（快楽追求型）</div>
+            <div class="value"><span id="kirigirisu-value">0</span>点</div>
+          </div>
+          <div class="score-item" id="ari-score">
+            <div class="label">アリ（リスク回避型）</div>
+            <div class="value"><span id="ari-value">0</span>点</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 診断結果 -->
+    <div class="result-section" id="result-section" style="display: none;">
+      <p>あなたの性格タイプは...</p>
+      <div class="result-type" id="result-type"></div>
+      <p id="result-desc"></p>
+    </div>
+
+    <!-- タイプ別解説 -->
+    <div class="type-cards">
+      <div class="type-card" id="card-usaari" style="background: #fff3e0;">
+        <h3>うさアリタイプ</h3>
+        <p><strong>特徴：</strong>短期集中 × リスク回避</p>
+        <ul>
+          <li>締め切り直前に一気に集中</li>
+          <li>不安を解消するために行動</li>
+          <li>夏休みの宿題は最後に一気派</li>
+        </ul>
+        <p><strong>やる気スイッチ：</strong>メリットを明確にして楽しく続ける</p>
+      </div>
+      <div class="type-card" id="card-usagiri" style="background: #fce4ec;">
+        <h3>うさギリスタイプ</h3>
+        <p><strong>特徴：</strong>短期集中 × 快楽追求</p>
+        <ul>
+          <li>やりたいことは即行動</li>
+          <li>熱しやすく冷めやすい</li>
+          <li>ワクワクがエネルギー源</li>
+        </ul>
+        <p><strong>やる気スイッチ：</strong>ビジョンとメリットを明確にして楽しく続ける</p>
+      </div>
+      <div class="type-card" id="card-kameari" style="background: #e8f5e9;">
+        <h3>かめアリタイプ</h3>
+        <p><strong>特徴：</strong>長期分散 × リスク回避</p>
+        <ul>
+          <li>計画的にコツコツ進める</li>
+          <li>リスクを避けて確実に</li>
+          <li>継続力が最大の武器</li>
+        </ul>
+        <p><strong>やる気スイッチ：</strong>少しずつ負荷を高めながら淡々と長期継続</p>
+      </div>
+      <div class="type-card" id="card-kamegiri" style="background: #e3f2fd;">
+        <h3>かめギリスタイプ</h3>
+        <p><strong>特徴：</strong>長期分散 × 快楽追求</p>
+        <ul>
+          <li>楽しみながらコツコツ</li>
+          <li>好きなことには粘り強い</li>
+          <li>マイペースが心地よい</li>
+        </ul>
+        <p><strong>やる気スイッチ：</strong>理想を描いてコツコツ努力を積み重ねる</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 下部ナビゲーション -->
+  <nav class="nav-bottom">
+    <a href="../index.html" class="btn btn-secondary">← 目次へ</a>
+    <button class="btn btn-save" onclick="saveData()">保存する</button>
+    <a href="04-values.html" class="btn btn-primary">次へ →</a>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Lark API連携 -->
+  <script src="../js/lark-api.js"></script>
+  <script src="../js/lark-config.js"></script>
+  <script src="../js/data-sync.js"></script>
+
+  <script>
+    // 質問データ
+    const behaviorQuestions = [
+      { num: 1, text: "思いついたら即行動したい", type: "usagi" },
+      { num: 2, text: "やるべきことは、短期集中で一気に終わらせる", type: "usagi" },
+      { num: 3, text: "一気呵成、短期集中で取り組むのが自分の性に合っている気がする", type: "usagi" },
+      { num: 4, text: "短期でのゴールがあると一気にモチベーションが上がる", type: "usagi" },
+      { num: 5, text: "熱しやすく冷めやすい", type: "usagi" },
+      { num: 6, text: "しっかり考えて計画を立ててから、行動に移したい", type: "kame" },
+      { num: 7, text: "やるべきことは分散してコツコツやりたい", type: "kame" },
+      { num: 8, text: "分散型で少しずつ取り組むのが自分の性に合っている", type: "kame" },
+      { num: 9, text: "コツコツ、努力を積み重ねることでモチベーションが上がる", type: "kame" },
+      { num: 10, text: "我慢強く、コツコツ取り組める性格である", type: "kame" }
+    ];
+
+    const motivationQuestions = [
+      { num: 11, text: "楽しいこと、やりたいことから優先して進める", type: "kirigirisu" },
+      { num: 12, text: "義務的なタスク、面倒なことが先延ばしになりがち", type: "kirigirisu" },
+      { num: 13, text: "提出物、宿題は期限ギリギリまで取り組んでいる", type: "kirigirisu" },
+      { num: 14, text: "気分のムラがあり、行動量にアップダウンがある", type: "kirigirisu" },
+      { num: 15, text: "一番好きなこと、楽しみは後回しになる", type: "kirigirisu" },
+      { num: 16, text: "不安や心配事、やるべきことは早めに終わらせて提出している", type: "ari" },
+      { num: 17, text: "やりたいこと、楽しみは後回しになることも多い", type: "ari" },
+      { num: 18, text: "提出物、宿題は期限よりも早めに終わらせて提出している", type: "ari" },
+      { num: 19, text: "気分のムラは少なく、淡々と行動を進めることができる", type: "ari" },
+      { num: 20, text: "一番好きなことは最後に楽しむ", type: "ari" }
+    ];
+
+    // 選択肢
+    const options = [
+      { value: "", text: "選んで" },
+      { value: "5", text: "5点 よく当てはまる" },
+      { value: "4", text: "4点 当てはまる" },
+      { value: "3", text: "3点 まあ当てはまる" },
+      { value: "2", text: "2点 あまり当てはまらない" },
+      { value: "1", text: "1点 当てはまらない" }
+    ];
+
+    // 質問を生成
+    function renderQuestions() {
+      const behaviorContainer = document.getElementById('behavior-questions');
+      const motivationContainer = document.getElementById('motivation-questions');
+
+      behaviorQuestions.forEach(q => {
+        behaviorContainer.innerHTML += createQuestionRow(q);
+      });
+
+      motivationQuestions.forEach(q => {
+        motivationContainer.innerHTML += createQuestionRow(q);
+      });
+
+      // イベントリスナーを追加
+      document.querySelectorAll('.score-select').forEach(select => {
+        select.addEventListener('change', calculateScores);
+      });
+    }
+
+    function createQuestionRow(q) {
+      const optionsHtml = options.map(opt =>
+        `<option value="${opt.value}">${opt.text}</option>`
+      ).join('');
+
+      return `
+        <div class="diagnosis-row">
+          <div class="num">${q.num}</div>
+          <div class="question">${q.text}</div>
+          <select class="score-select" data-num="${q.num}" data-type="${q.type}">
+            ${optionsHtml}
+          </select>
+        </div>
+      `;
+    }
+
+    // スコア計算
+    function calculateScores() {
+      let usagi = 0, kame = 0, kirigirisu = 0, ari = 0;
+      let answered = 0;
+
+      document.querySelectorAll('.score-select').forEach(select => {
+        const value = parseInt(select.value) || 0;
+        const type = select.dataset.type;
+
+        if (select.value) answered++;
+
+        switch(type) {
+          case 'usagi': usagi += value; break;
+          case 'kame': kame += value; break;
+          case 'kirigirisu': kirigirisu += value; break;
+          case 'ari': ari += value; break;
+        }
+      });
+
+      // スコア表示を更新
+      document.getElementById('usagi-value').textContent = usagi;
+      document.getElementById('kame-value').textContent = kame;
+      document.getElementById('kirigirisu-value').textContent = kirigirisu;
+      document.getElementById('ari-value').textContent = ari;
+
+      // アクティブ表示
+      document.getElementById('usagi-score').classList.toggle('active', usagi > kame);
+      document.getElementById('kame-score').classList.toggle('active', kame > usagi);
+      document.getElementById('kirigirisu-score').classList.toggle('active', kirigirisu > ari);
+      document.getElementById('ari-score').classList.toggle('active', ari > kirigirisu);
+
+      // 進捗バー更新
+      const progress = (answered / 20) * 100;
+      document.getElementById('progressBar').style.width = progress + '%';
+
+      // 結果表示
+      if (answered === 20) {
+        showResult(usagi, kame, kirigirisu, ari);
+      }
+    }
+
+    function showResult(usagi, kame, kirigirisu, ari) {
+      const resultSection = document.getElementById('result-section');
+      const resultType = document.getElementById('result-type');
+      const resultDesc = document.getElementById('result-desc');
+
+      const behavior = usagi >= kame ? 'うさ' : 'かめ';
+      const motivation = kirigirisu >= ari ? 'ギリス' : 'アリ';
+      const type = behavior + motivation;
+
+      resultType.textContent = type + 'タイプ';
+      resultSection.style.display = 'block';
+
+      // カードを表示
+      document.querySelectorAll('.type-card').forEach(card => card.classList.remove('show'));
+      const cardId = 'card-' + (behavior === 'うさ' ? 'usa' : 'kame') + (motivation === 'ギリス' ? 'giri' : 'ari');
+      document.getElementById(cardId).classList.add('show');
+
+      // スクロール
+      resultSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // データ保存
+    async function saveData() {
+      const data = {
+        answers: {},
+        scores: {
+          usagi: parseInt(document.getElementById('usagi-value').textContent),
+          kame: parseInt(document.getElementById('kame-value').textContent),
+          kirigirisu: parseInt(document.getElementById('kirigirisu-value').textContent),
+          ari: parseInt(document.getElementById('ari-value').textContent)
+        },
+        resultType: document.getElementById('result-type').textContent,
+        timestamp: new Date().toISOString()
+      };
+
+      document.querySelectorAll('.score-select').forEach(select => {
+        data.answers[select.dataset.num] = select.value;
+      });
+
+      // ローカル保存
+      localStorage.setItem('selfUnderstanding_personality', JSON.stringify(data));
+
+      // Lark Base同期
+      if (window.DataSync) {
+        try {
+          // Lark Base用のデータ形式に変換
+          const larkData = {
+            type: data.resultType,
+            usagiScore: data.scores.usagi,
+            kameScore: data.scores.kame,
+            kirigirisuScore: data.scores.kirigirisu,
+            ariScore: data.scores.ari,
+            answers: data.answers
+          };
+          await window.DataSync.saveWorkData('personality', larkData);
+        } catch (error) {
+          console.error('Lark sync failed:', error);
+        }
+      }
+
+      showToast('保存しました！', 'success');
+    }
+
+    // データ読み込み
+    function loadData() {
+      const saved = localStorage.getItem('selfUnderstanding_personality');
+      if (saved) {
+        const data = JSON.parse(saved);
+        Object.keys(data.answers).forEach(num => {
+          const select = document.querySelector(`[data-num="${num}"]`);
+          if (select) select.value = data.answers[num];
+        });
+        calculateScores();
+      }
+    }
+
+    // トースト表示
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast ' + type + ' show';
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // 初期化
+    document.addEventListener('DOMContentLoaded', () => {
+      renderQuestions();
+      loadData();
+    });
+  </script>
+</body>
+</html>
