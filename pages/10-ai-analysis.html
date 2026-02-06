@@ -126,6 +126,30 @@
       cursor: pointer;
       font-size: 0.85rem;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    /* マークダウン風の分析結果表示 */
+    #resultContent h1, #resultContent h2, #resultContent h3 {
+      color: #673ab7;
+      margin: var(--spacing-md) 0 var(--spacing-sm);
+    }
+    #resultContent h1 { font-size: 1.4rem; border-bottom: 2px solid #673ab7; padding-bottom: 8px; }
+    #resultContent h2 { font-size: 1.2rem; }
+    #resultContent h3 { font-size: 1.05rem; }
+    #resultContent ul, #resultContent ol {
+      padding-left: var(--spacing-md);
+      margin: var(--spacing-sm) 0;
+    }
+    #resultContent li { margin-bottom: 6px; line-height: 1.6; }
+    #resultContent p { margin: var(--spacing-sm) 0; line-height: 1.7; }
+    #resultContent strong { color: var(--primary-brown); }
+    #resultContent blockquote {
+      border-left: 4px solid #673ab7;
+      padding: 8px 16px;
+      background: #f3e5f5;
+      border-radius: 0 8px 8px 0;
+      margin: var(--spacing-sm) 0;
+    }
+    #resultContent hr { border: none; border-top: 1px solid #e0e0e0; margin: var(--spacing-md) 0; }
   </style>
 </head>
 <body>
@@ -169,22 +193,32 @@
       </div>
     </div>
 
-    <!-- AI分析用プロンプト生成 -->
+    <!-- AI分析実行 -->
     <div class="data-summary">
       <h3>🎯 AIに分析してもらう</h3>
-      <p style="margin-bottom: var(--spacing-md);">以下のボタンで、入力データをおさるAIや他のAIに貼り付けられる形式で出力します。</p>
+      <p style="margin-bottom: var(--spacing-md);">ボタンを押すと、AIがあなたの全ワークデータを分析してレポートを作成します。</p>
 
-      <button class="export-btn" onclick="generatePrompt()">
-        📋 分析用プロンプトを生成
+      <button class="analysis-btn" id="aiAnalyzeBtn" onclick="runAIAnalysis()">
+        🤖 AIに分析してもらう
       </button>
 
-      <button class="export-btn" onclick="exportJSON()" style="background: #2196f3;">
-        💾 JSONでエクスポート
-      </button>
+      <div id="analysisLoading" style="display:none; text-align:center; padding: var(--spacing-lg);">
+        <div style="width:48px;height:48px;border:4px solid #f0f0f0;border-top-color:#673ab7;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px;"></div>
+        <p style="font-weight:bold;color:#673ab7;">AIが分析中...</p>
+        <p style="font-size:0.9rem;color:var(--text-light);">30秒〜1分ほどお待ちください</p>
+      </div>
 
-      <button class="export-btn" onclick="clearAllData()" style="background: #f44336;">
-        🗑️ データをリセット
-      </button>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:var(--spacing-sm);">
+        <button class="export-btn" onclick="generatePrompt()">
+          📋 プロンプトをコピー
+        </button>
+        <button class="export-btn" onclick="exportJSON()" style="background: #2196f3;">
+          💾 JSONエクスポート
+        </button>
+        <button class="export-btn" onclick="clearAllData()" style="background: #f44336;">
+          🗑️ データリセット
+        </button>
+      </div>
 
       <div class="copy-prompt-box" id="promptBox" style="display: none;">
         <button class="copy-btn" onclick="copyPrompt()">コピー</button>
@@ -192,22 +226,13 @@
       </div>
     </div>
 
-    <!-- Lark Base連携 -->
-    <div class="data-summary">
-      <h3>🔗 Lark Base連携（準備中）</h3>
-      <p>今後、入力データをLark Baseに自動保存・同期する機能を追加予定です。</p>
-      <ul style="padding-left: var(--spacing-md); margin-top: var(--spacing-sm); color: var(--text-light);">
-        <li>ワークの回答をクラウドに自動バックアップ</li>
-        <li>複数デバイスでの同期</li>
-        <li>AIによる継続的な分析とフィードバック</li>
-      </ul>
-    </div>
-
     <!-- 分析結果 -->
     <div class="analysis-result" id="analysisResult">
-      <h3>📈 分析結果</h3>
-      <div class="analysis-section" id="resultContent">
-        <!-- 分析結果がここに表示される -->
+      <h3>📈 AI分析レポート</h3>
+      <div class="analysis-section" id="resultContent"></div>
+      <div style="display:flex;gap:8px;margin-top:var(--spacing-md);">
+        <button class="export-btn" onclick="copyAnalysis()" style="background:#673ab7;">📋 分析結果をコピー</button>
+        <button class="export-btn" onclick="runAIAnalysis()" style="background:#ff9800;">🔄 再分析する</button>
       </div>
     </div>
   </div>
@@ -364,6 +389,115 @@
       }
     }
 
+    // === AI分析を実行 ===
+    async function runAIAnalysis() {
+      const userData = getAllData();
+      const dataKeys = ['personality', 'values', 'talent', 'passion', 'mission', 'life-manual'];
+      const hasData = dataKeys.some(k => userData[k]);
+
+      if (!hasData) {
+        showToast('ワークデータがありません。先にワークを完了してください。', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('aiAnalyzeBtn');
+      const loading = document.getElementById('analysisLoading');
+      const result = document.getElementById('analysisResult');
+
+      btn.disabled = true;
+      btn.style.display = 'none';
+      loading.style.display = 'block';
+      result.classList.remove('show');
+
+      try {
+        // 管理画面で設定したカスタムプロンプトがあれば使う
+        const customPrompt = localStorage.getItem('selfUnderstanding_adminPrompt') || undefined;
+
+        const response = await fetch('/api/ai-analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userData, customPrompt })
+        });
+
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.error || 'AI分析に失敗しました');
+        }
+
+        const data = await response.json();
+        document.getElementById('resultContent').innerHTML = markdownToHtml(data.analysis);
+        result.classList.add('show');
+
+        // 分析結果をlocalStorageに保存
+        localStorage.setItem('selfUnderstanding_aiAnalysis', JSON.stringify({
+          analysis: data.analysis,
+          timestamp: new Date().toISOString()
+        }));
+
+        showToast('分析が完了しました!', 'success');
+
+      } catch (error) {
+        console.error('AI analysis error:', error);
+        showToast(error.message || 'AI分析中にエラーが発生しました', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.style.display = 'block';
+        loading.style.display = 'none';
+      }
+    }
+
+    // 分析結果をコピー
+    function copyAnalysis() {
+      const saved = localStorage.getItem('selfUnderstanding_aiAnalysis');
+      if (saved) {
+        const { analysis } = JSON.parse(saved);
+        navigator.clipboard.writeText(analysis).then(() => showToast('コピーしました!', 'success'));
+      }
+    }
+
+    // 簡易マークダウン → HTML変換
+    function markdownToHtml(md) {
+      if (!md) return '';
+      let html = md
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        // 見出し
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        // 太字・斜体
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        // 水平線
+        .replace(/^---$/gm, '<hr>')
+        // 引用
+        .replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>')
+        // リスト
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/^(\d+)\. (.+)$/gm, '<li>$2</li>');
+
+      // <li>の連続をul/olで囲む
+      html = html.replace(/((<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>');
+      // 残りの行を<p>で囲む（空行区切り）
+      html = html.split('\n\n').map(block => {
+        block = block.trim();
+        if (!block) return '';
+        if (block.startsWith('<h') || block.startsWith('<ul') || block.startsWith('<ol') || block.startsWith('<hr') || block.startsWith('<blockquote')) return block;
+        return '<p>' + block.replace(/\n/g, '<br>') + '</p>';
+      }).join('\n');
+
+      return html;
+    }
+
+    // 保存済み分析結果を表示
+    function loadSavedAnalysis() {
+      const saved = localStorage.getItem('selfUnderstanding_aiAnalysis');
+      if (saved) {
+        const { analysis } = JSON.parse(saved);
+        document.getElementById('resultContent').innerHTML = markdownToHtml(analysis);
+        document.getElementById('analysisResult').classList.add('show');
+      }
+    }
+
     function showToast(message, type = 'success') {
       const toast = document.getElementById('toast');
       toast.textContent = message;
@@ -371,7 +505,10 @@
       setTimeout(() => toast.classList.remove('show'), 3000);
     }
 
-    document.addEventListener('DOMContentLoaded', checkDataStatus);
+    document.addEventListener('DOMContentLoaded', () => {
+      checkDataStatus();
+      loadSavedAnalysis();
+    });
   </script>
 </body>
 </html>

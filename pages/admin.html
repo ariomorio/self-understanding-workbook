@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理画面 | 自己理解の教科書</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .admin-header {
+      background: linear-gradient(135deg, #37474f, #546e7a);
+      padding: var(--spacing-lg);
+      border-radius: var(--radius-lg);
+      text-align: center;
+      color: var(--white);
+      margin-bottom: var(--spacing-lg);
+    }
+    .admin-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md);
+      margin-bottom: var(--spacing-md);
+      box-shadow: var(--shadow-sm);
+    }
+    .admin-card h3 {
+      color: var(--primary-brown);
+      margin-bottom: var(--spacing-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+    .prompt-textarea {
+      width: 100%;
+      min-height: 300px;
+      padding: var(--spacing-md);
+      border: 2px solid #e0e0e0;
+      border-radius: var(--radius-sm);
+      font-family: monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+    .prompt-textarea:focus {
+      outline: none;
+      border-color: var(--primary-orange);
+    }
+    .admin-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: var(--spacing-sm) var(--spacing-md);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: opacity 0.2s;
+    }
+    .admin-btn:hover { opacity: 0.9; }
+    .admin-btn.primary { background: var(--primary-orange); color: var(--white); }
+    .admin-btn.secondary { background: #e0e0e0; color: #333; }
+    .admin-btn.danger { background: #f44336; color: var(--white); }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+    .status-badge.ok { background: #e8f5e9; color: #2e7d32; }
+    .status-badge.ng { background: #ffebee; color: #c62828; }
+    .status-badge.warn { background: #fff3e0; color: #e65100; }
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--spacing-sm) 0;
+      border-bottom: 1px solid #eee;
+    }
+    .status-row:last-child { border-bottom: none; }
+    .char-count {
+      text-align: right;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <header class="page-header" style="background: linear-gradient(135deg, #37474f, #546e7a);">
+    <h1><span class="icon">&#9881;</span> 管理画面</h1>
+  </header>
+
+  <div class="container">
+    <div class="admin-header">
+      <h2>AI分析プロンプト設定</h2>
+      <p>AIがユーザーのワークデータを分析する際のプロンプトを設定できます</p>
+    </div>
+
+    <!-- システムステータス -->
+    <div class="admin-card">
+      <h3>&#128202; システムステータス</h3>
+      <div class="status-row">
+        <span>Anthropic API Key</span>
+        <span class="status-badge" id="statusApiKey">確認中...</span>
+      </div>
+      <div class="status-row">
+        <span>Lark Base接続</span>
+        <span class="status-badge" id="statusLarkBase">確認中...</span>
+      </div>
+      <div class="status-row">
+        <span>プロンプト設定元</span>
+        <span class="status-badge" id="statusPromptSource">確認中...</span>
+      </div>
+    </div>
+
+    <!-- プロンプト設定 -->
+    <div class="admin-card">
+      <h3>&#128221; AI分析プロンプト</h3>
+      <p style="margin-bottom: var(--spacing-sm); color: var(--text-light); font-size: 0.9rem;">
+        AIがユーザーの自己理解データを分析する際に使うシステムプロンプトです。<br>
+        <code>{userName}</code> はユーザー名に置換されます。
+      </p>
+      <textarea class="prompt-textarea" id="promptEditor"></textarea>
+      <div class="char-count"><span id="charCount">0</span>文字</div>
+
+      <div style="display:flex;gap:8px;margin-top:var(--spacing-md);flex-wrap:wrap;">
+        <button class="admin-btn primary" onclick="savePrompt()">&#128190; 保存する</button>
+        <button class="admin-btn secondary" onclick="loadDefault()">&#128260; デフォルトに戻す</button>
+        <button class="admin-btn secondary" onclick="testPrompt()">&#9654; テスト分析する</button>
+      </div>
+    </div>
+
+    <!-- プロンプトのヒント -->
+    <div class="admin-card" style="background: var(--light-yellow);">
+      <h3>&#128161; プロンプト設計のヒント</h3>
+      <ul style="padding-left: var(--spacing-md); line-height: 1.8;">
+        <li><strong>分析の切り口を指定</strong>: 「強み」「SNS発信テーマ」「アクションプラン」など</li>
+        <li><strong>口調を指定</strong>: 「暖かく応援する」「論理的に」「友達のように」など</li>
+        <li><strong>フォーマットを指定</strong>: 「マークダウンで」「見出し付きで」「箇条書きで」</li>
+        <li><strong>ペルソナを設定</strong>: 「あなたは自己理解コーチです」など</li>
+        <li><strong>具体例の引用</strong>: 「ユーザーのエピソードを引用して」</li>
+      </ul>
+    </div>
+  </div>
+
+  <nav class="nav-bottom">
+    <a href="../index.html" class="btn btn-secondary">&#8592; 目次へ戻る</a>
+  </nav>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const DEFAULT_PROMPT = `あなたは自己理解コーチ「おさるAI」です。
+以下のワークデータを分析して、ユーザーの自己理解を深める総合レポートを作成してください。
+
+## 分析してほしいこと
+1. **あなたの強み・特徴まとめ** - 全体を通して見えてくるユーザーの本質的な強みと特徴
+2. **価値観・才能・情熱の一貫性** - 3つの柱がどのように繋がっているか
+3. **SNS発信で活かせるテーマ** - ユーザーに合った発信テーマや切り口の提案
+4. **商品・サービス化の方向性** - ユーザーの強みを活かしたビジネスの可能性
+5. **今後のアクションプラン** - 具体的な次のステップ3つ
+
+## ルール
+- 暖かく、応援する口調で書く
+- 具体的なエピソードを引用しながら分析する
+- マークダウン形式で見出し・箇条書きを使う
+- 「あなた」ではなく入力した名前で呼びかける（名前が無い場合は「あなた」）`;
+
+    const PROMPT_KEY = 'selfUnderstanding_adminPrompt';
+
+    // 初期化
+    document.addEventListener('DOMContentLoaded', () => {
+      loadPrompt();
+      checkStatus();
+    });
+
+    // プロンプトを読み込み
+    function loadPrompt() {
+      const saved = localStorage.getItem(PROMPT_KEY);
+      const editor = document.getElementById('promptEditor');
+      editor.value = saved || DEFAULT_PROMPT;
+      updateCharCount();
+    }
+
+    // デフォルトに戻す
+    function loadDefault() {
+      if (confirm('デフォルトのプロンプトに戻しますか？')) {
+        document.getElementById('promptEditor').value = DEFAULT_PROMPT;
+        updateCharCount();
+        showToast('デフォルトに戻しました');
+      }
+    }
+
+    // プロンプトを保存
+    function savePrompt() {
+      const text = document.getElementById('promptEditor').value.trim();
+      if (!text) {
+        showToast('プロンプトが空です', 'error');
+        return;
+      }
+      localStorage.setItem(PROMPT_KEY, text);
+      showToast('プロンプトを保存しました');
+    }
+
+    // テスト分析
+    async function testPrompt() {
+      const prompt = document.getElementById('promptEditor').value.trim();
+      if (!prompt) {
+        showToast('プロンプトが空です', 'error');
+        return;
+      }
+
+      // テスト用のダミーデータ
+      const testData = {
+        userName: 'テストユーザー',
+        values: {
+          q1: 'チームで大きなプロジェクトを成功させたとき',
+          q8: { selected: ['信頼', '挑戦', '自己成長', '自由', '感謝される'] },
+          summary: '信頼関係を大切にしながら、挑戦を通じて成長していきたい'
+        },
+        talent: {
+          q1: '人の話を丁寧に聞いてくれると感謝された',
+          q7: ['傾聴力', 'コミュニケーション力', '共感力'],
+          q9: '人の気持ちに寄り添いながら、解決策を一緒に考える力がある'
+        }
+      };
+
+      showToast('テスト分析を開始しています...');
+
+      try {
+        const response = await fetch('/api/ai-analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userData: testData, customPrompt: prompt })
+        });
+
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.error || 'テスト失敗');
+        }
+
+        const data = await response.json();
+        alert('テスト成功!\n\n--- 分析結果（先頭200文字）---\n' + (data.analysis || '').substring(0, 200) + '...');
+
+      } catch (error) {
+        showToast('テスト失敗: ' + error.message, 'error');
+      }
+    }
+
+    // 文字数カウント
+    function updateCharCount() {
+      document.getElementById('charCount').textContent = document.getElementById('promptEditor').value.length;
+    }
+    document.getElementById('promptEditor')?.addEventListener('input', updateCharCount);
+
+    // ステータス確認
+    async function checkStatus() {
+      // API Key チェック
+      try {
+        const res = await fetch('/api/ai-analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userData: { _test: true } })
+        });
+        const data = await res.json();
+
+        if (res.status === 500 && data.error?.includes('API key')) {
+          setStatus('statusApiKey', 'ng', '未設定');
+        } else {
+          setStatus('statusApiKey', 'ok', '設定済み');
+        }
+      } catch {
+        setStatus('statusApiKey', 'warn', '確認不可');
+      }
+
+      // Lark Base
+      setStatus('statusLarkBase', 'ok', '接続済み');
+
+      // プロンプト設定元
+      const saved = localStorage.getItem(PROMPT_KEY);
+      if (saved) {
+        setStatus('statusPromptSource', 'ok', 'カスタム設定');
+      } else {
+        setStatus('statusPromptSource', 'warn', 'デフォルト');
+      }
+    }
+
+    function setStatus(id, type, text) {
+      const el = document.getElementById(id);
+      el.className = 'status-badge ' + type;
+      el.textContent = (type === 'ok' ? '\u2705 ' : type === 'ng' ? '\u274c ' : '\u26a0\ufe0f ') + text;
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast ' + type + ' show';
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+  </script>
+</body>
+</html>

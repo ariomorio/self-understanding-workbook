@@ -47,18 +47,6 @@
       margin-bottom: var(--spacing-lg);
       box-shadow: var(--shadow-sm);
     }
-    .user-info input {
-      width: 100%;
-      padding: var(--spacing-sm);
-      border: 2px solid #e0e0e0;
-      border-radius: var(--radius-sm);
-      font-size: 1rem;
-      margin-top: var(--spacing-xs);
-    }
-    .user-info input:focus {
-      outline: none;
-      border-color: var(--primary-orange);
-    }
     .progress-overview {
       background: var(--white);
       padding: var(--spacing-md);
@@ -85,6 +73,106 @@
       color: var(--text-light);
       margin-top: var(--spacing-xs);
     }
+    /* ログイン/登録画面 */
+    .login-screen {
+      text-align: center;
+      padding: var(--spacing-xl) var(--spacing-md);
+    }
+    .login-card {
+      background: var(--white);
+      padding: 40px 32px;
+      border-radius: 16px;
+      max-width: 400px;
+      margin: 0 auto;
+      box-shadow: var(--shadow-md);
+    }
+    .login-card h2 {
+      color: var(--primary-brown);
+      margin-bottom: var(--spacing-sm);
+    }
+    .login-card p {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      margin-bottom: var(--spacing-md);
+      line-height: 1.6;
+    }
+    .form-group {
+      margin-bottom: 16px;
+      text-align: left;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--primary-brown);
+      margin-bottom: 6px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary-orange);
+    }
+    .auth-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ff9800, #ffc107);
+      color: white;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .auth-btn:hover {
+      opacity: 0.9;
+    }
+    .auth-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .auth-switch {
+      margin-top: 16px;
+      font-size: 0.9rem;
+      color: var(--text-light);
+    }
+    .auth-switch a {
+      color: var(--primary-orange);
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .auth-switch a:hover {
+      text-decoration: underline;
+    }
+    .auth-error {
+      background: #fff0f0;
+      border: 1px solid #ffcdd2;
+      color: #c62828;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .auth-success {
+      background: #e8f5e9;
+      border: 1px solid #c8e6c9;
+      color: #2e7d32;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -94,18 +182,58 @@
   </div>
 
   <div class="container">
-    <!-- Larkログイン -->
-    <div class="user-info" id="larkLoginSection">
-      <div id="loggedOutView">
-        <p style="margin-bottom: var(--spacing-sm); color: var(--text-light);">Larkアカウントでログインすると、データがクラウドに自動保存されます</p>
-        <button id="larkLoginBtn" style="width: 100%; padding: 12px; border: none; border-radius: 8px; background: linear-gradient(135deg, #3370ff, #2558d9); color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18l6.9 3.45L12 11.08 5.1 7.63 12 4.18zM4 8.82l7 3.5v7.36l-7-3.5V8.82zm9 10.86v-7.36l7-3.5v7.36l-7 3.5z"/></svg>
-          Larkでログイン
-        </button>
+    <!-- ログイン画面（未ログイン時） -->
+    <div id="loginScreen" class="login-screen">
+      <!-- ログインフォーム -->
+      <div id="loginForm" class="login-card">
+        <h2>ログイン</h2>
+        <p>メールアドレスとパスワードで<br>ログインしてください</p>
+        <div id="loginError" class="auth-error"></div>
+        <div class="form-group">
+          <label for="loginEmail">メールアドレス</label>
+          <input type="email" id="loginEmail" placeholder="example@mail.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">パスワード</label>
+          <input type="password" id="loginPassword" placeholder="6文字以上" autocomplete="current-password">
+        </div>
+        <button id="loginBtn" class="auth-btn">ログイン</button>
+        <div class="auth-switch">
+          アカウントをお持ちでない方は<br><a id="showRegister">アカウント作成</a>
+        </div>
       </div>
-      <div id="loggedInView" style="display: none;">
+
+      <!-- 登録フォーム -->
+      <div id="registerForm" class="login-card" style="display: none;">
+        <h2>アカウント作成</h2>
+        <p>新しいアカウントを作成して<br>自己理解ワークを始めましょう</p>
+        <div id="registerError" class="auth-error"></div>
+        <div id="registerSuccess" class="auth-success"></div>
+        <div class="form-group">
+          <label for="registerName">お名前</label>
+          <input type="text" id="registerName" placeholder="山田 太郎" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label for="registerEmail">メールアドレス</label>
+          <input type="email" id="registerEmail" placeholder="example@mail.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label for="registerPassword">パスワード</label>
+          <input type="password" id="registerPassword" placeholder="6文字以上" autocomplete="new-password">
+        </div>
+        <button id="registerBtn" class="auth-btn">アカウント作成</button>
+        <div class="auth-switch">
+          既にアカウントをお持ちの方は<br><a id="showLogin">ログインに戻る</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- メインコンテンツ（ログイン後） -->
+    <div id="mainContent" style="display: none;">
+      <!-- ユーザー情報 -->
+      <div class="user-info" id="userInfoSection">
         <div style="display: flex; align-items: center; gap: 12px;">
-          <img id="userAvatar" src="" alt="" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">
+          <div style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #ff9800, #ffc107); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;" id="userInitial"></div>
           <div style="flex: 1;">
             <div id="userDisplayName" style="font-weight: bold; color: var(--primary-brown);"></div>
             <div id="userEmail" style="font-size: 0.85rem; color: var(--text-light);"></div>
@@ -113,160 +241,145 @@
           <button id="logoutBtn" style="padding: 8px 16px; border: 1px solid #ddd; border-radius: 6px; background: white; cursor: pointer; font-size: 0.85rem;">ログアウト</button>
         </div>
       </div>
-    </div>
 
-    <!-- ユーザー情報（ログインしていない場合） -->
-    <div class="user-info" id="manualUserSection" style="display: none;">
-      <label for="userName">あなたのお名前（ニックネーム可）</label>
-      <input type="text" id="userName" placeholder="例：たろう" />
-    </div>
-
-    <!-- 進捗状況 -->
-    <div class="progress-overview">
-      <strong>全体の進捗</strong>
-      <div class="progress-bar-large">
-        <div class="progress-bar-fill" id="totalProgress" style="width: 0%"></div>
+      <!-- 進捗状況 -->
+      <div class="progress-overview">
+        <strong>全体の進捗</strong>
+        <div class="progress-bar-large">
+          <div class="progress-bar-fill" id="totalProgress" style="width: 0%"></div>
+        </div>
+        <div class="progress-text"><span id="progressPercent">0</span>% 完了</div>
       </div>
-      <div class="progress-text"><span id="progressPercent">0</span>% 完了</div>
-    </div>
 
-    <!-- クラウド同期 -->
-    <div class="cloud-sync" style="background: var(--white); padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-lg); box-shadow: var(--shadow-sm);">
-      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: var(--spacing-sm);">
-        <span style="font-size: 1.2rem;">☁️</span>
-        <strong>Lark Base連携</strong>
+      <!-- ガイド -->
+      <div class="menu-section">
+        <div class="menu-section-title">はじめに</div>
+        <div class="menu-grid">
+          <a href="pages/01-osaru-ai.html" class="menu-item" data-page="osaru-ai">
+            <div class="number">0</div>
+            <div>
+              <div class="title">おさるAI</div>
+              <div class="desc">24時間コーチングAIの紹介</div>
+            </div>
+            <div class="status" id="status-osaru-ai"></div>
+          </a>
+          <a href="pages/02-about.html" class="menu-item" data-page="about">
+            <div class="number">0</div>
+            <div>
+              <div class="title">自己理解とは</div>
+              <div class="desc">なぜ自己理解が必要なのか？</div>
+            </div>
+            <div class="status" id="status-about"></div>
+          </a>
+        </div>
       </div>
-      <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: var(--spacing-sm);">
-        データをクラウドに保存して、どの端末からでもアクセス
-      </p>
-      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-        <button id="syncToCloud" style="flex: 1; min-width: 120px; padding: 10px; border: none; border-radius: 6px; background: linear-gradient(135deg, #4CAF50, #45a049); color: white; font-weight: bold; cursor: pointer;">
-          クラウドに同期
-        </button>
-        <button id="restoreFromCloud" style="flex: 1; min-width: 120px; padding: 10px; border: none; border-radius: 6px; background: linear-gradient(135deg, #2196F3, #1976D2); color: white; font-weight: bold; cursor: pointer;">
-          クラウドから復元
-        </button>
-        <button id="openLarkBase" style="flex: 1; min-width: 120px; padding: 10px; border: none; border-radius: 6px; background: linear-gradient(135deg, #FF9800, #F57C00); color: white; font-weight: bold; cursor: pointer;">
-          Baseを開く
-        </button>
-      </div>
-    </div>
 
-    <!-- ガイド -->
-    <div class="menu-section">
-      <div class="menu-section-title">はじめに</div>
-      <div class="menu-grid">
-        <a href="pages/01-osaru-ai.html" class="menu-item" data-page="osaru-ai">
-          <div class="number">0</div>
-          <div>
-            <div class="title">おさるAI</div>
-            <div class="desc">24時間コーチングAIの紹介</div>
-          </div>
-          <div class="status" id="status-osaru-ai"></div>
-        </a>
-        <a href="pages/02-about.html" class="menu-item" data-page="about">
-          <div class="number">0</div>
-          <div>
-            <div class="title">自己理解とは</div>
-            <div class="desc">なぜ自己理解が必要なのか？</div>
-          </div>
-          <div class="status" id="status-about"></div>
-        </a>
+      <!-- 診断 -->
+      <div class="menu-section">
+        <div class="menu-section-title">性格診断</div>
+        <div class="menu-grid">
+          <a href="pages/03-personality.html" class="menu-item" data-page="personality">
+            <div class="number">1</div>
+            <div>
+              <div class="title">性格診断ワーク</div>
+              <div class="desc">うさぎ/かめ × アリ/キリギリス</div>
+            </div>
+            <div class="status" id="status-personality"></div>
+          </a>
+        </div>
       </div>
-    </div>
 
-    <!-- 診断 -->
-    <div class="menu-section">
-      <div class="menu-section-title">性格診断</div>
-      <div class="menu-grid">
-        <a href="pages/03-personality.html" class="menu-item" data-page="personality">
-          <div class="number">1</div>
-          <div>
-            <div class="title">性格診断ワーク</div>
-            <div class="desc">うさぎ/かめ × アリ/キリギリス</div>
-          </div>
-          <div class="status" id="status-personality"></div>
-        </a>
+      <!-- 自己理解ワーク -->
+      <div class="menu-section">
+        <div class="menu-section-title">自己理解ワーク</div>
+        <div class="menu-grid">
+          <a href="pages/04-values.html" class="menu-item" data-page="values">
+            <div class="number">2</div>
+            <div>
+              <div class="title">価値観ワーク</div>
+              <div class="desc">何を大切にしたいか</div>
+            </div>
+            <div class="status" id="status-values"></div>
+          </a>
+          <a href="pages/05-talent.html" class="menu-item" data-page="talent">
+            <div class="number">3</div>
+            <div>
+              <div class="title">才能ワーク</div>
+              <div class="desc">無意識にできる強み</div>
+            </div>
+            <div class="status" id="status-talent"></div>
+          </a>
+          <a href="pages/06-passion.html" class="menu-item" data-page="passion">
+            <div class="number">4</div>
+            <div>
+              <div class="title">情熱ワーク</div>
+              <div class="desc">頑張らなくても頑張れること</div>
+            </div>
+            <div class="status" id="status-passion"></div>
+          </a>
+          <a href="pages/07-mission.html" class="menu-item" data-page="mission">
+            <div class="number">5</div>
+            <div>
+              <div class="title">使命・判断軸ワーク</div>
+              <div class="desc">人生の目的を見つける</div>
+            </div>
+            <div class="status" id="status-mission"></div>
+          </a>
+        </div>
       </div>
-    </div>
 
-    <!-- 自己理解ワーク -->
-    <div class="menu-section">
-      <div class="menu-section-title">自己理解ワーク</div>
-      <div class="menu-grid">
-        <a href="pages/04-values.html" class="menu-item" data-page="values">
-          <div class="number">2</div>
-          <div>
-            <div class="title">価値観ワーク</div>
-            <div class="desc">何を大切にしたいか</div>
-          </div>
-          <div class="status" id="status-values"></div>
-        </a>
-        <a href="pages/05-talent.html" class="menu-item" data-page="talent">
-          <div class="number">3</div>
-          <div>
-            <div class="title">才能ワーク</div>
-            <div class="desc">無意識にできる強み</div>
-          </div>
-          <div class="status" id="status-talent"></div>
-        </a>
-        <a href="pages/06-passion.html" class="menu-item" data-page="passion">
-          <div class="number">4</div>
-          <div>
-            <div class="title">情熱ワーク</div>
-            <div class="desc">頑張らなくても頑張れること</div>
-          </div>
-          <div class="status" id="status-passion"></div>
-        </a>
-        <a href="pages/07-mission.html" class="menu-item" data-page="mission">
-          <div class="number">5</div>
-          <div>
-            <div class="title">使命・判断軸ワーク</div>
-            <div class="desc">人生の目的を見つける</div>
-          </div>
-          <div class="status" id="status-mission"></div>
-        </a>
+      <!-- まとめ -->
+      <div class="menu-section">
+        <div class="menu-section-title">まとめ</div>
+        <div class="menu-grid">
+          <a href="pages/08-become.html" class="menu-item" data-page="become">
+            <div class="number">6</div>
+            <div>
+              <div class="title">なりたい自分ワーク</div>
+              <div class="desc">5年後〜半年後の目標設定</div>
+            </div>
+            <div class="status" id="status-become"></div>
+          </a>
+          <a href="pages/09-life-manual.html" class="menu-item" data-page="life-manual">
+            <div class="number">7</div>
+            <div>
+              <div class="title">人生の説明書</div>
+              <div class="desc">すべてをまとめた自分マニュアル</div>
+            </div>
+            <div class="status" id="status-life-manual"></div>
+          </a>
+        </div>
       </div>
-    </div>
 
-    <!-- まとめ -->
-    <div class="menu-section">
-      <div class="menu-section-title">まとめ</div>
-      <div class="menu-grid">
-        <a href="pages/08-become.html" class="menu-item" data-page="become">
-          <div class="number">6</div>
-          <div>
-            <div class="title">なりたい自分ワーク</div>
-            <div class="desc">5年後〜半年後の目標設定</div>
-          </div>
-          <div class="status" id="status-become"></div>
-        </a>
-        <a href="pages/09-life-manual.html" class="menu-item" data-page="life-manual">
-          <div class="number">7</div>
-          <div>
-            <div class="title">人生の説明書</div>
-            <div class="desc">すべてをまとめた自分マニュアル</div>
-          </div>
-          <div class="status" id="status-life-manual"></div>
-        </a>
+      <!-- AI分析 -->
+      <div class="menu-section">
+        <div class="menu-section-title">AI分析</div>
+        <div class="menu-grid">
+          <a href="pages/10-ai-analysis.html" class="menu-item" data-page="ai-analysis">
+            <div class="number" style="background: var(--primary-green);">AI</div>
+            <div>
+              <div class="title">AI自己分析</div>
+              <div class="desc">入力内容をAIが総合分析</div>
+            </div>
+            <div class="status" id="status-ai-analysis"></div>
+          </a>
+        </div>
       </div>
-    </div>
 
-    <!-- AI分析 -->
-    <div class="menu-section">
-      <div class="menu-section-title">AI分析</div>
-      <div class="menu-grid">
-        <a href="pages/10-ai-analysis.html" class="menu-item" data-page="ai-analysis">
-          <div class="number" style="background: var(--primary-green);">AI</div>
-          <div>
-            <div class="title">AI自己分析</div>
-            <div class="desc">入力内容をAIが総合分析</div>
-          </div>
-          <div class="status" id="status-ai-analysis"></div>
-        </a>
+      <!-- 管理 -->
+      <div class="menu-section">
+        <div class="menu-section-title">管理</div>
+        <div class="menu-grid">
+          <a href="pages/admin.html" class="menu-item">
+            <div class="number" style="background: #546e7a;">&#9881;</div>
+            <div>
+              <div class="title">管理画面</div>
+              <div class="desc">AIプロンプト設定</div>
+            </div>
+          </a>
+        </div>
       </div>
     </div>
-
   </div>
 
   <!-- Lark API連携 -->
@@ -275,96 +388,197 @@
   <script src="js/data-sync.js"></script>
 
   <script>
-    // ローカルストレージからユーザー名を読み込み
     document.addEventListener('DOMContentLoaded', function() {
-      // Larkユーザー情報をチェック
-      checkLarkLogin();
+      // ログイン状態をチェックして画面を切り替え
+      checkLogin();
 
-      // ログイン後の自動同期
+      // ログイン後の自動同期（Lark Baseからデータ復元）
       const needSync = localStorage.getItem('selfUnderstanding_needSync');
       if (needSync === 'true') {
         localStorage.removeItem('selfUnderstanding_needSync');
-        // DataSyncの初期化を待ってから同期
         setTimeout(async () => {
-          if (window.DataSync && window.LarkAPI) {
-            try {
-              showSyncingOverlay(true);
+          try {
+            showSyncingOverlay(true);
+            // DataSyncが初期化されていなければ手動で初期化
+            if (window.DataSync) {
+              if (!window.DataSync.userId) window.DataSync.init();
               await window.DataSync.syncOnLogin();
-              updateProgress(); // 進捗を更新
-            } catch (error) {
-              console.error('Auto sync failed:', error);
-            } finally {
-              showSyncingOverlay(false);
             }
+            updateProgress();
+          } catch (error) {
+            console.error('Auto sync failed:', error);
+          } finally {
+            showSyncingOverlay(false);
           }
-        }, 1000);
-      }
-
-      const userName = localStorage.getItem('selfUnderstanding_userName');
-      if (userName) {
-        const userNameInput = document.getElementById('userName');
-        if (userNameInput) userNameInput.value = userName;
+        }, 500);
       }
 
       // 進捗状況を更新
       updateProgress();
 
-      // Larkログインボタン
-      document.getElementById('larkLoginBtn').addEventListener('click', async function() {
-        try {
-          const response = await fetch('/api/auth/login');
-          const data = await response.json();
-          window.location.href = data.url;
-        } catch (error) {
-          alert('ログインURLの取得に失敗しました');
-        }
+      // フォーム切り替え
+      document.getElementById('showRegister').addEventListener('click', function() {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('registerForm').style.display = 'block';
+        clearErrors();
+      });
+
+      document.getElementById('showLogin').addEventListener('click', function() {
+        document.getElementById('registerForm').style.display = 'none';
+        document.getElementById('loginForm').style.display = 'block';
+        clearErrors();
+      });
+
+      // ログインボタン
+      document.getElementById('loginBtn').addEventListener('click', handleLogin);
+      // Enterキーでログイン
+      document.getElementById('loginPassword').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') handleLogin();
+      });
+
+      // 登録ボタン
+      document.getElementById('registerBtn').addEventListener('click', handleRegister);
+      // Enterキーで登録
+      document.getElementById('registerPassword').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') handleRegister();
       });
 
       // ログアウトボタン
       document.getElementById('logoutBtn').addEventListener('click', function() {
         localStorage.removeItem('selfUnderstanding_larkUser');
         localStorage.removeItem('selfUnderstanding_userId');
-        checkLarkLogin();
-      });
-
-      // 同期ボタンのイベント
-      document.getElementById('syncToCloud').addEventListener('click', async function() {
-        this.disabled = true;
-        this.textContent = '同期中...';
-        try {
-          await window.DataSync.syncAllToLarkBase();
-        } catch (error) {
-          console.error('Sync failed:', error);
-          alert('同期に失敗しました: ' + error.message);
-        }
-        this.disabled = false;
-        this.textContent = 'クラウドに同期';
-      });
-
-      document.getElementById('restoreFromCloud').addEventListener('click', async function() {
-        if (!confirm('クラウドのデータでローカルデータを上書きしますか？')) return;
-        this.disabled = true;
-        this.textContent = '復元中...';
-        try {
-          await window.DataSync.restoreFromLarkBase();
-          updateProgress();
-        } catch (error) {
-          console.error('Restore failed:', error);
-          alert('復元に失敗しました: ' + error.message);
-        }
-        this.disabled = false;
-        this.textContent = 'クラウドから復元';
-      });
-
-      document.getElementById('openLarkBase').addEventListener('click', function() {
-        window.open(window.LARK_CONFIG.baseAppUrl, '_blank');
+        localStorage.removeItem('selfUnderstanding_userName');
+        checkLogin();
       });
     });
 
-    // ユーザー名を保存
-    document.getElementById('userName').addEventListener('change', function() {
-      localStorage.setItem('selfUnderstanding_userName', this.value);
-    });
+    // ログイン処理
+    async function handleLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const errorEl = document.getElementById('loginError');
+      const btn = document.getElementById('loginBtn');
+
+      errorEl.style.display = 'none';
+
+      if (!email || !password) {
+        errorEl.textContent = 'メールアドレスとパスワードを入力してください';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'ログイン中...';
+
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          errorEl.textContent = data.error || 'ログインに失敗しました';
+          errorEl.style.display = 'block';
+          return;
+        }
+
+        // ログイン成功 - ユーザー情報をlocalStorageに保存
+        const userData = {
+          userId: data.userId,
+          name: data.name,
+          email: data.email,
+          loginAt: new Date().toISOString()
+        };
+        localStorage.setItem('selfUnderstanding_larkUser', JSON.stringify(userData));
+        localStorage.setItem('selfUnderstanding_userId', userData.userId);
+        localStorage.setItem('selfUnderstanding_userName', userData.name);
+        localStorage.setItem('selfUnderstanding_needSync', 'true');
+
+        // ページリロードで同期を開始
+        window.location.reload();
+
+      } catch (error) {
+        errorEl.textContent = 'ネットワークエラーが発生しました。接続を確認してください。';
+        errorEl.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'ログイン';
+      }
+    }
+
+    // 登録処理
+    async function handleRegister() {
+      const name = document.getElementById('registerName').value.trim();
+      const email = document.getElementById('registerEmail').value.trim();
+      const password = document.getElementById('registerPassword').value;
+      const errorEl = document.getElementById('registerError');
+      const successEl = document.getElementById('registerSuccess');
+      const btn = document.getElementById('registerBtn');
+
+      errorEl.style.display = 'none';
+      successEl.style.display = 'none';
+
+      if (!name || !email || !password) {
+        errorEl.textContent = '全ての項目を入力してください';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      if (password.length < 6) {
+        errorEl.textContent = 'パスワードは6文字以上で入力してください';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '登録中...';
+
+      try {
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, name, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          errorEl.textContent = data.error || '登録に失敗しました';
+          errorEl.style.display = 'block';
+          return;
+        }
+
+        // 登録成功
+        successEl.textContent = 'アカウント作成が完了しました！ログインしてください。';
+        successEl.style.display = 'block';
+
+        // 2秒後にログインフォームに切り替え（メールを自動入力）
+        setTimeout(() => {
+          document.getElementById('registerForm').style.display = 'none';
+          document.getElementById('loginForm').style.display = 'block';
+          document.getElementById('loginEmail').value = email;
+          document.getElementById('loginPassword').focus();
+          clearErrors();
+        }, 2000);
+
+      } catch (error) {
+        errorEl.textContent = 'ネットワークエラーが発生しました。接続を確認してください。';
+        errorEl.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'アカウント作成';
+      }
+    }
+
+    // エラーメッセージをクリア
+    function clearErrors() {
+      document.getElementById('loginError').style.display = 'none';
+      document.getElementById('registerError').style.display = 'none';
+      document.getElementById('registerSuccess').style.display = 'none';
+    }
 
     // 同期中オーバーレイ表示
     function showSyncingOverlay(show) {
@@ -392,7 +606,6 @@
             justifyContent: 'center',
             zIndex: '10000'
           });
-          // スピンアニメーション追加
           const style = document.createElement('style');
           style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
           document.head.appendChild(style);
@@ -404,37 +617,32 @@
       }
     }
 
-    // Larkログイン状態をチェック
-    function checkLarkLogin() {
-      const larkUser = localStorage.getItem('selfUnderstanding_larkUser');
-      const loggedOutView = document.getElementById('loggedOutView');
-      const loggedInView = document.getElementById('loggedInView');
-      const manualSection = document.getElementById('manualUserSection');
+    // ログイン状態をチェック → 画面切り替え
+    function checkLogin() {
+      const storedUser = localStorage.getItem('selfUnderstanding_larkUser');
+      const loginScreen = document.getElementById('loginScreen');
+      const mainContent = document.getElementById('mainContent');
 
-      if (larkUser) {
-        const user = JSON.parse(larkUser);
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
         document.getElementById('userDisplayName').textContent = user.name;
         document.getElementById('userEmail').textContent = user.email || user.userId;
-        const avatar = document.getElementById('userAvatar');
-        if (user.avatar) {
-          avatar.src = user.avatar;
-          avatar.style.display = 'block';
-        } else {
-          avatar.style.display = 'none';
-        }
-        loggedOutView.style.display = 'none';
-        loggedInView.style.display = 'block';
-        manualSection.style.display = 'none';
+
+        // イニシャルアイコン
+        const initial = (user.name || '?').charAt(0).toUpperCase();
+        document.getElementById('userInitial').textContent = initial;
+
+        loginScreen.style.display = 'none';
+        mainContent.style.display = 'block';
       } else {
-        loggedOutView.style.display = 'block';
-        loggedInView.style.display = 'none';
-        manualSection.style.display = 'block';
+        loginScreen.style.display = 'block';
+        mainContent.style.display = 'none';
       }
     }
 
     // 進捗状況を更新
     function updateProgress() {
-      const pages = ['personality', 'values', 'talent', 'passion', 'mission', 'become', 'life-manual'];
+      const pages = ['osaru-ai', 'about', 'personality', 'values', 'talent', 'passion', 'mission', 'become', 'life-manual'];
       let completed = 0;
 
       pages.forEach(page => {
@@ -442,7 +650,7 @@
         const statusEl = document.getElementById(`status-${page}`);
         if (data) {
           completed++;
-          if (statusEl) statusEl.textContent = '✅';
+          if (statusEl) statusEl.textContent = '\u2705';
           const menuItem = document.querySelector(`[data-page="${page}"]`);
           if (menuItem) menuItem.classList.add('completed');
         }
