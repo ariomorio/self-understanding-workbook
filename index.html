@@ -366,8 +366,8 @@
         </div>
       </div>
 
-      <!-- 管理 -->
-      <div class="menu-section">
+      <!-- 管理（管理者のみ表示） -->
+      <div class="menu-section" id="adminSection" style="display:none;">
         <div class="menu-section-title">管理</div>
         <div class="menu-grid">
           <a href="pages/admin.html" class="menu-item">
@@ -617,6 +617,16 @@
       }
     }
 
+    // 管理者メールリスト
+    const ADMIN_EMAILS = ['garden.quattro@gmail.com'];
+
+    function isAdmin() {
+      try {
+        const user = JSON.parse(localStorage.getItem('selfUnderstanding_larkUser') || '{}');
+        return ADMIN_EMAILS.includes(user.email);
+      } catch { return false; }
+    }
+
     // ログイン状態をチェック → 画面切り替え
     function checkLogin() {
       const storedUser = localStorage.getItem('selfUnderstanding_larkUser');
@@ -634,6 +644,12 @@
 
         loginScreen.style.display = 'none';
         mainContent.style.display = 'block';
+
+        // 管理者のみ管理セクションを表示
+        const adminSection = document.getElementById('adminSection');
+        if (adminSection) {
+          adminSection.style.display = isAdmin() ? '' : 'none';
+        }
       } else {
         loginScreen.style.display = 'block';
         mainContent.style.display = 'none';

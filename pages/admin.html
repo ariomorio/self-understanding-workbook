@@ -152,6 +152,21 @@
   <div class="toast" id="toast"></div>
 
   <script>
+    // 管理者チェック
+    const ADMIN_EMAILS = ['garden.quattro@gmail.com'];
+    (function checkAdminAccess() {
+      try {
+        const user = JSON.parse(localStorage.getItem('selfUnderstanding_larkUser') || '{}');
+        if (!ADMIN_EMAILS.includes(user.email)) {
+          document.body.innerHTML = '<div style="text-align:center;padding:60px 20px;"><h2>アクセス権限がありません</h2><p>この画面は管理者のみアクセスできます。</p><a href="../index.html" style="color:#ff9800;">目次へ戻る</a></div>';
+          return;
+        }
+      } catch {
+        document.body.innerHTML = '<div style="text-align:center;padding:60px 20px;"><h2>ログインが必要です</h2><a href="../index.html" style="color:#ff9800;">目次へ戻る</a></div>';
+        return;
+      }
+    })();
+
     const DEFAULT_PROMPT = `あなたは自己理解コーチ「おさるAI」です。
 以下のワークデータを分析して、ユーザーの自己理解を深める総合レポートを作成してください。
 
