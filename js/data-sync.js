@@ -115,10 +115,10 @@ const DataSync = {
         fields.q1_satisfied = data.q1 || '';
         fields.q2_angry = data.q2 || '';
         fields.q3_quit_job = data.q3 || '';
-        fields.q4_memories_json = JSON.stringify(data.q4 || []);
-        fields.q6_respect = data.q6 || '';
+        fields.q4_memories_json = JSON.stringify(data.q4 || {});
+        fields.q6_respect = JSON.stringify(data.q6 || {});
         fields.q7_feedback_json = JSON.stringify(data.q7 || []);
-        fields.q8_selected_values = JSON.stringify(data.q8 || []);
+        fields.q8_selected_values = JSON.stringify(data.q8 || {});
         fields.q9_categories = JSON.stringify(data.q9 || {});
         fields.q10_priority = JSON.stringify(data.q10 || []);
         fields.summary = data.summary || '';
@@ -132,7 +132,7 @@ const DataSync = {
         fields.q5_not_aware = data.q5 || '';
         fields.q6_feedback_json = JSON.stringify(data.q6 || []);
         fields.q7_selected_talents = JSON.stringify(data.q7 || []);
-        fields.q8_priority = JSON.stringify(data.q8 || []);
+        fields.q8_priority = data.q8 || '';
         fields.q9_summary = data.q9 || '';
         break;
 
@@ -152,13 +152,26 @@ const DataSync = {
         break;
 
       case 'mission':
-        fields.valley1_json = JSON.stringify(data.valley1 || {});
-        fields.valley2_json = JSON.stringify(data.valley2 || {});
-        fields.valley3_json = JSON.stringify(data.valley3 || {});
+        // ページはvalley/mountainを配列で保存: valley: [{...},{...},{...}]
+        if (Array.isArray(data.valley)) {
+          fields.valley1_json = JSON.stringify(data.valley[0] || {});
+          fields.valley2_json = JSON.stringify(data.valley[1] || {});
+          fields.valley3_json = JSON.stringify(data.valley[2] || {});
+        } else {
+          fields.valley1_json = JSON.stringify(data.valley1 || {});
+          fields.valley2_json = JSON.stringify(data.valley2 || {});
+          fields.valley3_json = JSON.stringify(data.valley3 || {});
+        }
         fields.valley_summary = data.valleySummary || '';
-        fields.mountain1_json = JSON.stringify(data.mountain1 || {});
-        fields.mountain2_json = JSON.stringify(data.mountain2 || {});
-        fields.mountain3_json = JSON.stringify(data.mountain3 || {});
+        if (Array.isArray(data.mountain)) {
+          fields.mountain1_json = JSON.stringify(data.mountain[0] || {});
+          fields.mountain2_json = JSON.stringify(data.mountain[1] || {});
+          fields.mountain3_json = JSON.stringify(data.mountain[2] || {});
+        } else {
+          fields.mountain1_json = JSON.stringify(data.mountain1 || {});
+          fields.mountain2_json = JSON.stringify(data.mountain2 || {});
+          fields.mountain3_json = JSON.stringify(data.mountain3 || {});
+        }
         fields.mountain_summary = data.mountainSummary || '';
         fields.core_words = data.coreWords || '';
         fields.verbalize = data.verbalize || '';
@@ -293,43 +306,52 @@ const DataSync = {
   },
 
   /**
-   * Lark Baseからデータを復元
+   * Lark Baseからデータを復元（サーバーサイド一括取得）
    */
   async restoreFromLarkBase() {
-    if (!window.LarkAPI || !window.LARK_CONFIG) {
-      console.error('Lark API not initialized');
-      return 0;
-    }
-
-    const workTypes = ['personality', 'values', 'talent', 'passion', 'mission'];
     let restoreCount = 0;
 
-    for (const workType of workTypes) {
-      try {
-        const tableKey = this.convertWorkTypeToTableKey(workType);
-        const tableId = window.LARK_CONFIG.tableIds[tableKey];
+    try {
+      const response = await fetch('/api/auth/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: this.userId })
+      });
 
-        if (tableId) {
-          const records = await window.LarkAPI.getRecords(tableId, `CurrentValue.[user_id]="${this.userId}"`);
-
-          if (records.length > 0) {
-            const fields = records[0].fields;
-            // Lark Baseのフィールドをローカル形式に変換
-            const localData = this.convertFromLarkFields(workType, fields);
-            const localKey = `selfUnderstanding_${workType}`;
-            localStorage.setItem(localKey, JSON.stringify(localData));
-            restoreCount++;
-            console.log(`Restored ${workType} from Lark Base`);
-          }
-        }
-      } catch (error) {
-        console.error(`Failed to restore ${workType}:`, error);
+      if (!response.ok) {
+        console.error('Sync API error:', response.status);
+        return 0;
       }
+
+      const result = await response.json();
+      const data = result.data || {};
+
+      // ワークタイプとlocalStorageキーのマッピング
+      const keyMapping = {
+        personality: 'personality',
+        values: 'values',
+        talent: 'talent',
+        passion: 'passion',
+        mission: 'mission',
+        lifeManual: 'life-manual'
+      };
+
+      for (const [workType, localKeySuffix] of Object.entries(keyMapping)) {
+        if (data[workType]) {
+          const localKey = `selfUnderstanding_${localKeySuffix}`;
+          localStorage.setItem(localKey, JSON.stringify(data[workType]));
+          restoreCount++;
+          console.log(`Restored ${workType} from Lark Base`);
+        }
+      }
+
+      if (restoreCount > 0) {
+        this.showSyncNotification('success', `${restoreCount}件のデータをクラウドから復元しました`);
+      }
+    } catch (error) {
+      console.error('Failed to restore from Lark Base:', error);
     }
 
-    if (restoreCount > 0) {
-      this.showSyncNotification('success', `${restoreCount}件のデータをクラウドから復元しました`);
-    }
     return restoreCount;
   },
 
@@ -427,18 +449,13 @@ const DataSync = {
    * - ローカルにデータがあればアップロード
    */
   async syncOnLogin() {
-    if (!window.LarkAPI || !window.LARK_CONFIG) {
-      console.error('Lark API not initialized');
-      return;
-    }
-
     console.log('Starting post-login sync for user:', this.userId);
 
-    // まずクラウドからデータを復元
+    // サーバーサイドAPIでクラウドからデータを復元（LarkAPI不要）
     const restoredCount = await this.restoreFromLarkBase();
 
     if (restoredCount === 0) {
-      // クラウドにデータがない場合、ローカルデータをアップロード
+      // クラウドにデータがない場合
       const localWorkTypes = ['personality', 'values', 'talent', 'passion', 'mission', 'life-manual'];
       let hasLocalData = false;
 
@@ -450,10 +467,10 @@ const DataSync = {
         }
       }
 
-      if (hasLocalData) {
+      if (hasLocalData && window.LarkAPI && window.LARK_CONFIG) {
         this.showSyncNotification('info', 'ローカルデータをクラウドに同期中...');
         await this.syncAllToLarkBase();
-      } else {
+      } else if (!hasLocalData) {
         this.showSyncNotification('info', 'ようこそ！ワークを始めましょう');
       }
     }

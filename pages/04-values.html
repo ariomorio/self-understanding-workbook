@@ -82,6 +82,8 @@
       border-radius: var(--radius-sm);
       margin-bottom: var(--spacing-xs);
       cursor: grab;
+      user-select: none;
+      transition: transform 0.15s, box-shadow 0.15s;
     }
     .priority-item:active {
       cursor: grabbing;
@@ -102,6 +104,226 @@
     }
     .priority-item.dragging {
       opacity: 0.5;
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    /* Q9 ジャンル分けUI */
+    .genre-pool {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 50px;
+      padding: var(--spacing-sm);
+      background: var(--gray-light);
+      border-radius: var(--radius-sm);
+      border: 2px dashed #ccc;
+    }
+    .genre-pool-empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      color: var(--gray);
+      font-size: 0.9rem;
+    }
+    .genre-block {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 14px;
+      background: var(--primary-orange);
+      color: var(--white);
+      border-radius: 20px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .genre-block:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+    .genre-block:active {
+      transform: scale(0.95);
+    }
+    .genre-shelf {
+      margin-top: var(--spacing-md);
+      border: 2px solid #e0e0e0;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .genre-shelf-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--spacing-sm) var(--spacing-md);
+      background: var(--light-orange);
+      font-weight: bold;
+      color: var(--primary-brown);
+    }
+    .genre-shelf-header .delete-genre {
+      background: none;
+      border: none;
+      color: #c62828;
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+    }
+    .genre-shelf-header .delete-genre:hover {
+      background: rgba(198,40,40,0.1);
+    }
+    .genre-shelf-body {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 44px;
+      padding: var(--spacing-sm);
+      background: var(--white);
+      border-top: 1px solid #e0e0e0;
+    }
+    .genre-shelf-body.drag-over {
+      background: #fff3e0;
+      border-color: var(--primary-orange);
+    }
+    .genre-shelf-empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      color: #bbb;
+      font-size: 0.85rem;
+    }
+    .add-genre-area {
+      display: flex;
+      gap: 8px;
+      margin-top: var(--spacing-md);
+    }
+    .add-genre-area input {
+      flex: 1;
+      padding: var(--spacing-sm);
+      border: 2px solid #e0e0e0;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+    }
+    .add-genre-area input:focus {
+      outline: none;
+      border-color: var(--primary-orange);
+    }
+    .add-genre-btn {
+      padding: var(--spacing-sm) var(--spacing-md);
+      background: var(--primary-orange);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-weight: bold;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .add-genre-btn:hover {
+      filter: brightness(1.1);
+    }
+
+    /* Q9 タップ振り分けメニュー */
+    .genre-assign-menu {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--white);
+      border-top: 2px solid var(--primary-orange);
+      box-shadow: 0 -4px 16px rgba(0,0,0,0.15);
+      padding: var(--spacing-md);
+      z-index: 1000;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+    .genre-assign-menu.show {
+      transform: translateY(0);
+    }
+    .genre-assign-menu .menu-title {
+      font-weight: bold;
+      margin-bottom: var(--spacing-sm);
+      color: var(--primary-brown);
+    }
+    .genre-assign-menu .menu-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .genre-assign-menu .menu-option {
+      padding: 8px 16px;
+      background: var(--light-orange);
+      border: 2px solid var(--primary-orange);
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--primary-brown);
+      font-weight: bold;
+    }
+    .genre-assign-menu .menu-option:hover {
+      background: var(--primary-orange);
+      color: var(--white);
+    }
+    .genre-assign-menu .menu-cancel {
+      padding: 8px 16px;
+      background: #eee;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    .genre-assign-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 999;
+      display: none;
+    }
+    .genre-assign-overlay.show {
+      display: block;
+    }
+
+    /* Q10 優先順位UI */
+    .priority-item .handle {
+      cursor: grab;
+      font-size: 1.2rem;
+      color: #999;
+      padding: 0 4px;
+    }
+    .priority-item .handle:active {
+      cursor: grabbing;
+    }
+    .priority-item .item-label {
+      flex: 1;
+      font-size: 1rem;
+    }
+    .priority-item .move-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .priority-item .move-btn {
+      background: none;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      line-height: 1;
+      color: #666;
+    }
+    .priority-item .move-btn:hover {
+      background: var(--light-orange);
+      border-color: var(--primary-orange);
+    }
+    .q10-empty-msg {
+      text-align: center;
+      color: var(--gray);
+      padding: var(--spacing-md);
+      font-size: 0.95rem;
     }
     .feedback-list {
       display: flex;
@@ -343,10 +565,28 @@
         </div>
         <div class="question-hint">ジャンル化すると、自分の行動・仕事・選択と結びつけやすくなる！</div>
         <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: var(--spacing-sm);">
-          イメージは本屋さんの本棚です。例えば「人間関係」というジャンルならどのワードが当てはまるかを考えてみてください
+          本棚をイメージしてね。ブロックをタップしてジャンル（棚）に振り分けよう！
         </p>
-        <textarea id="q9" placeholder="例）【人間関係】というジャンルなら「正直」「誠実」「コミュニケーション」などなど"></textarea>
+
+        <p style="font-weight: bold; color: var(--primary-brown); margin-bottom: var(--spacing-xs);">未分類の価値観</p>
+        <div class="genre-pool" id="genrePool">
+          <span class="genre-pool-empty">Q8で価値観を選んでください</span>
+        </div>
+
+        <div class="add-genre-area">
+          <input type="text" id="newGenreName" placeholder="ジャンル名を入力（例：人間関係）">
+          <button class="add-genre-btn" onclick="addGenre()">+ 追加</button>
+        </div>
+
+        <div id="genreShelves"></div>
       </div>
+    </div>
+
+    <!-- Q9 タップ振り分けメニュー -->
+    <div class="genre-assign-overlay" id="genreOverlay" onclick="closeAssignMenu()"></div>
+    <div class="genre-assign-menu" id="genreAssignMenu">
+      <div class="menu-title" id="assignMenuTitle">「」をどのジャンルに入れる？</div>
+      <div class="menu-options" id="assignMenuOptions"></div>
     </div>
 
     <!-- Q10 -->
@@ -356,8 +596,10 @@
           <span class="question-number">Q10</span>
           5つ以上のジャンル分けできたら、優先順位をつけてみよう
         </div>
-        <div class="question-hint">この優先順位が"判断軸"になる！</div>
-        <textarea id="q10" placeholder="例）①理想②スキル③環境④人間関係⑤自己理解"></textarea>
+        <div class="question-hint">この優先順位が"判断軸"になる！ドラッグまたは▲▼ボタンで並べ替えよう</div>
+        <div class="priority-list" id="q10PriorityList">
+          <div class="q10-empty-msg">Q9でジャンルを追加すると、ここに自動で表示されます</div>
+        </div>
       </div>
     </div>
 
@@ -413,6 +655,15 @@
 
     let selectedValues = [];
 
+    // === Q9 ジャンル分けデータ ===
+    // { "人間関係": ["信頼", "誠実"], "自己成長": ["挑戦"] }
+    let genreData = {};
+    let pendingAssignValue = null; // タップ振り分け中の値
+
+    // === Q10 優先順位データ ===
+    // ["人間関係", "自己成長", ...]
+    let priorityOrder = [];
+
     // 価値観タグを生成
     function renderValueTags() {
       Object.keys(valuesData).forEach(category => {
@@ -438,8 +689,11 @@
       } else {
         selectedValues.splice(index, 1);
         tagEl.classList.remove('selected');
+        // Q9から該当ブロックも削除
+        removeValueFromAllGenres(value);
       }
       updateSelectedDisplay();
+      renderQ9();
     }
 
     // 選択された価値観を表示
@@ -463,21 +717,304 @@
         document.querySelectorAll('.value-tag').forEach(tag => {
           if (tag.textContent === value) tag.classList.remove('selected');
         });
+        // Q9から該当ブロックも削除
+        removeValueFromAllGenres(value);
         updateSelectedDisplay();
+        renderQ9();
       }
+    }
+
+    // === Q9 ジャンル分けUI ===
+
+    // Q9: 全ジャンルから特定の値を削除
+    function removeValueFromAllGenres(value) {
+      Object.keys(genreData).forEach(genre => {
+        const idx = genreData[genre].indexOf(value);
+        if (idx !== -1) genreData[genre].splice(idx, 1);
+      });
+    }
+
+    // Q9: 未分類（どのジャンルにも属していない）の値を取得
+    function getUnassignedValues() {
+      const assigned = new Set();
+      Object.values(genreData).forEach(values => {
+        values.forEach(v => assigned.add(v));
+      });
+      return selectedValues.filter(v => !assigned.has(v));
+    }
+
+    // Q9: ジャンルを追加
+    function addGenre() {
+      const input = document.getElementById('newGenreName');
+      const name = input.value.trim();
+      if (!name) return;
+      if (genreData[name] !== undefined) {
+        showToast('同じ名前のジャンルがあります', 'error');
+        return;
+      }
+      genreData[name] = [];
+      input.value = '';
+      renderQ9();
+      renderQ10();
+    }
+
+    // Q9: ジャンルを削除（中のブロックは未分類に戻す）
+    function removeGenre(name) {
+      delete genreData[name];
+      // Q10の優先順位からも削除
+      priorityOrder = priorityOrder.filter(g => g !== name);
+      renderQ9();
+      renderQ10();
+    }
+
+    // Q9: ブロックをジャンルに振り分け
+    function assignToGenre(value, genre) {
+      // まず他のジャンルから削除
+      removeValueFromAllGenres(value);
+      // 指定ジャンルに追加
+      if (!genreData[genre]) genreData[genre] = [];
+      if (!genreData[genre].includes(value)) {
+        genreData[genre].push(value);
+      }
+      renderQ9();
+    }
+
+    // Q9: ブロックをジャンルから外す（未分類に戻す）
+    function unassignFromGenre(value) {
+      removeValueFromAllGenres(value);
+      renderQ9();
+    }
+
+    // Q9: タップ振り分けメニューを開く
+    function openAssignMenu(value) {
+      pendingAssignValue = value;
+      const genres = Object.keys(genreData);
+      if (genres.length === 0) {
+        showToast('先にジャンルを追加してください', 'warning');
+        return;
+      }
+      document.getElementById('assignMenuTitle').textContent = `「${value}」をどのジャンルに入れる？`;
+      const optionsEl = document.getElementById('assignMenuOptions');
+      optionsEl.innerHTML = genres.map(g =>
+        `<div class="menu-option" onclick="doAssign('${g.replace(/'/g, "\\'")}')">${g}</div>`
+      ).join('') + '<button class="menu-cancel" onclick="closeAssignMenu()">キャンセル</button>';
+
+      document.getElementById('genreOverlay').classList.add('show');
+      document.getElementById('genreAssignMenu').classList.add('show');
+    }
+
+    // Q9: 振り分け実行
+    function doAssign(genre) {
+      if (pendingAssignValue) {
+        assignToGenre(pendingAssignValue, genre);
+        pendingAssignValue = null;
+      }
+      closeAssignMenu();
+    }
+
+    // Q9: 振り分けメニューを閉じる
+    function closeAssignMenu() {
+      pendingAssignValue = null;
+      document.getElementById('genreOverlay').classList.remove('show');
+      document.getElementById('genreAssignMenu').classList.remove('show');
+    }
+
+    // Q9: UI全体を再描画
+    function renderQ9() {
+      // 未分類エリア
+      const pool = document.getElementById('genrePool');
+      const unassigned = getUnassignedValues();
+      if (unassigned.length === 0 && selectedValues.length === 0) {
+        pool.innerHTML = '<span class="genre-pool-empty">Q8で価値観を選んでください</span>';
+      } else if (unassigned.length === 0) {
+        pool.innerHTML = '<span class="genre-pool-empty">すべて振り分け済み!</span>';
+      } else {
+        pool.innerHTML = unassigned.map(v =>
+          `<div class="genre-block" onclick="openAssignMenu('${v.replace(/'/g, "\\'")}')" draggable="true" data-value="${v}">${v}</div>`
+        ).join('');
+      }
+
+      // ジャンル棚
+      const shelves = document.getElementById('genreShelves');
+      shelves.innerHTML = Object.keys(genreData).map(genre => {
+        const values = genreData[genre].filter(v => selectedValues.includes(v));
+        // genreDataの中からselectedValuesに含まれないものを自動クリーンアップ
+        genreData[genre] = values;
+        const blocksHtml = values.length > 0
+          ? values.map(v =>
+              `<div class="genre-block" onclick="unassignFromGenre('${v.replace(/'/g, "\\'")}')" title="クリックで未分類に戻す">${v}</div>`
+            ).join('')
+          : '<span class="genre-shelf-empty">ここにブロックを振り分けよう</span>';
+
+        return `<div class="genre-shelf">
+          <div class="genre-shelf-header">
+            <span>📚 ${genre}</span>
+            <button class="delete-genre" onclick="removeGenre('${genre.replace(/'/g, "\\'")}')">×削除</button>
+          </div>
+          <div class="genre-shelf-body" data-genre="${genre}">${blocksHtml}</div>
+        </div>`;
+      }).join('');
+
+      // Enter key でジャンル追加
+      const input = document.getElementById('newGenreName');
+      input.onkeydown = (e) => { if (e.key === 'Enter') { e.preventDefault(); addGenre(); } };
+
+      updateProgress();
+    }
+
+    // === Q10 優先順位UI ===
+
+    // Q10: ジャンル一覧からリストを自動生成
+    function renderQ10() {
+      const genres = Object.keys(genreData);
+      const list = document.getElementById('q10PriorityList');
+
+      if (genres.length === 0) {
+        list.innerHTML = '<div class="q10-empty-msg">Q9でジャンルを追加すると、ここに自動で表示されます</div>';
+        priorityOrder = [];
+        return;
+      }
+
+      // priorityOrderに新しいジャンルを追加、削除されたジャンルを除外
+      const genreSet = new Set(genres);
+      priorityOrder = priorityOrder.filter(g => genreSet.has(g));
+      genres.forEach(g => {
+        if (!priorityOrder.includes(g)) priorityOrder.push(g);
+      });
+
+      list.innerHTML = priorityOrder.map((genre, idx) =>
+        `<div class="priority-item" draggable="true" data-index="${idx}">
+          <span class="handle" title="ドラッグで並べ替え">≡</span>
+          <span class="item-label">📚 ${genre}</span>
+          <div class="move-btns">
+            <button class="move-btn" onclick="moveItem(${idx}, -1)" ${idx === 0 ? 'disabled' : ''}>▲</button>
+            <button class="move-btn" onclick="moveItem(${idx}, 1)" ${idx === priorityOrder.length - 1 ? 'disabled' : ''}>▼</button>
+          </div>
+        </div>`
+      ).join('');
+
+      initQ10DragAndDrop();
+      updateProgress();
+    }
+
+    // Q10: 上下ボタンで移動
+    function moveItem(index, direction) {
+      const newIndex = index + direction;
+      if (newIndex < 0 || newIndex >= priorityOrder.length) return;
+      const temp = priorityOrder[index];
+      priorityOrder[index] = priorityOrder[newIndex];
+      priorityOrder[newIndex] = temp;
+      renderQ10();
+    }
+
+    // Q10: ドラッグ＆ドロップ（PC + タッチ）
+    function initQ10DragAndDrop() {
+      const list = document.getElementById('q10PriorityList');
+      let dragIdx = null;
+
+      list.querySelectorAll('.priority-item').forEach(item => {
+        // PC: HTML5 Drag API
+        item.addEventListener('dragstart', (e) => {
+          dragIdx = parseInt(item.dataset.index);
+          item.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+        item.addEventListener('dragend', () => {
+          item.classList.remove('dragging');
+          dragIdx = null;
+        });
+        item.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+        });
+        item.addEventListener('drop', (e) => {
+          e.preventDefault();
+          const targetIdx = parseInt(item.dataset.index);
+          if (dragIdx !== null && dragIdx !== targetIdx) {
+            const moved = priorityOrder.splice(dragIdx, 1)[0];
+            priorityOrder.splice(targetIdx, 0, moved);
+            renderQ10();
+          }
+        });
+
+        // タッチ: touch events
+        let touchStartY = 0;
+        let touchCurrentItem = null;
+        let touchClone = null;
+
+        item.addEventListener('touchstart', (e) => {
+          const handle = e.target.closest('.handle');
+          if (!handle) return; // ハンドル以外はスルー
+          e.preventDefault();
+          dragIdx = parseInt(item.dataset.index);
+          touchStartY = e.touches[0].clientY;
+          item.classList.add('dragging');
+
+          // ゴースト要素
+          touchClone = item.cloneNode(true);
+          touchClone.style.position = 'fixed';
+          touchClone.style.width = item.offsetWidth + 'px';
+          touchClone.style.opacity = '0.8';
+          touchClone.style.zIndex = '9999';
+          touchClone.style.pointerEvents = 'none';
+          touchClone.style.left = item.getBoundingClientRect().left + 'px';
+          touchClone.style.top = e.touches[0].clientY - item.offsetHeight / 2 + 'px';
+          document.body.appendChild(touchClone);
+        }, { passive: false });
+
+        item.addEventListener('touchmove', (e) => {
+          if (dragIdx === null) return;
+          e.preventDefault();
+          const y = e.touches[0].clientY;
+          if (touchClone) {
+            touchClone.style.top = y - item.offsetHeight / 2 + 'px';
+          }
+
+          // 他のアイテムとの交差判定
+          list.querySelectorAll('.priority-item').forEach(other => {
+            if (other === item) return;
+            const rect = other.getBoundingClientRect();
+            const midY = rect.top + rect.height / 2;
+            if (y > rect.top && y < rect.bottom) {
+              const targetIdx = parseInt(other.dataset.index);
+              if (targetIdx !== dragIdx) {
+                const moved = priorityOrder.splice(dragIdx, 1)[0];
+                priorityOrder.splice(targetIdx, 0, moved);
+                dragIdx = targetIdx;
+                renderQ10();
+                // 新しい要素に再アタッチは renderQ10 で行われる
+              }
+            }
+          });
+        }, { passive: false });
+
+        item.addEventListener('touchend', () => {
+          if (touchClone) {
+            touchClone.remove();
+            touchClone = null;
+          }
+          item.classList.remove('dragging');
+          dragIdx = null;
+        });
+      });
     }
 
     // 進捗更新
     function updateProgress() {
-      const fields = ['q1', 'q2', 'q3', 'q4-1', 'q4-2', 'q4-3', 'q4-4', 'q4-5', 'q6-1', 'q6-2', 'q7-1', 'q9', 'q10', 'summary'];
+      const textFields = ['q1', 'q2', 'q3', 'q4-1', 'q4-2', 'q4-3', 'q4-4', 'q4-5', 'q6-1', 'q6-2', 'q7-1', 'summary'];
       let filled = 0;
-      fields.forEach(id => {
+      textFields.forEach(id => {
         const el = document.getElementById(id);
         if (el && el.value.trim()) filled++;
       });
       if (selectedValues.length > 0) filled++;
+      // Q9: ジャンルが1つ以上あれば
+      if (Object.keys(genreData).length > 0) filled++;
+      // Q10: 優先順位が設定されていれば
+      if (priorityOrder.length > 0) filled++;
 
-      const progress = (filled / (fields.length + 1)) * 100;
+      const total = textFields.length + 3; // +3 = Q8選択, Q9ジャンル, Q10優先順位
+      const progress = (filled / total) * 100;
       document.getElementById('progressBar').style.width = progress + '%';
     }
 
@@ -509,8 +1046,8 @@
           selected: selectedValues,
           other: document.getElementById('q8-other').value
         },
-        q9: document.getElementById('q9').value,
-        q10: document.getElementById('q10').value,
+        q9: genreData,
+        q10: priorityOrder,
         summary: document.getElementById('summary').value,
         timestamp: new Date().toISOString()
       };
@@ -561,10 +1098,24 @@
           updateSelectedDisplay();
         }
 
-        document.getElementById('q9').value = data.q9 || '';
-        document.getElementById('q10').value = data.q10 || '';
+        // Q9: オブジェクト形式 or 旧フォーマット（文字列）
+        if (data.q9 && typeof data.q9 === 'object' && !Array.isArray(data.q9)) {
+          genreData = data.q9;
+        } else {
+          genreData = {};
+        }
+
+        // Q10: 配列形式 or 旧フォーマット（文字列）
+        if (Array.isArray(data.q10)) {
+          priorityOrder = data.q10;
+        } else {
+          priorityOrder = [];
+        }
+
         document.getElementById('summary').value = data.summary || '';
 
+        renderQ9();
+        renderQ10();
         updateProgress();
       }
     }
