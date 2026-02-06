@@ -618,12 +618,12 @@
     }
 
     // 管理者メールリスト
-    const ADMIN_EMAILS = ['garden.quattro@gmail.com'];
-
-    function isAdmin() {
+    // 管理者チェック（API経由でLark Base設定を参照）
+    async function checkAdminAccess(email) {
       try {
-        const user = JSON.parse(localStorage.getItem('selfUnderstanding_larkUser') || '{}');
-        return ADMIN_EMAILS.includes(user.email);
+        const res = await fetch(`/api/admin-check?email=${encodeURIComponent(email)}`);
+        const data = await res.json();
+        return data.isAdmin === true;
       } catch { return false; }
     }
 
@@ -645,10 +645,13 @@
         loginScreen.style.display = 'none';
         mainContent.style.display = 'block';
 
-        // 管理者のみ管理セクションを表示
+        // 管理者チェック（非同期）
         const adminSection = document.getElementById('adminSection');
         if (adminSection) {
-          adminSection.style.display = isAdmin() ? '' : 'none';
+          adminSection.style.display = 'none';
+          checkAdminAccess(user.email).then(isAdmin => {
+            adminSection.style.display = isAdmin ? '' : 'none';
+          });
         }
       } else {
         loginScreen.style.display = 'block';

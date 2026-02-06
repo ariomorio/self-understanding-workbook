@@ -152,12 +152,15 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    // 管理者チェック
-    const ADMIN_EMAILS = ['garden.quattro@gmail.com'];
-    (function checkAdminAccess() {
+    // 管理者チェック（API経由でLark Base設定を参照）
+    (async function checkAdminAccess() {
       try {
         const user = JSON.parse(localStorage.getItem('selfUnderstanding_larkUser') || '{}');
-        if (!ADMIN_EMAILS.includes(user.email)) {
+        if (!user.email) throw new Error('not logged in');
+
+        const res = await fetch(`/api/admin-check?email=${encodeURIComponent(user.email)}`);
+        const data = await res.json();
+        if (!data.isAdmin) {
           document.body.innerHTML = '<div style="text-align:center;padding:60px 20px;"><h2>アクセス権限がありません</h2><p>この画面は管理者のみアクセスできます。</p><a href="../index.html" style="color:#ff9800;">目次へ戻る</a></div>';
           return;
         }
