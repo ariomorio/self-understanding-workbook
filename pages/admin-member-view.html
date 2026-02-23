@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Member Detail | Coach Dashboard</title>
+  <title>メンバー詳細 | コーチダッシュボード</title>
   <link rel="stylesheet" href="../css/style.css">
   <style>
     .admin-header {
@@ -133,7 +133,7 @@
 </head>
 <body>
   <div class="admin-header">
-    <a href="admin-dashboard.html" class="back-btn">&larr; Back</a>
+    <a href="admin-dashboard.html" class="back-btn">&larr; 戻る</a>
     <div class="member-title">
       <h1 id="memberName">Loading...</h1>
       <p id="memberEmail"></p>
@@ -141,7 +141,7 @@
   </div>
 
   <div class="container" id="content">
-    <div class="loading" id="loadingState">Loading member data...</div>
+    <div class="loading" id="loadingState">メンバーデータを読み込み中...</div>
   </div>
 
   <script src="../js/admin-auth.js"></script>
@@ -150,106 +150,106 @@
     const WORK_SECTIONS = [
       {
         key: 'personality',
-        title: 'Personality',
+        title: '性格診断',
         icon: '&#x1F430;',
         fields: [
-          { key: 'type', label: 'Type' },
-          { key: 'usagi_score', label: 'Usagi Score' },
-          { key: 'kame_score', label: 'Kame Score' },
-          { key: 'kirigirisu_score', label: 'Kirigirisu Score' },
-          { key: 'ari_score', label: 'Ari Score' }
+          { key: 'type', label: 'タイプ' },
+          { key: 'usagi_score', label: 'うさぎスコア' },
+          { key: 'kame_score', label: 'かめスコア' },
+          { key: 'kirigirisu_score', label: 'キリギリススコア' },
+          { key: 'ari_score', label: 'アリスコア' }
         ]
       },
       {
         key: 'values',
-        title: 'Values',
+        title: '価値観ワーク',
         icon: '&#x2764;&#xFE0F;',
         fields: [
-          { key: 'q1_satisfied', label: 'Q1: Satisfied moments' },
-          { key: 'q2_angry', label: 'Q2: Angry moments' },
-          { key: 'q3_quit_job', label: 'Q3: Reason to quit' },
-          { key: 'q6_respect', label: 'Q6: Respected person' },
-          { key: 'q8_selected_values', label: 'Q8: Selected values', isJson: true },
-          { key: 'q10_priority', label: 'Q10: Priority ranking', isJson: true },
-          { key: 'summary', label: 'Summary' }
+          { key: 'q1_satisfied', label: 'Q1: 満たされた瞬間' },
+          { key: 'q2_angry', label: 'Q2: 怒りを感じた瞬間' },
+          { key: 'q3_quit_job', label: 'Q3: 仕事を辞めた理由' },
+          { key: 'q6_respect', label: 'Q6: 尊敬する人' },
+          { key: 'q8_selected_values', label: 'Q8: 選んだ価値観', isJson: true },
+          { key: 'q10_priority', label: 'Q10: 優先順位', isJson: true },
+          { key: 'summary', label: 'まとめ' }
         ]
       },
       {
         key: 'talent',
-        title: 'Talent',
+        title: '才能ワーク',
         icon: '&#x1F31F;',
         fields: [
-          { key: 'q1_thanked', label: 'Q1: Thanked for' },
-          { key: 'q2_surprised', label: 'Q2: Surprised others' },
-          { key: 'q3_cant_help', label: "Q3: Can't help doing" },
-          { key: 'q4_absorbed', label: 'Q4: Get absorbed in' },
-          { key: 'q5_not_aware', label: 'Q5: Not aware of' },
-          { key: 'q7_selected_talents', label: 'Q7: Selected talents', isJson: true },
-          { key: 'q8_priority', label: 'Q8: Priority ranking', isJson: true },
-          { key: 'q9_summary', label: 'Q9: Summary' }
+          { key: 'q1_thanked', label: 'Q1: 感謝されたこと' },
+          { key: 'q2_surprised', label: 'Q2: 驚かれたこと' },
+          { key: 'q3_cant_help', label: 'Q3: つい、やっちゃうこと' },
+          { key: 'q4_absorbed', label: 'Q4: 没頭してしまうこと' },
+          { key: 'q5_not_aware', label: 'Q5: 自覚がないこと' },
+          { key: 'q7_selected_talents', label: 'Q7: 選んだ才能', isJson: true },
+          { key: 'q8_priority', label: 'Q8: 優先順位', isJson: true },
+          { key: 'q9_summary', label: 'Q9: まとめ' }
         ]
       },
       {
         key: 'passion',
-        title: 'Passion',
+        title: '情熱ワーク',
         icon: '&#x1F525;',
         fields: [
-          { key: 'q1_youtube', label: 'Q1: YouTube topics' },
-          { key: 'q2_talk', label: 'Q2: Talk endlessly' },
-          { key: 'q3_free', label: 'Q3: Free to do anything' },
-          { key: 'q4_curious', label: 'Q4: Most curious' },
-          { key: 'q5_told', label: 'Q5: Others say' },
-          { key: 'q6_searched', label: 'Q6: Searched often' },
-          { key: 'q7_uninstructed', label: 'Q7: Do without being told' },
-          { key: 'q8_most_curious', label: 'Q8: Most curious thing' },
-          { key: 'q9_episodes', label: 'Q9: Episodes' },
-          { key: 'q10_common', label: 'Q10: Common thread' },
-          { key: 'q11_keywords', label: 'Q11: Keywords' },
-          { key: 'q12_state', label: 'Q12: Ideal state' },
-          { key: 'q13_daily_change', label: 'Q13: Daily change' },
-          { key: 'q14_shape', label: 'Q14: Give it shape' },
-          { key: 'passion_manual', label: 'Passion manual' }
+          { key: 'q1_youtube', label: 'Q1: YouTubeで見るジャンル' },
+          { key: 'q2_talk', label: 'Q2: つい話してしまうこと' },
+          { key: 'q3_free', label: 'Q3: 自由に何でもできるなら' },
+          { key: 'q4_curious', label: 'Q4: 一番気になること' },
+          { key: 'q5_told', label: 'Q5: 周りから言われること' },
+          { key: 'q6_searched', label: 'Q6: よく検索すること' },
+          { key: 'q7_uninstructed', label: 'Q7: 言われなくてもやること' },
+          { key: 'q8_most_curious', label: 'Q8: 最も気になるもの' },
+          { key: 'q9_episodes', label: 'Q9: エピソード' },
+          { key: 'q10_common', label: 'Q10: 共通点' },
+          { key: 'q11_keywords', label: 'Q11: キーワード' },
+          { key: 'q12_state', label: 'Q12: 理想の状態' },
+          { key: 'q13_daily_change', label: 'Q13: 日常の変化' },
+          { key: 'q14_shape', label: 'Q14: カタチにすると' },
+          { key: 'passion_manual', label: '情熱マニュアル' }
         ]
       },
       {
         key: 'mission',
-        title: 'Mission',
+        title: '使命ワーク',
         icon: '&#x1F9ED;',
         fields: [
-          { key: 'valley1_json', label: 'Valley 1', isJson: true },
-          { key: 'valley2_json', label: 'Valley 2', isJson: true },
-          { key: 'valley3_json', label: 'Valley 3', isJson: true },
-          { key: 'valley_summary', label: 'Valley summary' },
-          { key: 'mountain1_json', label: 'Mountain 1', isJson: true },
-          { key: 'mountain2_json', label: 'Mountain 2', isJson: true },
-          { key: 'mountain3_json', label: 'Mountain 3', isJson: true },
-          { key: 'mountain_summary', label: 'Mountain summary' },
-          { key: 'core_words', label: 'Core words' },
-          { key: 'verbalize', label: 'Verbalize' },
-          { key: 'life_purpose', label: 'Life purpose' },
-          { key: 'life_mission', label: 'Life mission' },
-          { key: 'life_compass', label: 'Life compass' }
+          { key: 'valley1_json', label: '谷の経験 1', isJson: true },
+          { key: 'valley2_json', label: '谷の経験 2', isJson: true },
+          { key: 'valley3_json', label: '谷の経験 3', isJson: true },
+          { key: 'valley_summary', label: '谷のまとめ' },
+          { key: 'mountain1_json', label: '山の経験 1', isJson: true },
+          { key: 'mountain2_json', label: '山の経験 2', isJson: true },
+          { key: 'mountain3_json', label: '山の経験 3', isJson: true },
+          { key: 'mountain_summary', label: '山のまとめ' },
+          { key: 'core_words', label: 'コアワード' },
+          { key: 'verbalize', label: '言語化' },
+          { key: 'life_purpose', label: '人生の目的' },
+          { key: 'life_mission', label: '人生の使命' },
+          { key: 'life_compass', label: '人生のコンパス' }
         ]
       },
       {
         key: 'lifeManual',
-        title: 'Life Manual',
+        title: '人生の説明書',
         icon: '&#x1F331;',
         fields: [
-          { key: 'item1_character', label: '1. Character' },
-          { key: 'item2_strength', label: '2. Strength' },
-          { key: 'item3_challenge', label: '3. Challenge' },
-          { key: 'item4_trigger', label: '4. Trigger & recovery' },
-          { key: 'item5_values_top5', label: '5. Values TOP5' },
-          { key: 'item6_passion_theme', label: '6. Passion theme' },
-          { key: 'item7_work_style', label: '7. Work style' },
-          { key: 'item8_lifestyle', label: '8. Lifestyle' },
-          { key: 'item9_sns_theme', label: '9. SNS theme' },
-          { key: 'item10_target', label: '10. Target audience' },
-          { key: 'item11_pain', label: '11. Their pain' },
-          { key: 'item12_value', label: '12. Value to deliver' },
-          { key: 'item13_service', label: '13. Service idea' },
-          { key: 'final_manual', label: 'Final manual' }
+          { key: 'item1_character', label: '1. 特徴・性格' },
+          { key: 'item2_strength', label: '2. 強み・才能' },
+          { key: 'item3_challenge', label: '3. 課題・つまずき' },
+          { key: 'item4_trigger', label: '4. やる気トリガー & 復活スイッチ' },
+          { key: 'item5_values_top5', label: '5. 価値観TOP5' },
+          { key: 'item6_passion_theme', label: '6. 情熱テーマ' },
+          { key: 'item7_work_style', label: '7. 合う働き方' },
+          { key: 'item8_lifestyle', label: '8. 目指す生き方' },
+          { key: 'item9_sns_theme', label: '9. 発信テーマ' },
+          { key: 'item10_target', label: '10. 届けたい人' },
+          { key: 'item11_pain', label: '11. その人の悩み' },
+          { key: 'item12_value', label: '12. 届ける価値' },
+          { key: 'item13_service', label: '13. 商品・サービス' },
+          { key: 'final_manual', label: '最終マニュアル' }
         ]
       }
     ];
@@ -266,7 +266,7 @@
       const params = new URLSearchParams(window.location.search);
       const memberId = params.get('member_id');
       if (!memberId) {
-        document.getElementById('loadingState').innerHTML = '<div class="error-state">Member ID is not specified.</div>';
+        document.getElementById('loadingState').innerHTML = '<div class="error-state">メンバーIDが指定されていません。</div>';
         return;
       }
 
@@ -299,7 +299,7 @@
         if (hasData) accordion.className += ' open';
 
         const statusClass = hasData ? 'status-filled' : 'status-empty';
-        const statusText = hasData ? 'Filled' : 'Empty';
+        const statusText = hasData ? '入力済' : '未入力';
 
         accordion.innerHTML = `
           <div class="accordion-header">
@@ -311,7 +311,7 @@
             <span class="arrow">&#x203A;</span>
           </div>
           <div class="accordion-body">
-            ${hasData ? renderFields(section.fields, workData) : '<p style="color: #999; padding-top: var(--spacing-sm);">No data yet.</p>'}
+            ${hasData ? renderFields(section.fields, workData) : '<p style="color: #999; padding-top: var(--spacing-sm);">まだデータがありません</p>'}
           </div>
         `;
 
@@ -324,7 +324,7 @@
     }
 
     function renderFields(fields, data) {
-      if (!data) return '<p style="color: #999;">No data</p>';
+      if (!data) return '<p style="color: #999;">データなし</p>';
 
       return fields.map(f => {
         let value = getFieldValue(data[f.key]);
@@ -349,7 +349,7 @@
         return `
           <div class="data-item">
             <div class="data-label">${escapeHtml(f.label)}</div>
-            <div class="data-value ${isEmpty ? 'empty' : ''}">${isEmpty ? '(empty)' : escapeHtml(String(value))}</div>
+            <div class="data-value ${isEmpty ? 'empty' : ''}">${isEmpty ? '(未入力)' : escapeHtml(String(value))}</div>
           </div>
         `;
       }).join('');

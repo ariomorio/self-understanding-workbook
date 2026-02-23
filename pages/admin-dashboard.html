@@ -192,32 +192,32 @@
       <h1 id="coachName">Loading...</h1>
       <p id="coachEmail"></p>
     </div>
-    <button class="logout-btn" id="logoutBtn">Logout</button>
+    <button class="logout-btn" id="logoutBtn">ログアウト</button>
   </div>
 
   <div class="container">
     <div class="section-header">
-      <h2>Members</h2>
-      <button class="add-btn" id="addMemberBtn">+ Add</button>
+      <h2>メンバー一覧</h2>
+      <button class="add-btn" id="addMemberBtn">+ 追加</button>
     </div>
 
     <div id="membersList">
-      <div class="loading">Loading...</div>
+      <div class="loading">読み込み中...</div>
     </div>
   </div>
 
   <!-- メンバー追加モーダル -->
   <div class="modal-overlay" id="addModal">
     <div class="modal">
-      <h3>Add Member</h3>
+      <h3>メンバーを追加</h3>
       <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: var(--spacing-md);">
-        Member's registered email address
+        メンバーの登録済みメールアドレスを入力してください
       </p>
       <input type="email" id="memberEmail" placeholder="member@example.com">
       <div class="modal-error" id="modalError"></div>
       <div class="modal-actions">
-        <button class="modal-cancel" id="modalCancel">Cancel</button>
-        <button class="modal-submit" id="modalSubmit">Add</button>
+        <button class="modal-cancel" id="modalCancel">キャンセル</button>
+        <button class="modal-submit" id="modalSubmit">追加</button>
       </div>
     </div>
   </div>
@@ -252,7 +252,7 @@
 
     async function loadMembers() {
       const listEl = document.getElementById('membersList');
-      listEl.innerHTML = '<div class="loading">Loading...</div>';
+      listEl.innerHTML = '<div class="loading">読み込み中...</div>';
 
       try {
         const data = await AdminAPI.getMembers(coach.userId);
@@ -269,7 +269,7 @@
         listEl.innerHTML = `
           <div class="empty-state">
             <div class="icon">&#x1F465;</div>
-            <p>No members yet.<br>Tap "Add" to assign a member.</p>
+            <p>メンバーがまだいません。<br>「+ 追加」からメンバーを割り当てましょう。</p>
           </div>
         `;
         return;
@@ -336,7 +336,7 @@
         modalError.style.display = 'block';
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Add';
+        submitBtn.textContent = '追加';
       }
     });
 
