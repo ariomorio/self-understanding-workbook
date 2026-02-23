@@ -233,7 +233,7 @@
       <!-- ユーザー情報 -->
       <div class="user-info" id="userInfoSection">
         <div style="display: flex; align-items: center; gap: 12px;">
-          <div style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #ff9800, #ffc107); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;" id="userInitial"></div>
+          <div id="userAvatarWrap" style="position:relative; width:48px; height:48px; cursor:pointer;" onclick="openAvatarPicker()"><div style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, #ff9800, #ffc107); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:1.2rem; overflow:hidden;" id="userInitial"></div><div style="position:absolute; bottom:-2px; right:-2px; width:18px; height:18px; border-radius:50%; background:#4caf50; color:white; font-size:0.65rem; display:flex; align-items:center; justify-content:center; border:2px solid white;">✎</div></div>
           <div style="flex: 1;">
             <div id="userDisplayName" style="font-weight: bold; color: var(--primary-brown);"></div>
             <div id="userEmail" style="font-size: 0.85rem; color: var(--text-light);"></div>
@@ -490,6 +490,7 @@
         // ログイン成功 - ユーザー情報をlocalStorageに保存
         const userData = {
           userId: data.userId,
+          avatar: data.avatar || "",
           name: data.name,
           email: data.email,
           loginAt: new Date().toISOString()
@@ -643,6 +644,7 @@
         // イニシャルアイコン
         const initial = (user.name || '?').charAt(0).toUpperCase();
         document.getElementById('userInitial').textContent = initial;
+// アバター表示        if (user.avatar) {          displayAvatar(user.avatar);        }
 
         loginScreen.style.display = 'none';
         mainContent.style.display = 'block';
@@ -694,6 +696,88 @@
       document.getElementById('totalProgress').style.width = percent + '%';
       document.getElementById('progressPercent').textContent = percent;
     }
+    // ── アバター機能 ──
+    const AVATAR_EMOJIS = ["🐵","🐶","🐱","🐰","🦊","🐻","🐼","🐨","🦁","🐯","🐸","🐧","🐦","🦄","🐝","🌸","🌻","🌺","🍀","🌈","⭐","🌙","🔥","💎","🎵","🎨","📚","✨","💡","🚀","🎯","🏆","💪","🌊","🍎","🌿"];
+
+    function openAvatarPicker() {
+      var modal = document.getElementById("avatarModal");
+      var grid = document.getElementById("avatarGrid");
+      grid.innerHTML = "";
+      AVATAR_EMOJIS.forEach(function(emoji) {
+        var btn = document.createElement("button");
+        btn.textContent = emoji;
+        btn.style.cssText = "font-size:2rem; width:48px; height:48px; border:2px solid transparent; border-radius:12px; background:none; cursor:pointer; transition:all 0.2s;";
+        btn.onmouseover = function(){ this.style.borderColor = "#ffc107"; this.style.background = "#fff8e1"; };
+        btn.onmouseout = function(){ this.style.borderColor = "transparent"; this.style.background = "none"; };
+        btn.onclick = function(){ selectAvatar(emoji); };
+        grid.appendChild(btn);
+      });
+      modal.style.display = "flex";
+    }
+
+    function closeAvatarPicker() {
+      document.getElementById("avatarModal").style.display = "none";
+    }
+
+    function selectAvatar(emoji) {
+      var stored = localStorage.getItem("selfUnderstanding_larkUser");
+      if (stored) {
+        var user = JSON.parse(stored);
+        user.avatar = emoji;
+        localStorage.setItem("selfUnderstanding_larkUser", JSON.stringify(user));
+        displayAvatar(emoji);
+        saveAvatarToLark(user.userId, emoji);
+      }
+      closeAvatarPicker();
+    }
+
+    function clearAvatar() {
+      var stored = localStorage.getItem("selfUnderstanding_larkUser");
+      if (stored) {
+        var user = JSON.parse(stored);
+        user.avatar = "";
+        localStorage.setItem("selfUnderstanding_larkUser", JSON.stringify(user));
+        var initial = (user.name || "?").charAt(0).toUpperCase();
+        document.getElementById("userInitial").innerHTML = initial;
+        document.getElementById("userInitial").style.fontSize = "1.2rem";
+        saveAvatarToLark(user.userId, "");
+      }
+      closeAvatarPicker();
+    }
+
+    function displayAvatar(avatar) {
+      var el = document.getElementById("userInitial");
+      if (avatar) {
+        el.innerHTML = avatar;
+        el.style.fontSize = "1.8rem";
+      }
+    }
+
+    async function saveAvatarToLark(userId, avatar) {
+      try {
+        var response = await fetch("/api/auth/update-avatar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: userId, avatar: avatar })
+        });
+        if (!response.ok) console.error("Avatar save failed");
+      } catch (e) {
+        console.error("Avatar save error:", e);
+      }
+    }
   </script>
+<!-- アバターピッカーモーダル -->
+<div id="avatarModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; display:none; align-items:center; justify-content:center;">
+  <div style="background:white; border-radius:16px; padding:24px; max-width:340px; width:90%; max-height:70vh; overflow-y:auto;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <h3 style="margin:0; color:#8b5a2b;">アイコンを選択</h3>
+      <button onclick="closeAvatarPicker()" style="border:none; background:none; font-size:1.5rem; cursor:pointer; color:#999;">u00d7</button>
+    </div>
+    <div id="avatarGrid" style="display:grid; grid-template-columns:repeat(6, 1fr); gap:8px;"></div>
+    <div style="margin-top:16px; text-align:center;">
+      <button onclick="clearAvatar()" style="padding:8px 20px; border:1px solid #ddd; border-radius:8px; background:white; cursor:pointer; font-size:0.85rem; color:#999;">イニシャルに戻す</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
