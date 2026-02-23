@@ -76,10 +76,19 @@
 
   <header class="page-header" style="background: linear-gradient(135deg, #4caf50, #81c784);">
     <h1><span class="icon">🌱</span> あなたの人生の説明書</h1>
-    <a href="https://drive.google.com/file/d/1OcUi0au5ZOg5q8q5KdmBt5WwWlY991FR/view" target="_blank" class="video-link">解説動画はこちら</a>
   </header>
 
   <div class="container">
+    <div class="video-section">
+      <h3>📺 解説動画</h3>
+      <div class="video-embed">
+        <iframe src="https://drive.google.com/file/d/1OcUi0au5ZOg5q8q5KdmBt5WwWlY991FR/preview" allow="autoplay" allowfullscreen></iframe>
+      </div>
+      <div class="video-fallback">
+        <a href="https://drive.google.com/file/d/1OcUi0au5ZOg5q8q5KdmBt5WwWlY991FR/view" target="_blank">動画が表示されない場合はこちら</a>
+      </div>
+    </div>
+
     <div class="life-header">
       <div class="emoji">🌱</div>
       <h2>すべてのワークを統合して<br>あなただけの「人生の説明書」を作ろう</h2>
@@ -196,7 +205,7 @@
 
   <nav class="nav-bottom">
     <a href="08-become.html" class="btn btn-secondary">← 前へ</a>
-    <a href="../index.html" class="btn btn-secondary" style="font-size:0.85rem;">目次</a>
+    <a href="../index.html" class="btn btn-home">目次に戻る</a>
     <button class="btn btn-save" onclick="saveData()">保存する</button>
     <a href="10-ai-analysis.html" class="btn btn-primary">AI分析 →</a>
   </nav>
@@ -206,6 +215,7 @@
   <script src="../js/lark-api.js"></script>
   <script src="../js/lark-config.js"></script>
   <script src="../js/data-sync.js"></script>
+  <script src="../js/save-helper.js"></script>
 
   <script>
     function updateProgress() {
@@ -223,15 +233,33 @@
     }
 
     function saveData() {
+      const checkFields = [];
+      for (let i = 1; i <= 13; i++) checkFields.push(`item${i}`);
+      checkFields.push('finalManual');
+      SaveHelper.save(checkFields, doSave);
+    }
+
+    async function doSave(isDraft) {
       const data = {};
       for (let i = 1; i <= 13; i++) {
         data[`item${i}`] = document.getElementById(`item${i}`).value;
       }
       data.finalManual = document.getElementById('finalManual').value;
+      data.isDraft = isDraft;
       data.timestamp = new Date().toISOString();
 
       localStorage.setItem('selfUnderstanding_life-manual', JSON.stringify(data));
-      showToast('保存しました！', 'success');
+
+      // Lark Base同期
+      if (window.DataSync) {
+        try {
+          await window.DataSync.saveWorkData('life-manual', data);
+        } catch (e) {
+          console.error('Lark sync failed:', e);
+        }
+      }
+
+      showToast(isDraft ? '一時保存しました！' : '保存しました！', 'success');
     }
 
     function loadData() {

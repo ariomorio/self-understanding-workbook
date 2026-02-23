@@ -87,10 +87,19 @@
 
   <header class="page-header">
     <h1><span class="icon">✨</span> 自己理解ワーク②：才能</h1>
-    <a href="https://drive.google.com/file/d/1Mv5gujTT9NjigInWLMBrHHoVuOIYih0m/view" target="_blank" class="video-link">解説動画はこちら</a>
   </header>
 
   <div class="container">
+    <div class="video-section">
+      <h3>📺 解説動画</h3>
+      <div class="video-embed">
+        <iframe src="https://drive.google.com/file/d/1Mv5gujTT9NjigInWLMBrHHoVuOIYih0m/preview" allow="autoplay" allowfullscreen></iframe>
+      </div>
+      <div class="video-fallback">
+        <a href="https://drive.google.com/file/d/1Mv5gujTT9NjigInWLMBrHHoVuOIYih0m/view" target="_blank">動画が表示されない場合はこちら</a>
+      </div>
+    </div>
+
     <!-- 才能とは -->
     <div class="section">
       <h2 class="section-title">才能の正体を知る</h2>
@@ -244,7 +253,7 @@
 
   <nav class="nav-bottom">
     <a href="04-values.html" class="btn btn-secondary">← 前へ</a>
-    <a href="../index.html" class="btn btn-secondary" style="font-size:0.85rem;">目次</a>
+    <a href="../index.html" class="btn btn-home">目次に戻る</a>
     <button class="btn btn-save" onclick="saveData()">保存する</button>
     <a href="06-passion.html" class="btn btn-primary">次へ →</a>
   </nav>
@@ -254,6 +263,7 @@
   <script src="../js/lark-api.js"></script>
   <script src="../js/lark-config.js"></script>
   <script src="../js/data-sync.js"></script>
+  <script src="../js/save-helper.js"></script>
 
   <script>
     const talentsData = {
@@ -334,6 +344,11 @@
     }
 
     function saveData() {
+      const checkFields = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6-1', 'q8', 'q9'];
+      SaveHelper.save(checkFields, doSave);
+    }
+
+    async function doSave(isDraft) {
       const data = {
         q1: document.getElementById('q1').value,
         q2: document.getElementById('q2').value,
@@ -350,10 +365,21 @@
         q7: selectedTalents,
         q8: document.getElementById('q8').value,
         q9: document.getElementById('q9').value,
+        isDraft: isDraft,
         timestamp: new Date().toISOString()
       };
       localStorage.setItem('selfUnderstanding_talent', JSON.stringify(data));
-      showToast('保存しました！', 'success');
+
+      // Lark Base同期
+      if (window.DataSync) {
+        try {
+          await window.DataSync.saveWorkData('talent', data);
+        } catch (e) {
+          console.error('Lark sync failed:', e);
+        }
+      }
+
+      showToast(isDraft ? '一時保存しました！' : '保存しました！', 'success');
     }
 
     function loadData() {

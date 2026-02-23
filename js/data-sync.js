@@ -27,6 +27,45 @@ const DataSync = {
     }
 
     console.log('DataSync initialized with userId:', this.userId);
+
+    // 未同期のローカルデータがあれば自動同期（ページロード後2秒待ち）
+    setTimeout(() => this._autoSyncIfNeeded(), 2000);
+  },
+
+  /**
+   * 未同期データの自動同期
+   * - ローカルにデータがあるがsyncStatusに記録がない場合に同期
+   * - 前回の同期から1時間以上経過している場合にも同期
+   */
+  async _autoSyncIfNeeded() {
+    if (!window.LarkAPI || !window.LARK_CONFIG) return;
+
+    const lastSync = this.syncStatus.lastSync;
+    const oneHour = 60 * 60 * 1000;
+    const recentlySynced = lastSync && (Date.now() - new Date(lastSync).getTime() < oneHour);
+
+    // 最近同期済みなら何もしない
+    if (recentlySynced && this.syncStatus.pendingChanges.length === 0) return;
+
+    const workTypes = ['personality', 'values', 'talent', 'passion', 'mission', 'life-manual'];
+    let syncCount = 0;
+
+    for (const wt of workTypes) {
+      const localKey = `selfUnderstanding_${wt}`;
+      const localData = localStorage.getItem(localKey);
+      if (localData) {
+        try {
+          await this.saveWorkData(wt, JSON.parse(localData));
+          syncCount++;
+        } catch (e) {
+          console.error('Auto-sync failed for', wt, ':', e);
+        }
+      }
+    }
+
+    if (syncCount > 0) {
+      console.log(`Auto-synced ${syncCount} work types to Lark Base`);
+    }
   },
 
   /**
@@ -88,18 +127,26 @@ const DataSync = {
       'passion': 'passion',
       'mission': 'mission',
       'life-manual': 'lifeManual',
-      'become': 'lifeManual' // becomeはlife_manualの一部
+      'become': 'become' // 独立ワーク（Lark Base未対応）
     };
     return mapping[workType] || workType;
+  },
+
+  /**
+   * 値を文字列に変換（オブジェクト/配列はJSON化、文字列はそのまま）
+   */
+  _toStr(val, fallback) {
+    if (val === undefined || val === null) return fallback || '';
+    if (typeof val === 'string') return val;
+    return JSON.stringify(val);
   },
 
   /**
    * データをLark Baseフィールド形式に変換
    */
   convertToLarkFields(workType, data) {
-    // 基本的にはJSONとして保存
-    // 各ワークタイプごとに適切なフィールドマッピングを行う
     const fields = {};
+    const s = this._toStr.bind(this);
 
     switch (workType) {
       case 'personality':
@@ -108,95 +155,100 @@ const DataSync = {
         fields.kame_score = data.kameScore || 0;
         fields.kirigirisu_score = data.kirigirisuScore || 0;
         fields.ari_score = data.ariScore || 0;
-        fields.answers_json = JSON.stringify(data.answers || {});
+        fields.answers_json = s(data.answers, '{}');
         break;
 
       case 'values':
-        fields.q1_satisfied = data.q1 || '';
-        fields.q2_angry = data.q2 || '';
-        fields.q3_quit_job = data.q3 || '';
-        fields.q4_memories_json = JSON.stringify(data.q4 || {});
-        fields.q6_respect = JSON.stringify(data.q6 || {});
-        fields.q7_feedback_json = JSON.stringify(data.q7 || []);
-        fields.q8_selected_values = JSON.stringify(data.q8 || {});
-        fields.q9_categories = JSON.stringify(data.q9 || {});
-        fields.q10_priority = JSON.stringify(data.q10 || []);
-        fields.summary = data.summary || '';
+        fields.q1_satisfied = s(data.q1);
+        fields.q2_angry = s(data.q2);
+        fields.q3_quit_job = s(data.q3);
+        fields.q4_memories_json = s(data.q4, '{}');
+        fields.q6_respect = s(data.q6, '{}');
+        fields.q7_feedback_json = s(data.q7, '[]');
+        fields.q8_selected_values = s(data.q8, '{}');
+        fields.q9_categories = s(data.q9);
+        fields.q10_priority = s(data.q10);
+        fields.summary = s(data.summary);
         break;
 
       case 'talent':
-        fields.q1_thanked = data.q1 || '';
-        fields.q2_surprised = data.q2 || '';
-        fields.q3_cant_help = data.q3 || '';
-        fields.q4_absorbed = data.q4 || '';
-        fields.q5_not_aware = data.q5 || '';
-        fields.q6_feedback_json = JSON.stringify(data.q6 || []);
-        fields.q7_selected_talents = JSON.stringify(data.q7 || []);
-        fields.q8_priority = data.q8 || '';
-        fields.q9_summary = data.q9 || '';
+        fields.q1_thanked = s(data.q1);
+        fields.q2_surprised = s(data.q2);
+        fields.q3_cant_help = s(data.q3);
+        fields.q4_absorbed = s(data.q4);
+        fields.q5_not_aware = s(data.q5);
+        fields.q6_feedback_json = s(data.q6, '[]');
+        fields.q7_selected_talents = s(data.q7, '[]');
+        fields.q8_priority = s(data.q8);
+        fields.q9_summary = s(data.q9);
         break;
 
       case 'passion':
-        fields.q1_youtube = data.q1 || '';
-        fields.q2_talk = data.q2 || '';
-        fields.q3_free = data.q3 || '';
-        fields.q4_curious = data.q4 || '';
-        fields.q5_told = data.q5 || '';
-        fields.q6_searched = data.q6 || '';
-        fields.q7_check_answers = JSON.stringify(data.q7 || []);
-        fields.q7_yes_count = data.q7YesCount || 0;
-        fields.q8_experiences = data.q8 || '';
-        fields.q9_who_help = data.q9 || '';
-        fields.q10_work_form = data.q10 || '';
-        fields.q11_one_word = data.q11 || '';
+        fields.q1_youtube = s(data.q1);
+        fields.q2_talk = s(data.q2);
+        fields.q3_free = s(data.q3);
+        fields.q4_curious = s(data.q4);
+        fields.q5_told = s(data.q5);
+        fields.q6_searched = s(data.q6);
+        fields.q7_uninstructed = s(data.q7);
+        fields.q8_most_curious = s(data.q8);
+        fields.q9_episodes = s(data.q9);
+        fields.q10_common = s(data.q10);
+        fields.q11_keywords = s(data.q11);
+        fields.q12_state = s(data.q12);
+        fields.q13_daily_change = s(data.q13);
+        fields.q14_shape = s(data.q14);
+        fields.passion_manual = s(data['passion-manual']);
         break;
 
-      case 'mission':
-        // ページはvalley/mountainを配列で保存: valley: [{...},{...},{...}]
-        if (Array.isArray(data.valley)) {
-          fields.valley1_json = JSON.stringify(data.valley[0] || {});
-          fields.valley2_json = JSON.stringify(data.valley[1] || {});
-          fields.valley3_json = JSON.stringify(data.valley[2] || {});
-        } else {
-          fields.valley1_json = JSON.stringify(data.valley1 || {});
-          fields.valley2_json = JSON.stringify(data.valley2 || {});
-          fields.valley3_json = JSON.stringify(data.valley3 || {});
-        }
-        fields.valley_summary = data.valleySummary || '';
-        if (Array.isArray(data.mountain)) {
-          fields.mountain1_json = JSON.stringify(data.mountain[0] || {});
-          fields.mountain2_json = JSON.stringify(data.mountain[1] || {});
-          fields.mountain3_json = JSON.stringify(data.mountain[2] || {});
-        } else {
-          fields.mountain1_json = JSON.stringify(data.mountain1 || {});
-          fields.mountain2_json = JSON.stringify(data.mountain2 || {});
-          fields.mountain3_json = JSON.stringify(data.mountain3 || {});
-        }
-        fields.mountain_summary = data.mountainSummary || '';
-        fields.core_words = data.coreWords || '';
-        fields.verbalize = data.verbalize || '';
-        fields.life_purpose = data.lifePurpose || '';
-        fields.life_mission = data.lifeMission || '';
-        fields.life_compass = data.lifeCompass || '';
+      case 'mission': {
+        // ページは valley/mountain を配列で保存、互換性のため両形式対応
+        const v = data.valley || [];
+        fields.valley1_json = s(data.valley1 || v[0], '{}');
+        fields.valley2_json = s(data.valley2 || v[1], '{}');
+        fields.valley3_json = s(data.valley3 || v[2], '{}');
+        fields.valley_summary = s(data.valleySummary);
+        const m = data.mountain || [];
+        fields.mountain1_json = s(data.mountain1 || m[0], '{}');
+        fields.mountain2_json = s(data.mountain2 || m[1], '{}');
+        fields.mountain3_json = s(data.mountain3 || m[2], '{}');
+        fields.mountain_summary = s(data.mountainSummary);
+        fields.core_words = s(data.coreWords);
+        fields.verbalize = s(data.verbalize);
+        fields.life_purpose = s(data.lifePurpose);
+        fields.life_mission = s(data.lifeMission);
+        fields.life_compass = s(data.lifeCompass);
         break;
+      }
 
       case 'life-manual':
-      case 'become':
-        fields.item1_character = data.item1 || '';
-        fields.item2_strength = data.item2 || '';
-        fields.item3_challenge = data.item3 || '';
-        fields.item4_trigger = data.item4 || '';
-        fields.item5_values_top5 = data.item5 || '';
-        fields.item6_passion_theme = data.item6 || '';
-        fields.item7_work_style = data.item7 || '';
-        fields.item8_lifestyle = data.item8 || '';
-        fields.item9_sns_theme = data.item9 || '';
-        fields.item10_target = data.item10 || '';
-        fields.item11_pain = data.item11 || '';
-        fields.item12_value = data.item12 || '';
-        fields.item13_service = data.item13 || '';
-        fields.final_manual = data.finalManual || '';
+        fields.item1_character = s(data.item1);
+        fields.item2_strength = s(data.item2);
+        fields.item3_challenge = s(data.item3);
+        fields.item4_trigger = s(data.item4);
+        fields.item5_values_top5 = s(data.item5);
+        fields.item6_passion_theme = s(data.item6);
+        fields.item7_work_style = s(data.item7);
+        fields.item8_lifestyle = s(data.item8);
+        fields.item9_sns_theme = s(data.item9);
+        fields.item10_target = s(data.item10);
+        fields.item11_pain = s(data.item11);
+        fields.item12_value = s(data.item12);
+        fields.item13_service = s(data.item13);
+        fields.final_manual = s(data.finalManual);
         break;
+
+      case 'become': {
+        // テキストデータのみ（画像はローカルのみ保持）
+        const periods = ['year5', 'year3', 'year1', 'month6'];
+        periods.forEach(p => {
+          if (data[p]) {
+            fields[p + '_goal'] = s(data[p].goal);
+            fields[p + '_reason'] = s(data[p].reason);
+          }
+        });
+        break;
+      }
 
       default:
         // 未定義のワークタイプは全てJSONとして保存
@@ -306,52 +358,43 @@ const DataSync = {
   },
 
   /**
-   * Lark Baseからデータを復元（サーバーサイド一括取得）
+   * Lark Baseからデータを復元
    */
   async restoreFromLarkBase() {
-    let restoreCount = 0;
-
-    try {
-      const response = await fetch('/api/auth/sync', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: this.userId })
-      });
-
-      if (!response.ok) {
-        console.error('Sync API error:', response.status);
-        return 0;
-      }
-
-      const result = await response.json();
-      const data = result.data || {};
-
-      // ワークタイプとlocalStorageキーのマッピング
-      const keyMapping = {
-        personality: 'personality',
-        values: 'values',
-        talent: 'talent',
-        passion: 'passion',
-        mission: 'mission',
-        lifeManual: 'life-manual'
-      };
-
-      for (const [workType, localKeySuffix] of Object.entries(keyMapping)) {
-        if (data[workType]) {
-          const localKey = `selfUnderstanding_${localKeySuffix}`;
-          localStorage.setItem(localKey, JSON.stringify(data[workType]));
-          restoreCount++;
-          console.log(`Restored ${workType} from Lark Base`);
-        }
-      }
-
-      if (restoreCount > 0) {
-        this.showSyncNotification('success', `${restoreCount}件のデータをクラウドから復元しました`);
-      }
-    } catch (error) {
-      console.error('Failed to restore from Lark Base:', error);
+    if (!window.LarkAPI || !window.LARK_CONFIG) {
+      console.error('Lark API not initialized');
+      return 0;
     }
 
+    const workTypes = ['personality', 'values', 'talent', 'passion', 'mission'];
+    let restoreCount = 0;
+
+    for (const workType of workTypes) {
+      try {
+        const tableKey = this.convertWorkTypeToTableKey(workType);
+        const tableId = window.LARK_CONFIG.tableIds[tableKey];
+
+        if (tableId) {
+          const records = await window.LarkAPI.getRecords(tableId, `CurrentValue.[user_id]="${this.userId}"`);
+
+          if (records.length > 0) {
+            const fields = records[0].fields;
+            // Lark Baseのフィールドをローカル形式に変換
+            const localData = this.convertFromLarkFields(workType, fields);
+            const localKey = `selfUnderstanding_${workType}`;
+            localStorage.setItem(localKey, JSON.stringify(localData));
+            restoreCount++;
+            console.log(`Restored ${workType} from Lark Base`);
+          }
+        }
+      } catch (error) {
+        console.error(`Failed to restore ${workType}:`, error);
+      }
+    }
+
+    if (restoreCount > 0) {
+      this.showSyncNotification('success', `${restoreCount}件のデータをクラウドから復元しました`);
+    }
     return restoreCount;
   },
 
@@ -410,12 +453,15 @@ const DataSync = {
         data.q4 = fields.q4_curious || '';
         data.q5 = fields.q5_told || '';
         data.q6 = fields.q6_searched || '';
-        try { data.q7 = fields.q7_check_answers ? JSON.parse(fields.q7_check_answers) : []; } catch (e) { data.q7 = []; }
-        data.q7YesCount = fields.q7_yes_count || 0;
-        data.q8 = fields.q8_experiences || '';
-        data.q9 = fields.q9_who_help || '';
-        data.q10 = fields.q10_work_form || '';
-        data.q11 = fields.q11_one_word || '';
+        data.q7 = fields.q7_uninstructed || '';
+        data.q8 = fields.q8_most_curious || '';
+        data.q9 = fields.q9_episodes || '';
+        data.q10 = fields.q10_common || '';
+        data.q11 = fields.q11_keywords || '';
+        data.q12 = fields.q12_state || '';
+        data.q13 = fields.q13_daily_change || '';
+        data.q14 = fields.q14_shape || '';
+        data['passion-manual'] = fields.passion_manual || '';
         break;
 
       case 'mission':
@@ -449,13 +495,18 @@ const DataSync = {
    * - ローカルにデータがあればアップロード
    */
   async syncOnLogin() {
+    if (!window.LarkAPI || !window.LARK_CONFIG) {
+      console.error('Lark API not initialized');
+      return;
+    }
+
     console.log('Starting post-login sync for user:', this.userId);
 
-    // サーバーサイドAPIでクラウドからデータを復元（LarkAPI不要）
+    // まずクラウドからデータを復元
     const restoredCount = await this.restoreFromLarkBase();
 
     if (restoredCount === 0) {
-      // クラウドにデータがない場合
+      // クラウドにデータがない場合、ローカルデータをアップロード
       const localWorkTypes = ['personality', 'values', 'talent', 'passion', 'mission', 'life-manual'];
       let hasLocalData = false;
 
@@ -467,10 +518,10 @@ const DataSync = {
         }
       }
 
-      if (hasLocalData && window.LarkAPI && window.LARK_CONFIG) {
+      if (hasLocalData) {
         this.showSyncNotification('info', 'ローカルデータをクラウドに同期中...');
         await this.syncAllToLarkBase();
-      } else if (!hasLocalData) {
+      } else {
         this.showSyncNotification('info', 'ようこそ！ワークを始めましょう');
       }
     }

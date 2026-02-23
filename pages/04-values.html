@@ -1020,7 +1020,7 @@
     }
 
     // データ保存
-    function saveData() {
+    async function saveData() {
       const data = {
         q1: document.getElementById('q1').value,
         q2: document.getElementById('q2').value,
@@ -1054,6 +1054,7 @@
       };
 
       localStorage.setItem('selfUnderstanding_values', JSON.stringify(data));
+// Lark Base同期      if (window.DataSync) {        try {          await window.DataSync.saveWorkData('values', data);        } catch (e) {          console.error('Lark sync failed:', e);        }      }
       showToast('保存しました！', 'success');
     }
 
