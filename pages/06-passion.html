@@ -7,8 +7,8 @@
   <link rel="stylesheet" href="../css/style.css">
   <style>
     .passion-check-item {
-      display: flex;
-      align-items: center;
+      display: flex; flex-wrap: wrap;
+      align-items: flex-start;
       gap: var(--spacing-sm);
       padding: var(--spacing-sm);
       background: var(--white);
@@ -30,11 +30,11 @@
     }
     .passion-check-item.selected .num { background: var(--primary-orange); color: var(--white); }
     .passion-check-item select {
-      margin-left: auto;
+      margin-left: 36px;
       padding: 8px;
       border: 2px solid #e0e0e0;
       border-radius: var(--radius-sm);
-      min-width: 100px;
+      width: calc(100% - 36px);
     }
     .diagnosis-result {
       padding: var(--spacing-md);
@@ -261,7 +261,7 @@
       container.innerHTML = passionQuestions.map((q, i) => `
         <div class="passion-check-item" data-index="${i}">
           <div class="num">${i + 1}</div>
-          <div style="flex: 1;">${q}</div>
+          <div style="flex: 1 1 calc(100% - 44px); font-size: 0.95rem; line-height: 1.6;">${q}</div>
           <select onchange="updateAnswer(${i}, this.value)">
             <option value="">選んでください</option>
             <option value="yes">YES</option>
