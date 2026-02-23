@@ -9,7 +9,7 @@ const LarkAPI = {
     appId: '',
     appSecret: '',
     baseUrl: 'https://open.larksuite.com/open-apis',
-    proxyUrl: '/api/lark', // ローカルプロキシ経由
+    proxyUrl: '/api/lark-proxy', // 単一エンドポイントプロキシ
     useProxy: true, // プロキシを使用するか
     appToken: '', // Lark Base App Token
     tableIds: {
@@ -40,13 +40,26 @@ const LarkAPI = {
   },
 
   /**
-   * APIエンドポイントを取得
+   * APIエンドポイントURLを構築
+   * @param {string} apiPath - Lark APIパス (例: /bitable/v1/apps/.../records)
+   * @param {object} extraParams - 追加のクエリパラメータ (例: { filter: '...' })
    */
-  getApiUrl(path) {
+  getApiUrl(apiPath, extraParams) {
     if (this.config.useProxy) {
-      return this.config.proxyUrl + path;
+      var params = new URLSearchParams({ path: apiPath });
+      if (extraParams) {
+        Object.keys(extraParams).forEach(function(key) {
+          params.append(key, extraParams[key]);
+        });
+      }
+      return this.config.proxyUrl + '?' + params.toString();
     }
-    return this.config.baseUrl + path;
+    var url = this.config.baseUrl + apiPath;
+    if (extraParams) {
+      var qs = new URLSearchParams(extraParams).toString();
+      if (qs) url += '?' + qs;
+    }
+    return url;
   },
 
   /**
@@ -62,7 +75,7 @@ const LarkAPI = {
     }
 
     try {
-      const response = await fetch(`${this.config.baseUrl}/auth/v3/tenant_access_token/internal`, {
+      const response = await fetch(this.config.baseUrl + '/auth/v3/tenant_access_token/internal', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -74,7 +87,7 @@ const LarkAPI = {
       const data = await response.json();
       if (data.code === 0) {
         this.accessToken = data.tenant_access_token;
-        this.tokenExpiry = Date.now() + (data.expire - 60) * 1000; // 60秒前に更新
+        this.tokenExpiry = Date.now() + (data.expire - 60) * 1000;
         return this.accessToken;
       }
       throw new Error(data.msg);
@@ -88,27 +101,27 @@ const LarkAPI = {
    * Lark Base にレコードを追加
    */
   async createRecord(tableId, fields) {
-    const apiPath = `/bitable/v1/apps/${this.config.appToken}/tables/${tableId}/records`;
+    const apiPath = '/bitable/v1/apps/' + this.config.appToken + '/tables/' + tableId + '/records';
     const url = this.getApiUrl(apiPath);
 
     const headers = { 'Content-Type': 'application/json' };
     if (!this.config.useProxy) {
       const token = await this.getAccessToken();
-      headers['Authorization'] = `Bearer ${token}`;
+      headers['Authorization'] = 'Bearer ' + token;
     }
 
     try {
       const response = await fetch(url, {
         method: 'POST',
-        headers,
-        body: JSON.stringify({ fields })
+        headers: headers,
+        body: JSON.stringify({ fields: fields })
       });
 
       const data = await response.json();
       if (data.code === 0) {
         return data.data.record;
       }
-      throw new Error(data.msg);
+      throw new Error(data.msg || 'createRecord failed: ' + JSON.stringify(data));
     } catch (error) {
       console.error('Failed to create record:', error);
       throw error;
@@ -119,27 +132,27 @@ const LarkAPI = {
    * Lark Base のレコードを更新
    */
   async updateRecord(tableId, recordId, fields) {
-    const apiPath = `/bitable/v1/apps/${this.config.appToken}/tables/${tableId}/records/${recordId}`;
+    const apiPath = '/bitable/v1/apps/' + this.config.appToken + '/tables/' + tableId + '/records/' + recordId;
     const url = this.getApiUrl(apiPath);
 
     const headers = { 'Content-Type': 'application/json' };
     if (!this.config.useProxy) {
       const token = await this.getAccessToken();
-      headers['Authorization'] = `Bearer ${token}`;
+      headers['Authorization'] = 'Bearer ' + token;
     }
 
     try {
       const response = await fetch(url, {
         method: 'PUT',
-        headers,
-        body: JSON.stringify({ fields })
+        headers: headers,
+        body: JSON.stringify({ fields: fields })
       });
 
       const data = await response.json();
       if (data.code === 0) {
         return data.data.record;
       }
-      throw new Error(data.msg);
+      throw new Error(data.msg || 'updateRecord failed: ' + JSON.stringify(data));
     } catch (error) {
       console.error('Failed to update record:', error);
       throw error;
@@ -149,27 +162,28 @@ const LarkAPI = {
   /**
    * Lark Base からレコードを取得
    */
-  async getRecords(tableId, filter = null) {
-    let apiPath = `/bitable/v1/apps/${this.config.appToken}/tables/${tableId}/records`;
+  async getRecords(tableId, filter) {
+    const apiPath = '/bitable/v1/apps/' + this.config.appToken + '/tables/' + tableId + '/records';
+    var extra = {};
     if (filter) {
-      apiPath += `?filter=${encodeURIComponent(filter)}`;
+      extra.filter = filter;
     }
-    const url = this.getApiUrl(apiPath);
+    const url = this.getApiUrl(apiPath, extra);
 
     const headers = { 'Content-Type': 'application/json' };
     if (!this.config.useProxy) {
       const token = await this.getAccessToken();
-      headers['Authorization'] = `Bearer ${token}`;
+      headers['Authorization'] = 'Bearer ' + token;
     }
 
     try {
-      const response = await fetch(url, { headers });
+      const response = await fetch(url, { headers: headers });
 
       const data = await response.json();
       if (data.code === 0) {
         return data.data.items || [];
       }
-      throw new Error(data.msg);
+      throw new Error(data.msg || 'getRecords failed: ' + JSON.stringify(data));
     } catch (error) {
       console.error('Failed to get records:', error);
       throw error;
@@ -182,7 +196,7 @@ const LarkAPI = {
   async saveUserData(userId, workType, data) {
     const tableId = this.config.tableIds[workType];
     if (!tableId) {
-      throw new Error(`Unknown work type: ${workType}`);
+      throw new Error('Unknown work type: ' + workType);
     }
 
     const fields = {
@@ -192,7 +206,7 @@ const LarkAPI = {
     };
 
     // 既存レコードをチェック
-    const existing = await this.getRecords(tableId, `user_id="${userId}"`);
+    const existing = await this.getRecords(tableId, 'user_id="' + userId + '"');
     if (existing.length > 0) {
       return await this.updateRecord(tableId, existing[0].record_id, fields);
     }
@@ -206,10 +220,10 @@ const LarkAPI = {
   async getUserData(userId, workType) {
     const tableId = this.config.tableIds[workType];
     if (!tableId) {
-      throw new Error(`Unknown work type: ${workType}`);
+      throw new Error('Unknown work type: ' + workType);
     }
 
-    const records = await this.getRecords(tableId, `user_id="${userId}"`);
+    const records = await this.getRecords(tableId, 'user_id="' + userId + '"');
     if (records.length > 0) {
       const data = records[0].fields.data;
       return typeof data === 'string' ? JSON.parse(data) : data;
@@ -224,15 +238,15 @@ const LarkAPI = {
     const workTypes = ['personality', 'values', 'talent', 'passion', 'mission', 'lifeManual'];
 
     for (const workType of workTypes) {
-      const localKey = `selfUnderstanding_${workType.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+      const localKey = 'selfUnderstanding_' + workType.replace(/([A-Z])/g, '-$1').toLowerCase();
       const localData = localStorage.getItem(localKey);
 
       if (localData) {
         try {
           await this.saveUserData(userId, workType, JSON.parse(localData));
-          console.log(`Synced ${workType} to Lark Base`);
+          console.log('Synced ' + workType + ' to Lark Base');
         } catch (error) {
-          console.error(`Failed to sync ${workType}:`, error);
+          console.error('Failed to sync ' + workType + ':', error);
         }
       }
     }
@@ -248,12 +262,12 @@ const LarkAPI = {
       try {
         const data = await this.getUserData(userId, workType);
         if (data) {
-          const localKey = `selfUnderstanding_${workType.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+          const localKey = 'selfUnderstanding_' + workType.replace(/([A-Z])/g, '-$1').toLowerCase();
           localStorage.setItem(localKey, JSON.stringify(data));
-          console.log(`Restored ${workType} from Lark Base`);
+          console.log('Restored ' + workType + ' from Lark Base');
         }
       } catch (error) {
-        console.error(`Failed to restore ${workType}:`, error);
+        console.error('Failed to restore ' + workType + ':', error);
       }
     }
   }

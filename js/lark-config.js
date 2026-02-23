@@ -9,7 +9,7 @@ const LARK_CONFIG = {
   appId: 'cli_a9f3f7c00538de1b',
 
   // API設定（プロキシ経由で認証はサーバー側で行う）
-  proxyUrl: '/api/lark',
+  proxyUrl: '/api/lark-proxy',
   useProxy: true,
 
   // Lark Base App Token

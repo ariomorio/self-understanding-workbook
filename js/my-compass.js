@@ -37,7 +37,7 @@
   ];
 
   const CIRCLED_NUMS = ['', '\u2460', '\u2461', '\u2462', '\u2463', '\u2464', '\u2465', '\u2466', '\u2467', '\u2468', '\u2469', '\u246A', '\u246B', '\u246C'];
-  const FOOTER_TEXT = '\u30DE\u30A4\u30B3\u30F3\u30D1\u3000-\u8FF7\u308F\u306A\u3044\u81EA\u5206\u306E\u4F5C\u308A\u65B9-';
+  const FOOTER_TEXT = '\u30DE\u30A4\u30B3\u30F3\u30D1\u30B9\u3000-\u8FF7\u308F\u306A\u3044\u81EA\u5206\u306E\u4F5C\u308A\u65B9-';
 
   let currentPage = 0;
   let totalPages = PAGE_CONFIG.length;
@@ -163,7 +163,7 @@
         '"\u6210\u9577\u3057\u305F\u81EA\u5206"\u3068\u3082\u518D\u4F1A\u3067\u304D\u307E\u3059' +
       '</div>' +
       '<div class="compass-cover-mascot">' +
-        '<img src="' + mascotSrc + '" alt="\u30DE\u30A4\u30B3\u30F3\u30D1" onerror="this.parentElement.innerHTML=\'\\ud83d\\udcdd\\ud83d\\udc35\'">' +
+        '<img src="' + mascotSrc + '" alt="\u30DE\u30A4\u30B3\u30F3\u30D1\u30B9" onerror="this.parentElement.innerHTML=\'\\ud83d\\udcdd\\ud83d\\udc35\'">' +
       '</div>' +
       '<div class="compass-cover-logo">' + FOOTER_TEXT + '</div>' +
     '</div>';
