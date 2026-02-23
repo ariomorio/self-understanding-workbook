@@ -27,22 +27,11 @@
       text-decoration: none;
     }
     .back-btn:hover { background: rgba(255,255,255,0.15); }
-    .admin-header .member-title {
-      flex: 1;
-    }
-    .admin-header .member-title h1 {
-      font-size: 1.1rem;
-      margin-bottom: 2px;
-    }
-    .admin-header .member-title p {
-      font-size: 0.8rem;
-      opacity: 0.8;
-    }
+    .admin-header .member-title { flex: 1; }
+    .admin-header .member-title h1 { font-size: 1.1rem; margin-bottom: 2px; }
+    .admin-header .member-title p { font-size: 0.8rem; opacity: 0.8; }
 
-    /* アコーディオン */
-    .accordion {
-      margin-bottom: var(--spacing-sm);
-    }
+    .accordion { margin-bottom: var(--spacing-sm); }
     .accordion-header {
       background: var(--white);
       padding: var(--spacing-md);
@@ -54,37 +43,15 @@
       justify-content: space-between;
       transition: background 0.2s;
     }
-    .accordion-header:hover {
-      background: #f5f5f5;
-    }
-    .accordion-header .title {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-sm);
-    }
+    .accordion-header:hover { background: #f5f5f5; }
+    .accordion-header .title { display: flex; align-items: center; gap: var(--spacing-sm); }
     .accordion-header .title .icon { font-size: 1.2rem; }
     .accordion-header .title span { font-weight: bold; color: var(--text-dark); }
-    .accordion-header .status {
-      font-size: 0.8rem;
-      padding: 4px 8px;
-      border-radius: 12px;
-    }
-    .status-filled {
-      background: #e8f5e9;
-      color: #2e7d32;
-    }
-    .status-empty {
-      background: #f5f5f5;
-      color: #999;
-    }
-    .accordion-header .arrow {
-      color: #bbb;
-      font-size: 1.2rem;
-      transition: transform 0.2s;
-    }
-    .accordion.open .accordion-header .arrow {
-      transform: rotate(90deg);
-    }
+    .accordion-header .status { font-size: 0.8rem; padding: 4px 8px; border-radius: 12px; }
+    .status-filled { background: #e8f5e9; color: #2e7d32; }
+    .status-empty { background: #f5f5f5; color: #999; }
+    .accordion-header .arrow { color: #bbb; font-size: 1.2rem; transition: transform 0.2s; }
+    .accordion.open .accordion-header .arrow { transform: rotate(90deg); }
     .accordion-body {
       display: none;
       background: var(--white);
@@ -93,49 +60,91 @@
       margin-top: -8px;
       box-shadow: var(--shadow-sm);
     }
-    .accordion.open .accordion-body {
-      display: block;
+    .accordion.open .accordion-body { display: block; }
+
+    .data-item { padding: var(--spacing-sm) 0; border-bottom: 1px solid #f0f0f0; }
+    .data-item:last-child { border-bottom: none; }
+    .data-label { font-size: 0.8rem; color: var(--text-light); margin-bottom: 4px; font-weight: bold; }
+    .data-value { font-size: 0.95rem; color: var(--text-dark); white-space: pre-wrap; line-height: 1.6; }
+    .data-value.empty { color: #ccc; font-style: italic; }
+
+    /* 性格診断スコアバー */
+    .type-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #ff9800, #ffb74d);
+      color: white;
+      font-weight: bold;
+      font-size: 1rem;
+      margin-bottom: var(--spacing-sm);
+    }
+    .score-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .score-label { width: 80px; font-size: 0.85rem; color: var(--text-dark); flex-shrink: 0; }
+    .score-bar-bg { flex: 1; height: 20px; background: #f0f0f0; border-radius: 10px; overflow: hidden; }
+    .score-bar-fill { height: 100%; border-radius: 10px; transition: width 0.5s; }
+    .score-num { width: 40px; text-align: right; font-size: 0.85rem; font-weight: bold; flex-shrink: 0; }
+
+    /* 質問回答テーブル */
+    .qa-table { width: 100%; border-collapse: collapse; margin-top: var(--spacing-sm); font-size: 0.85rem; }
+    .qa-table th { text-align: left; padding: 6px 8px; background: #f5f5f5; color: var(--text-light); font-weight: normal; }
+    .qa-table td { padding: 6px 8px; border-bottom: 1px solid #f0f0f0; }
+    .qa-table .q-num { width: 30px; text-align: center; color: var(--text-light); }
+    .qa-table .q-text { color: var(--text-dark); }
+    .qa-table .q-score { width: 50px; text-align: center; font-weight: bold; }
+    .qa-table .q-score .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin: 0 1px; }
+    .dot-filled { background: #ff9800; }
+    .dot-empty { background: #e0e0e0; }
+
+    /* 価値観タグ */
+    .value-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+    .value-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 16px;
+      background: #e3f2fd;
+      color: #1565c0;
+      font-size: 0.85rem;
     }
 
-    /* データ表示 */
-    .data-item {
-      padding: var(--spacing-sm) 0;
-      border-bottom: 1px solid #f0f0f0;
+    /* フィードバックリスト */
+    .feedback-list { list-style: none; padding: 0; margin: 4px 0 0; }
+    .feedback-list li {
+      padding: 6px 0;
+      border-bottom: 1px solid #f5f5f5;
+      font-size: 0.9rem;
+      display: flex;
+      gap: 8px;
     }
-    .data-item:last-child { border-bottom: none; }
-    .data-label {
+    .feedback-list li:last-child { border-bottom: none; }
+    .feedback-num {
+      width: 24px; height: 24px;
+      background: #e3f2fd;
+      color: #1565c0;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: bold; flex-shrink: 0;
+    }
+
+    /* セクション区切り */
+    .section-divider {
       font-size: 0.8rem;
       color: var(--text-light);
-      margin-bottom: 4px;
-    }
-    .data-value {
-      font-size: 0.95rem;
-      color: var(--text-dark);
-      white-space: pre-wrap;
-      line-height: 1.6;
-    }
-    .data-value.empty {
-      color: #ccc;
-      font-style: italic;
+      background: #fafafa;
+      padding: 6px var(--spacing-sm);
+      margin: var(--spacing-sm) calc(var(--spacing-md) * -1);
+      font-weight: bold;
     }
 
-    .loading {
-      text-align: center;
-      padding: var(--spacing-xl);
-      color: var(--text-light);
-    }
-    .error-state {
-      text-align: center;
-      padding: var(--spacing-xl);
-      color: #d32f2f;
-    }
+    .loading { text-align: center; padding: var(--spacing-xl); color: var(--text-light); }
+    .error-state { text-align: center; padding: var(--spacing-xl); color: #d32f2f; }
   </style>
 </head>
 <body>
   <div class="admin-header">
     <a href="admin-dashboard.html" class="back-btn">&larr; 戻る</a>
     <div class="member-title">
-      <h1 id="memberName">Loading...</h1>
+      <h1 id="memberName">読み込み中...</h1>
       <p id="memberEmail"></p>
     </div>
   </div>
@@ -147,140 +156,367 @@
   <script src="../js/admin-auth.js"></script>
   <script src="../js/admin-api.js"></script>
   <script>
-    const WORK_SECTIONS = [
-      {
-        key: 'personality',
-        title: '性格診断',
-        icon: '&#x1F430;',
-        fields: [
-          { key: 'type', label: 'タイプ' },
-          { key: 'usagi_score', label: 'うさぎスコア' },
-          { key: 'kame_score', label: 'かめスコア' },
-          { key: 'kirigirisu_score', label: 'キリギリススコア' },
-          { key: 'ari_score', label: 'アリスコア' }
-        ]
-      },
-      {
-        key: 'values',
-        title: '価値観ワーク',
-        icon: '&#x2764;&#xFE0F;',
-        fields: [
-          { key: 'q1_satisfied', label: 'Q1: 満たされた瞬間' },
-          { key: 'q2_angry', label: 'Q2: 怒りを感じた瞬間' },
-          { key: 'q3_quit_job', label: 'Q3: 仕事を辞めた理由' },
-          { key: 'q6_respect', label: 'Q6: 尊敬する人' },
-          { key: 'q8_selected_values', label: 'Q8: 選んだ価値観', isJson: true },
-          { key: 'q10_priority', label: 'Q10: 優先順位', isJson: true },
-          { key: 'summary', label: 'まとめ' }
-        ]
-      },
-      {
-        key: 'talent',
-        title: '才能ワーク',
-        icon: '&#x1F31F;',
-        fields: [
-          { key: 'q1_thanked', label: 'Q1: 感謝されたこと' },
-          { key: 'q2_surprised', label: 'Q2: 驚かれたこと' },
-          { key: 'q3_cant_help', label: 'Q3: つい、やっちゃうこと' },
-          { key: 'q4_absorbed', label: 'Q4: 没頭してしまうこと' },
-          { key: 'q5_not_aware', label: 'Q5: 自覚がないこと' },
-          { key: 'q7_selected_talents', label: 'Q7: 選んだ才能', isJson: true },
-          { key: 'q8_priority', label: 'Q8: 優先順位', isJson: true },
-          { key: 'q9_summary', label: 'Q9: まとめ' }
-        ]
-      },
-      {
-        key: 'passion',
-        title: '情熱ワーク',
-        icon: '&#x1F525;',
-        fields: [
-          { key: 'q1_youtube', label: 'Q1: YouTubeで見るジャンル' },
-          { key: 'q2_talk', label: 'Q2: つい話してしまうこと' },
-          { key: 'q3_free', label: 'Q3: 自由に何でもできるなら' },
-          { key: 'q4_curious', label: 'Q4: 一番気になること' },
-          { key: 'q5_told', label: 'Q5: 周りから言われること' },
-          { key: 'q6_searched', label: 'Q6: よく検索すること' },
-          { key: 'q7_uninstructed', label: 'Q7: 言われなくてもやること' },
-          { key: 'q8_most_curious', label: 'Q8: 最も気になるもの' },
-          { key: 'q9_episodes', label: 'Q9: エピソード' },
-          { key: 'q10_common', label: 'Q10: 共通点' },
-          { key: 'q11_keywords', label: 'Q11: キーワード' },
-          { key: 'q12_state', label: 'Q12: 理想の状態' },
-          { key: 'q13_daily_change', label: 'Q13: 日常の変化' },
-          { key: 'q14_shape', label: 'Q14: カタチにすると' },
-          { key: 'passion_manual', label: '情熱マニュアル' }
-        ]
-      },
-      {
-        key: 'mission',
-        title: '使命ワーク',
-        icon: '&#x1F9ED;',
-        fields: [
-          { key: 'valley1_json', label: '谷の経験 1', isJson: true },
-          { key: 'valley2_json', label: '谷の経験 2', isJson: true },
-          { key: 'valley3_json', label: '谷の経験 3', isJson: true },
-          { key: 'valley_summary', label: '谷のまとめ' },
-          { key: 'mountain1_json', label: '山の経験 1', isJson: true },
-          { key: 'mountain2_json', label: '山の経験 2', isJson: true },
-          { key: 'mountain3_json', label: '山の経験 3', isJson: true },
-          { key: 'mountain_summary', label: '山のまとめ' },
-          { key: 'core_words', label: 'コアワード' },
-          { key: 'verbalize', label: '言語化' },
-          { key: 'life_purpose', label: '人生の目的' },
-          { key: 'life_mission', label: '人生の使命' },
-          { key: 'life_compass', label: '人生のコンパス' }
-        ]
-      },
-      {
-        key: 'lifeManual',
-        title: '人生の説明書',
-        icon: '&#x1F331;',
-        fields: [
-          { key: 'item1_character', label: '1. 特徴・性格' },
-          { key: 'item2_strength', label: '2. 強み・才能' },
-          { key: 'item3_challenge', label: '3. 課題・つまずき' },
-          { key: 'item4_trigger', label: '4. やる気トリガー & 復活スイッチ' },
-          { key: 'item5_values_top5', label: '5. 価値観TOP5' },
-          { key: 'item6_passion_theme', label: '6. 情熱テーマ' },
-          { key: 'item7_work_style', label: '7. 合う働き方' },
-          { key: 'item8_lifestyle', label: '8. 目指す生き方' },
-          { key: 'item9_sns_theme', label: '9. 発信テーマ' },
-          { key: 'item10_target', label: '10. 届けたい人' },
-          { key: 'item11_pain', label: '11. その人の悩み' },
-          { key: 'item12_value', label: '12. 届ける価値' },
-          { key: 'item13_service', label: '13. 商品・サービス' },
-          { key: 'final_manual', label: '最終マニュアル' }
-        ]
-      }
+    // ===== 性格診断の質問 =====
+    const PERSONALITY_QUESTIONS = {
+      1: '思いついたら即行動したい',
+      2: 'やるべきことは、短期集中で一気に終わらせる',
+      3: '一気呵成、短期集中で取り組むのが自分の性に合っている',
+      4: '短期でのゴールがあると一気にモチベーションが上がる',
+      5: '熱しやすく冷めやすい',
+      6: 'しっかり考えて計画を立ててから、行動に移したい',
+      7: 'やるべきことは分散してコツコツやりたい',
+      8: '分散型で少しずつ取り組むのが自分の性に合っている',
+      9: 'コツコツ、努力を積み重ねることでモチベーションが上がる',
+      10: '我慢強く、コツコツ取り組める性格である',
+      11: '楽しいこと、やりたいことから優先して進める',
+      12: '義務的なタスク、面倒なことが先延ばしになりがち',
+      13: '提出物、宿題は期限ギリギリまで取り組んでいる',
+      14: '気分のムラがあり、行動量にアップダウンがある',
+      15: '一番好きなこと、楽しみは後回しになる',
+      16: '不安や心配事、やるべきことは早めに終わらせている',
+      17: 'やりたいこと、楽しみは後回しになることも多い',
+      18: '提出物、宿題は期限よりも早めに終わらせて提出している',
+      19: '気分のムラは少なく、淡々と行動を進めることができる',
+      20: '一番好きなことは最後に楽しむ'
+    };
+    const Q_GROUPS = [
+      { label: '行動傾向：うさぎ（短期集中型）', range: [1,2,3,4,5], color: '#ff9800' },
+      { label: '行動傾向：かめ（長期分散型）', range: [6,7,8,9,10], color: '#4caf50' },
+      { label: '動機傾向：キリギリス（快楽追求型）', range: [11,12,13,14,15], color: '#2196f3' },
+      { label: '動機傾向：アリ（リスク回避型）', range: [16,17,18,19,20], color: '#9c27b0' }
     ];
 
-    async function init() {
-      // コーチ認証チェック
-      const coach = AdminAuth.getCoach();
-      if (!coach) {
-        window.location.href = 'admin-login.html';
-        return;
-      }
+    // ===== ワークセクション定義 =====
+    const WORK_SECTIONS = [
+      { key: 'personality', title: '性格診断', icon: '\u{1F430}' },
+      { key: 'values', title: '価値観ワーク', icon: '\u{2764}\u{FE0F}' },
+      { key: 'talent', title: '才能ワーク', icon: '\u{1F31F}' },
+      { key: 'passion', title: '情熱ワーク', icon: '\u{1F525}' },
+      { key: 'mission', title: '使命ワーク', icon: '\u{1F9ED}' },
+      { key: 'lifeManual', title: '人生の説明書', icon: '\u{1F331}' }
+    ];
 
-      // URLからメンバーIDを取得
-      const params = new URLSearchParams(window.location.search);
-      const memberId = params.get('member_id');
-      if (!memberId) {
-        document.getElementById('loadingState').innerHTML = '<div class="error-state">メンバーIDが指定されていません。</div>';
-        return;
-      }
+    // ===== レンダリング関数 =====
 
-      try {
-        const data = await AdminAPI.getMemberData(coach.userId, memberId);
-
-        document.getElementById('memberName').textContent = data.memberName || 'Member';
-        document.getElementById('memberEmail').textContent = data.memberEmail || '';
-
-        renderWorkData(data);
-      } catch (error) {
-        document.getElementById('loadingState').innerHTML = `<div class="error-state">${escapeHtml(error.message)}</div>`;
-      }
+    function fv(field) {
+      if (field === null || field === undefined) return '';
+      if (Array.isArray(field)) return field[0]?.text || field[0] || '';
+      return String(field);
     }
+
+    function renderPersonality(data) {
+      if (!data) return '<p style="color:#999;padding-top:8px;">まだデータがありません</p>';
+      let html = '';
+
+      // タイプ表示
+      const type = fv(data.type);
+      if (type) html += `<div style="text-align:center;margin:12px 0;"><span class="type-badge">${esc(type)}</span></div>`;
+
+      // スコアバー
+      const scores = [
+        { label: 'うさぎ', score: data.usagi_score || 0, max: 25, color: '#ff9800' },
+        { label: 'かめ', score: data.kame_score || 0, max: 25, color: '#4caf50' },
+        { label: 'キリギリス', score: data.kirigirisu_score || 0, max: 25, color: '#2196f3' },
+        { label: 'アリ', score: data.ari_score || 0, max: 25, color: '#9c27b0' }
+      ];
+      scores.forEach(s => {
+        const pct = Math.round((s.score / s.max) * 100);
+        html += `<div class="score-row">
+          <span class="score-label">${s.label}</span>
+          <div class="score-bar-bg"><div class="score-bar-fill" style="width:${pct}%;background:${s.color};"></div></div>
+          <span class="score-num">${s.score}/${s.max}</span>
+        </div>`;
+      });
+
+      // 質問ごとの回答
+      let answers = {};
+      const raw = fv(data.answers_json);
+      if (raw) { try { answers = JSON.parse(raw); } catch(e) {} }
+
+      if (Object.keys(answers).length > 0) {
+        Q_GROUPS.forEach(g => {
+          html += `<div class="section-divider">${g.label}</div>`;
+          html += '<table class="qa-table"><tbody>';
+          g.range.forEach(n => {
+            const score = parseInt(answers[n] || answers[String(n)] || 0);
+            let dots = '';
+            for (let i = 1; i <= 5; i++) {
+              dots += `<span class="dot ${i <= score ? 'dot-filled' : 'dot-empty'}" style="${i <= score ? 'background:'+g.color : ''}"></span>`;
+            }
+            html += `<tr>
+              <td class="q-num">${n}</td>
+              <td class="q-text">${PERSONALITY_QUESTIONS[n]}</td>
+              <td class="q-score">${dots}</td>
+            </tr>`;
+          });
+          html += '</tbody></table>';
+        });
+      }
+      return html;
+    }
+
+    function renderValues(data) {
+      if (!data) return '<p style="color:#999;padding-top:8px;">まだデータがありません</p>';
+      let html = '';
+
+      // Q1-Q3: テキスト
+      const textQs = [
+        { key: 'q1_satisfied', label: 'Q1. 楽しかった・満たされた経験' },
+        { key: 'q2_angry', label: 'Q2. イラっとしたこと' },
+        { key: 'q3_quit_job', label: 'Q3. 今の仕事を辞めるとしたら？' }
+      ];
+      textQs.forEach(q => {
+        const val = fv(data[q.key]);
+        html += renderDataItem(q.label, val);
+      });
+
+      // Q4: 印象に残っている出来事（JSON）
+      const q4raw = fv(data.q4_memories_json);
+      if (q4raw) {
+        try {
+          const q4 = JSON.parse(q4raw);
+          if (typeof q4 === 'object' && !Array.isArray(q4)) {
+            const periodNames = { kindergarten:'幼稚園', elementary:'小学校', junior:'中学校', high:'高校', university:'大学・社会人' };
+            let q4html = '';
+            Object.entries(q4).forEach(([k,v]) => {
+              if (v) q4html += `<div style="margin-bottom:4px;"><strong>${periodNames[k] || k}:</strong> ${esc(v)}</div>`;
+            });
+            html += `<div class="data-item"><div class="data-label">Q4. 過去の印象に残っている出来事</div><div class="data-value">${q4html || '(未入力)'}</div></div>`;
+          }
+        } catch(e) {
+          html += renderDataItem('Q4. 過去の印象に残っている出来事', q4raw);
+        }
+      }
+
+      // Q6: 尊敬する人（JSON）
+      const q6raw = fv(data.q6_respect);
+      if (q6raw) {
+        try {
+          const q6 = JSON.parse(q6raw);
+          html += `<div class="data-item"><div class="data-label">Q6. 尊敬する人</div><div class="data-value">
+            <strong>${esc(q6.person || '')}</strong>${q6.reason ? '<br>理由: ' + esc(q6.reason) : ''}
+          </div></div>`;
+        } catch(e) {
+          html += renderDataItem('Q6. 尊敬する人', q6raw);
+        }
+      } else {
+        html += renderDataItem('Q6. 尊敬する人', '');
+      }
+
+      // Q7: フィードバック（配列）
+      const q7raw = fv(data.q7_feedback_json);
+      if (q7raw) {
+        try {
+          const q7 = JSON.parse(q7raw);
+          if (Array.isArray(q7) && q7.length > 0) {
+            let listHtml = '<ul class="feedback-list">';
+            q7.forEach((fb, i) => {
+              if (fb) listHtml += `<li><span class="feedback-num">${i+1}</span><span>${esc(fb)}</span></li>`;
+            });
+            listHtml += '</ul>';
+            html += `<div class="data-item"><div class="data-label">Q7. 周りから見た自分の価値観</div><div class="data-value">${listHtml}</div></div>`;
+          }
+        } catch(e) {
+          html += renderDataItem('Q7. 周りから見た自分の価値観', q7raw);
+        }
+      }
+
+      // Q8: 選んだ価値観（タグ表示）
+      const q8raw = fv(data.q8_selected_values);
+      if (q8raw) {
+        try {
+          const q8 = JSON.parse(q8raw);
+          let tagsHtml = '<div class="value-tags">';
+          if (q8.selected && Array.isArray(q8.selected)) {
+            q8.selected.forEach(v => { tagsHtml += `<span class="value-tag">${esc(v)}</span>`; });
+          }
+          tagsHtml += '</div>';
+          if (q8.other) tagsHtml += `<div style="margin-top:4px;font-size:0.85rem;color:var(--text-light);">その他: ${esc(q8.other)}</div>`;
+          html += `<div class="data-item"><div class="data-label">Q8. 共通するキーワード（価値観）</div><div class="data-value">${tagsHtml}</div></div>`;
+        } catch(e) {
+          html += renderDataItem('Q8. 共通するキーワード', q8raw);
+        }
+      }
+
+      // Q9, Q10, summary: テキスト
+      html += renderDataItem('Q9. ジャンル別の分類', fv(data.q9_categories));
+      html += renderDataItem('Q10. 優先順位', fv(data.q10_priority));
+      html += renderDataItem('まとめ', fv(data.summary));
+      return html;
+    }
+
+    function renderTalent(data) {
+      if (!data) return '<p style="color:#999;padding-top:8px;">まだデータがありません</p>';
+      let html = '';
+      const textQs = [
+        { key: 'q1_thanked', label: 'Q1. 人から感謝されたこと' },
+        { key: 'q2_surprised', label: 'Q2. 人に驚かれたこと' },
+        { key: 'q3_cant_help', label: 'Q3. つい、やっちゃうこと' },
+        { key: 'q4_absorbed', label: 'Q4. 没頭してしまうこと' },
+        { key: 'q5_not_aware', label: 'Q5. 自分では当たり前だと思っていること' }
+      ];
+      textQs.forEach(q => { html += renderDataItem(q.label, fv(data[q.key])); });
+
+      // Q6: フィードバック（配列）
+      const q6raw = fv(data.q6_feedback_json);
+      if (q6raw) {
+        try {
+          const q6 = JSON.parse(q6raw);
+          if (Array.isArray(q6) && q6.length > 0) {
+            let listHtml = '<ul class="feedback-list">';
+            q6.forEach((fb, i) => { if (fb) listHtml += `<li><span class="feedback-num">${i+1}</span><span>${esc(fb)}</span></li>`; });
+            listHtml += '</ul>';
+            html += `<div class="data-item"><div class="data-label">Q6. 周りから言われる強み</div><div class="data-value">${listHtml}</div></div>`;
+          }
+        } catch(e) { html += renderDataItem('Q6. 周りから言われる強み', q6raw); }
+      }
+
+      // Q7: 選んだ才能（タグ）
+      const q7raw = fv(data.q7_selected_talents);
+      if (q7raw) {
+        try {
+          const q7 = JSON.parse(q7raw);
+          if (Array.isArray(q7) && q7.length > 0) {
+            let tagsHtml = '<div class="value-tags">';
+            q7.forEach(v => { tagsHtml += `<span class="value-tag">${esc(typeof v === 'object' ? JSON.stringify(v) : v)}</span>`; });
+            tagsHtml += '</div>';
+            html += `<div class="data-item"><div class="data-label">Q7. 選んだ才能キーワード</div><div class="data-value">${tagsHtml}</div></div>`;
+          }
+        } catch(e) { html += renderDataItem('Q7. 選んだ才能キーワード', q7raw); }
+      }
+
+      // Q8: 優先順位（配列）
+      const q8raw = fv(data.q8_priority);
+      if (q8raw) {
+        try {
+          const q8 = JSON.parse(q8raw);
+          if (Array.isArray(q8) && q8.length > 0) {
+            const priorityText = q8.map((v, i) => `${i+1}. ${typeof v === 'object' ? JSON.stringify(v) : v}`).join('\n');
+            html += renderDataItem('Q8. 才能の優先順位', priorityText);
+          }
+        } catch(e) { html += renderDataItem('Q8. 才能の優先順位', q8raw); }
+      }
+
+      html += renderDataItem('Q9. 才能のまとめ', fv(data.q9_summary));
+      return html;
+    }
+
+    function renderPassion(data) {
+      if (!data) return '<p style="color:#999;padding-top:8px;">まだデータがありません</p>';
+      const qs = [
+        { key: 'q1_youtube', label: 'Q1. YouTubeでよく見るジャンル' },
+        { key: 'q2_talk', label: 'Q2. つい話してしまうこと' },
+        { key: 'q3_free', label: 'Q3. 自由に何でもできるとしたら？' },
+        { key: 'q4_curious', label: 'Q4. 一番気になること' },
+        { key: 'q5_told', label: 'Q5. 周りから「好きだよね」と言われること' },
+        { key: 'q6_searched', label: 'Q6. よく検索すること' },
+        { key: 'q7_uninstructed', label: 'Q7. 言われなくてもやってしまうこと' },
+        { key: 'q8_most_curious', label: 'Q8. 最も気になるもの' },
+        { key: 'q9_episodes', label: 'Q9. 情熱エピソード' },
+        { key: 'q10_common', label: 'Q10. 共通点' },
+        { key: 'q11_keywords', label: 'Q11. キーワード' },
+        { key: 'q12_state', label: 'Q12. 理想の状態' },
+        { key: 'q13_daily_change', label: 'Q13. 日常で変えたいこと' },
+        { key: 'q14_shape', label: 'Q14. カタチにすると？' },
+        { key: 'passion_manual', label: '情熱マニュアル' }
+      ];
+      return qs.map(q => renderDataItem(q.label, fv(data[q.key]))).join('');
+    }
+
+    function renderMission(data) {
+      if (!data) return '<p style="color:#999;padding-top:8px;">まだデータがありません</p>';
+      let html = '';
+
+      // 谷の経験
+      html += '<div class="section-divider">谷の経験（辛かった時期）</div>';
+      [1,2,3].forEach(i => {
+        const raw = fv(data[`valley${i}_json`]);
+        if (raw) {
+          try {
+            const v = JSON.parse(raw);
+            html += `<div class="data-item"><div class="data-label">谷の経験 ${i}</div><div class="data-value">`;
+            if (v.when) html += `<strong>いつ:</strong> ${esc(v.when)}<br>`;
+            if (v.what) html += `<strong>何があった:</strong> ${esc(v.what)}<br>`;
+            if (v.feeling) html += `<strong>どう感じた:</strong> ${esc(v.feeling)}<br>`;
+            if (v.learned) html += `<strong>学んだこと:</strong> ${esc(v.learned)}`;
+            html += '</div></div>';
+          } catch(e) { html += renderDataItem(`谷の経験 ${i}`, raw); }
+        }
+      });
+      html += renderDataItem('谷のまとめ', fv(data.valley_summary));
+
+      // 山の経験
+      html += '<div class="section-divider">山の経験（輝いていた時期）</div>';
+      [1,2,3].forEach(i => {
+        const raw = fv(data[`mountain${i}_json`]);
+        if (raw) {
+          try {
+            const v = JSON.parse(raw);
+            html += `<div class="data-item"><div class="data-label">山の経験 ${i}</div><div class="data-value">`;
+            if (v.when) html += `<strong>いつ:</strong> ${esc(v.when)}<br>`;
+            if (v.what) html += `<strong>何があった:</strong> ${esc(v.what)}<br>`;
+            if (v.feeling) html += `<strong>どう感じた:</strong> ${esc(v.feeling)}<br>`;
+            if (v.learned) html += `<strong>学んだこと:</strong> ${esc(v.learned)}`;
+            html += '</div></div>';
+          } catch(e) { html += renderDataItem(`山の経験 ${i}`, raw); }
+        }
+      });
+      html += renderDataItem('山のまとめ', fv(data.mountain_summary));
+
+      // 使命
+      html += '<div class="section-divider">使命・判断軸</div>';
+      html += renderDataItem('コアワード', fv(data.core_words));
+      html += renderDataItem('言語化', fv(data.verbalize));
+      html += renderDataItem('人生の目的', fv(data.life_purpose));
+      html += renderDataItem('人生の使命', fv(data.life_mission));
+      html += renderDataItem('人生のコンパス', fv(data.life_compass));
+      return html;
+    }
+
+    function renderLifeManual(data) {
+      if (!data) return '<p style="color:#999;padding-top:8px;">まだデータがありません</p>';
+      const items = [
+        { key: 'item1_character', label: '1. わたしの特徴・性格' },
+        { key: 'item2_strength', label: '2. わたしの強み・才能' },
+        { key: 'item3_challenge', label: '3. 課題・つまずきポイント' },
+        { key: 'item4_trigger', label: '4. やる気トリガー & 復活スイッチ' },
+        { key: 'item5_values_top5', label: '5. 大切にしたい価値観TOP5' },
+        { key: 'item6_passion_theme', label: '6. 情熱を感じるテーマ' },
+        { key: 'item7_work_style', label: '7. 自分に合う働き方・環境' },
+        { key: 'item8_lifestyle', label: '8. 目指したい生き方' },
+        { key: 'item9_sns_theme', label: '9. 発信テーマ' },
+        { key: 'item10_target', label: '10. 届けたい人' },
+        { key: 'item11_pain', label: '11. その人の悩み' },
+        { key: 'item12_value', label: '12. 届けられる価値' },
+        { key: 'item13_service', label: '13. 商品・サービスのカタチ' },
+        { key: 'final_manual', label: '最終版：人生の説明書' }
+      ];
+      return items.map(q => renderDataItem(q.label, fv(data[q.key]))).join('');
+    }
+
+    // ===== 共通ヘルパー =====
+
+    function renderDataItem(label, value) {
+      const isEmpty = !value || value === '0';
+      return `<div class="data-item"><div class="data-label">${esc(label)}</div><div class="data-value ${isEmpty ? 'empty' : ''}">${isEmpty ? '(未入力)' : esc(String(value))}</div></div>`;
+    }
+
+    function esc(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // ===== メインロジック =====
+
+    const RENDERERS = {
+      personality: renderPersonality,
+      values: renderValues,
+      talent: renderTalent,
+      passion: renderPassion,
+      mission: renderMission,
+      lifeManual: renderLifeManual
+    };
 
     function renderWorkData(data) {
       const content = document.getElementById('content');
@@ -295,76 +531,47 @@
         });
 
         const accordion = document.createElement('div');
-        accordion.className = 'accordion';
-        if (hasData) accordion.className += ' open';
-
+        accordion.className = 'accordion' + (hasData ? ' open' : '');
         const statusClass = hasData ? 'status-filled' : 'status-empty';
         const statusText = hasData ? '入力済' : '未入力';
 
+        const renderer = RENDERERS[section.key];
+        const bodyHtml = renderer ? renderer(workData) : '<p style="color:#999;">データなし</p>';
+
         accordion.innerHTML = `
           <div class="accordion-header">
-            <div class="title">
-              <span class="icon">${section.icon}</span>
-              <span>${section.title}</span>
-            </div>
+            <div class="title"><span class="icon">${section.icon}</span><span>${section.title}</span></div>
             <span class="status ${statusClass}">${statusText}</span>
-            <span class="arrow">&#x203A;</span>
+            <span class="arrow">\u203A</span>
           </div>
-          <div class="accordion-body">
-            ${hasData ? renderFields(section.fields, workData) : '<p style="color: #999; padding-top: var(--spacing-sm);">まだデータがありません</p>'}
-          </div>
+          <div class="accordion-body">${bodyHtml}</div>
         `;
-
         accordion.querySelector('.accordion-header').addEventListener('click', function() {
           accordion.classList.toggle('open');
         });
-
         content.appendChild(accordion);
       });
     }
 
-    function renderFields(fields, data) {
-      if (!data) return '<p style="color: #999;">データなし</p>';
+    async function init() {
+      const coach = AdminAuth.getCoach();
+      if (!coach) { window.location.href = 'admin-login.html'; return; }
 
-      return fields.map(f => {
-        let value = getFieldValue(data[f.key]);
+      const params = new URLSearchParams(window.location.search);
+      const memberId = params.get('member_id');
+      if (!memberId) {
+        document.getElementById('loadingState').innerHTML = '<div class="error-state">メンバーIDが指定されていません。</div>';
+        return;
+      }
 
-        if (f.isJson && value) {
-          try {
-            const parsed = typeof value === 'string' ? JSON.parse(value) : value;
-            if (Array.isArray(parsed)) {
-              value = parsed.map((item, i) => {
-                if (typeof item === 'object') return JSON.stringify(item, null, 2);
-                return `${i + 1}. ${item}`;
-              }).join('\n');
-            } else if (typeof parsed === 'object') {
-              value = Object.entries(parsed).map(([k, v]) => `${k}: ${v}`).join('\n');
-            }
-          } catch (e) {
-            // keep as is
-          }
-        }
-
-        const isEmpty = !value || value === '0';
-        return `
-          <div class="data-item">
-            <div class="data-label">${escapeHtml(f.label)}</div>
-            <div class="data-value ${isEmpty ? 'empty' : ''}">${isEmpty ? '(未入力)' : escapeHtml(String(value))}</div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function getFieldValue(field) {
-      if (field === null || field === undefined) return '';
-      if (Array.isArray(field)) return field[0]?.text || field[0] || '';
-      return field;
-    }
-
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
+      try {
+        const data = await AdminAPI.getMemberData(coach.userId, memberId);
+        document.getElementById('memberName').textContent = data.memberName || 'メンバー';
+        document.getElementById('memberEmail').textContent = data.memberEmail || '';
+        renderWorkData(data);
+      } catch (error) {
+        document.getElementById('loadingState').innerHTML = `<div class="error-state">${esc(error.message)}</div>`;
+      }
     }
 
     init();
