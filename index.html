@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>自己理解の教科書</title>
+  <title>マイコンパ</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
     .hero {
@@ -177,8 +177,8 @@
 </head>
 <body>
   <div class="hero">
-    <h1>自己理解の教科書</h1>
-    <p>あなたらしい人生を歩むための<br>自己理解ワークブック</p>
+    <h1>マイコンパ</h1>
+    <p>-迷わない自分の作り方-</p>
   </div>
 
   <div class="container">
@@ -241,6 +241,7 @@
           <button id="logoutBtn" style="padding: 8px 16px; border: 1px solid #ddd; border-radius: 6px; background: white; cursor: pointer; font-size: 0.85rem;">ログアウト</button>
         </div>
       </div>
+<!-- 人生説明書ビューアーリンク -->      <a href="pages/my-compass.html" id="compassLink" style="display:none; margin-top:12px; padding:16px; background:linear-gradient(135deg, #ffd93d, #f5a623); border-radius:12px; text-decoration:none; color:#8b5a2b; text-align:center; box-shadow:0 2px 8px rgba(245,166,35,0.3);">        <div style="font-size:1.5rem; margin-bottom:4px;">📖</div>        <div style="font-weight:bold; font-size:1rem;">あなたの人生説明書を見る</div>        <div style="font-size:0.8rem; opacity:0.8; margin-top:4px;">完成した説明書をスマホ壁紙に保存できます</div>      </a>
 
       <!-- 進捗状況 -->
       <div class="progress-overview">
@@ -653,6 +654,19 @@
           checkAdminAccess(user.email).then(isAdmin => {
             adminSection.style.display = isAdmin ? '' : 'none';
           });
+        }
+        // 人生説明書リンクの表示チェック
+        var compassLink = document.getElementById("compassLink");
+        if (compassLink) {
+          var lifeManual = localStorage.getItem("selfUnderstanding_life-manual");
+          if (lifeManual) {
+            try {
+              var lmData = JSON.parse(lifeManual);
+              compassLink.style.display = (lmData.finalManual && lmData.finalManual.trim()) ? "block" : "none";
+            } catch(e) { compassLink.style.display = "none"; }
+          } else {
+            compassLink.style.display = "none";
+          }
         }
       } else {
         loginScreen.style.display = 'block';

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>人生説明書 | マイコンパ</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/my-compass.css">
+</head>
+<body style="margin:0; padding:0; background:#fef9e7;">
+
+  <!-- ローディング -->
+  <div id="loadingState" style="display:flex; align-items:center; justify-content:center; min-height:100vh;">
+    <p style="color:#8b5a2b;">読み込み中...</p>
+  </div>
+
+  <!-- データなし -->
+  <div id="noDataState" class="compass-no-data" style="display:none;">
+    <div class="compass-no-data-icon">📖</div>
+    <p>まだ人生の説明書が作成されていません</p>
+    <p style="font-size:0.9rem; color:#999;">人生の説明書ワークとAI分析を完了すると<br>ここで美しい説明書が閲覧できます</p>
+    <a href="09-life-manual.html">人生の説明書を作る</a>
+    <br>
+    <a href="../index.html" style="margin-top:16px; display:inline-block; color:#8b5a2b; font-size:0.9rem;">目次に戻る</a>
+  </div>
+
+  <!-- ビューアー -->
+  <div id="compassViewer" class="compass-viewer" style="display:none;">
+    <!-- ヘッダー -->
+    <div class="compass-header">
+      <a href="../index.html">&#9664; 目次</a>
+      <span class="compass-page-indicator" id="pageIndicator">1 / 8</span>
+    </div>
+
+    <!-- ページエリア -->
+    <div class="compass-pages-wrap">
+      <div class="compass-pages" id="compassPages">
+        <!-- JSで生成 -->
+      </div>
+    </div>
+
+    <!-- ナビゲーション -->
+    <nav class="compass-nav">
+      <button class="compass-arrow" id="prevBtn" disabled>&#9664;</button>
+      <div class="compass-dots" id="compassDots"></div>
+      <button class="compass-arrow" id="nextBtn">&#9654;</button>
+    </nav>
+
+    <!-- ダウンロードFAB -->
+    <button class="compass-download-fab" id="downloadBtn" title="この画像を壁紙として保存">
+      &#11015;
+    </button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="../js/my-compass.js"></script>
+</body>
+</html>

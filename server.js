@@ -386,7 +386,7 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, () => {
   console.log(`
 ====================================
-  自己理解の教科書 - ローカルサーバー
+  マイコンパ - ローカルサーバー
 ====================================
 
 サーバー起動: http://localhost:${PORT}

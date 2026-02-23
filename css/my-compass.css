@@ -1,0 +1,414 @@
+/* マイコンパ - 人生説明書ビューアー */
+
+* { box-sizing: border-box; }
+
+.compass-viewer {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #fef9e7;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── ヘッダーバー ── */
+.compass-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(139,90,43,0.1);
+  z-index: 10;
+  flex-shrink: 0;
+}
+.compass-header a {
+  color: #8b5a2b;
+  text-decoration: none;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.compass-page-indicator {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+/* ── ページコンテナ ── */
+.compass-pages-wrap {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+.compass-pages {
+  display: flex;
+  height: 100%;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+
+/* ── 各ページ ── */
+.compass-page {
+  min-width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+.compass-page-inner {
+  width: 100%;
+  max-width: 430px;
+  height: 100%;
+  max-height: calc(100vh - 120px);
+  background: #fffdf5;
+  border: 1px solid rgba(139,90,43,0.08);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(139,90,43,0.1);
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── 表紙ページ ── */
+.compass-cover {
+  text-align: center;
+  padding: 40px 24px 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.compass-cover-title {
+  margin-bottom: 8px;
+}
+.compass-cover-title .name-line {
+  display: inline-block;
+  border-bottom: 3px solid #c8a040;
+  padding-bottom: 4px;
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #8b5a2b;
+  min-width: 120px;
+}
+.compass-cover-title .name-suffix {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #8b5a2b;
+}
+.compass-cover-subtitle {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #8b5a2b;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+.compass-cover-divider {
+  width: 60%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #c8a040, transparent);
+  margin: 0 auto 24px;
+  position: relative;
+}
+.compass-cover-divider::before,
+.compass-cover-divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  background: #c8a040;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+.compass-cover-divider::before { left: -5px; }
+.compass-cover-divider::after { right: -5px; }
+
+.compass-cover-intro {
+  font-size: 0.95rem;
+  color: #8b5a2b;
+  line-height: 2;
+  margin-bottom: 24px;
+}
+.compass-cover-mascot {
+  max-width: 200px;
+  margin: 0 auto;
+}
+.compass-cover-mascot img {
+  width: 100%;
+  height: auto;
+}
+.compass-cover-logo {
+  font-size: 0.85rem;
+  color: #c8a040;
+  font-weight: bold;
+  margin-top: 16px;
+}
+
+/* ── コンテンツページ ── */
+.compass-content {
+  padding: 20px 20px 8px;
+  flex: 1;
+}
+.compass-section {
+  margin-bottom: 20px;
+}
+.compass-section:last-child {
+  margin-bottom: 8px;
+}
+.compass-section-header {
+  background: #ffd93d;
+  color: #8b5a2b;
+  font-weight: bold;
+  font-size: 1.05rem;
+  padding: 8px 20px;
+  border-radius: 999px;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+.compass-section-body {
+  color: #8b5a2b;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-break: break-word;
+  padding: 0 4px;
+}
+
+/* ── 最終メッセージ（ページ8） ── */
+.compass-final-card {
+  margin-top: 16px;
+  border: 2px solid #ffd93d;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(255,217,61,0.05), rgba(255,217,61,0.15));
+}
+.compass-final-label {
+  font-size: 0.85rem;
+  color: #c8a040;
+  margin-bottom: 8px;
+}
+.compass-final-text {
+  color: #8b5a2b;
+  font-size: 1rem;
+  line-height: 1.8;
+  font-weight: bold;
+}
+
+/* ── ページフッター ── */
+.compass-page-footer {
+  text-align: center;
+  padding: 8px 0 12px;
+  font-size: 0.75rem;
+  color: #c8a040;
+  flex-shrink: 0;
+}
+
+/* ── ナビゲーション ── */
+.compass-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 16px 12px;
+  flex-shrink: 0;
+}
+.compass-arrow {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #c8a040;
+  background: white;
+  color: #c8a040;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.compass-arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.compass-arrow:not(:disabled):active {
+  background: #ffd93d;
+  color: #8b5a2b;
+}
+.compass-dots {
+  display: flex;
+  gap: 6px;
+}
+.compass-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ddd;
+  transition: all 0.3s;
+}
+.compass-dot.active {
+  background: #c8a040;
+  transform: scale(1.3);
+}
+
+/* ── ダウンロードFABボタン ── */
+.compass-download-fab {
+  position: fixed;
+  bottom: 72px;
+  right: 16px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #f5a623, #ffd93d);
+  color: white;
+  font-size: 1.3rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(245,166,35,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  transition: transform 0.2s;
+}
+.compass-download-fab:active {
+  transform: scale(0.9);
+}
+.compass-download-fab.downloading {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* ── データなし画面 ── */
+.compass-no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 32px;
+  text-align: center;
+  background: #fef9e7;
+}
+.compass-no-data-icon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+}
+.compass-no-data p {
+  color: #8b5a2b;
+  font-size: 1.1rem;
+  margin-bottom: 24px;
+}
+.compass-no-data a {
+  display: inline-block;
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #f5a623, #ffd93d);
+  color: white;
+  text-decoration: none;
+  border-radius: 999px;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(245,166,35,0.3);
+}
+
+/* ── ダウンロード中オーバーレイ ── */
+.compass-dl-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.compass-dl-overlay div {
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  text-align: center;
+}
+.compass-dl-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f0f0f0;
+  border-top-color: #f5a623;
+  border-radius: 50%;
+  animation: compassSpin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+@keyframes compassSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── 壁紙生成用（非表示エリア） ── */
+.compass-wallpaper-render {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  width: 1080px;
+  height: 1920px;
+  z-index: -1;
+  pointer-events: none;
+}
+.compass-wallpaper-render .compass-page-inner {
+  width: 1080px;
+  height: 1920px;
+  max-width: none;
+  max-height: none;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+}
+.compass-wallpaper-render .compass-cover {
+  padding: 80px 60px 60px;
+}
+.compass-wallpaper-render .compass-cover-title .name-line,
+.compass-wallpaper-render .compass-cover-title .name-suffix {
+  font-size: 3.2rem;
+}
+.compass-wallpaper-render .compass-cover-subtitle {
+  font-size: 4rem;
+}
+.compass-wallpaper-render .compass-cover-intro {
+  font-size: 1.8rem;
+  line-height: 2.2;
+}
+.compass-wallpaper-render .compass-cover-mascot {
+  max-width: 400px;
+}
+.compass-wallpaper-render .compass-cover-logo {
+  font-size: 1.6rem;
+}
+.compass-wallpaper-render .compass-content {
+  padding: 48px 48px 16px;
+}
+.compass-wallpaper-render .compass-section-header {
+  font-size: 2rem;
+  padding: 16px 40px;
+}
+.compass-wallpaper-render .compass-section-body {
+  font-size: 1.8rem;
+  line-height: 2;
+}
+.compass-wallpaper-render .compass-final-card {
+  padding: 40px;
+}
+.compass-wallpaper-render .compass-final-text {
+  font-size: 2rem;
+}
+.compass-wallpaper-render .compass-page-footer {
+  font-size: 1.4rem;
+  padding: 16px 0 24px;
+}
+
+/* ── Safari safe area ── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .compass-nav {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+}
