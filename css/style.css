@@ -111,6 +111,7 @@ body {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
+/* Video Embed Section */.video-section {  background: var(--white);  border-radius: var(--radius-md);  padding: var(--spacing-md);  margin-bottom: var(--spacing-md);  box-shadow: var(--shadow-sm);}.video-section h3 {  color: var(--primary-brown);  margin-bottom: var(--spacing-sm);}.video-embed {  position: relative;  width: 100%;  padding-bottom: 56.25%;  height: 0;  overflow: hidden;  border-radius: var(--radius-sm);  background: #000;  margin-bottom: var(--spacing-sm);}.video-embed iframe {  position: absolute;  top: 0;  left: 0;  width: 100%;  height: 100%;  border: none;  border-radius: var(--radius-sm);}.video-fallback {  text-align: center;  font-size: 0.85rem;}.video-fallback a {  color: var(--primary-brown);  text-decoration: underline;}
 
 /* Section */
 .section {
