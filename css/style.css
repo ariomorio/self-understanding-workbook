@@ -59,6 +59,7 @@ body {
   background: linear-gradient(135deg, #fef9e7 0%, #fff8e1 100%);
   min-height: 100vh;
   line-height: 1.8;
+  text-align: left;
 }
 
 /* Container */

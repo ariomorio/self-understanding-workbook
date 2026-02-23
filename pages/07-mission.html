@@ -29,11 +29,9 @@
     }
     .episode-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: 1fr;
       gap: var(--spacing-sm);
     }
-    @media (max-width: 768px) {
-      .episode-grid { grid-template-columns: 1fr; }
     }
     .episode-card {
       background: var(--gray-light);
@@ -46,10 +44,10 @@
       font-size: 0.9rem;
       color: var(--text-light);
       margin-bottom: var(--spacing-xs);
-      text-align: center;
+      text-align: left;
     }
     .episode-card textarea {
-      min-height: 80px;
+      min-height: 120px;
       font-size: 0.9rem;
     }
     .field-label {
@@ -285,8 +283,8 @@
     </div>
 
     <div style="background: var(--light-green); padding: var(--spacing-md); border-radius: var(--radius-md); margin-top: var(--spacing-lg);">
-      <p style="text-align: center; font-size: 1.1rem; color: #2e7d32;"><strong>ワークお疲れ様でした！</strong></p>
-      <p style="text-align: center; margin-top: var(--spacing-sm);">
+      <p style="text-align: left; font-size: 1.1rem; color: #2e7d32;"><strong>ワークお疲れ様でした！</strong></p>
+      <p style="text-align: left; margin-top: var(--spacing-sm);">
         あなたの人生の山と谷から、あなただけの【使命・目的・判断軸】が見えてきました。<br>
         これからの選択に迷ったとき、この言葉を思い出してください🧭
       </p>
