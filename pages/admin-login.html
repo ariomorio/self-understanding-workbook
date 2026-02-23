@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>コーチログイン | 自己理解の教科書</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #1565c0 0%, #42a5f5 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-container {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-xl);
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    .login-header {
+      text-align: center;
+      margin-bottom: var(--spacing-lg);
+    }
+    .login-header .icon {
+      font-size: 3rem;
+      margin-bottom: var(--spacing-sm);
+    }
+    .login-header h1 {
+      color: #1565c0;
+      font-size: 1.4rem;
+      margin-bottom: var(--spacing-xs);
+    }
+    .login-header p {
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+    .form-group {
+      margin-bottom: var(--spacing-md);
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--text-dark);
+      margin-bottom: var(--spacing-xs);
+    }
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      transition: border-color 0.3s;
+      box-sizing: border-box;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: #1565c0;
+    }
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, #1565c0, #42a5f5);
+      color: var(--white);
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: opacity 0.3s;
+    }
+    .login-btn:hover { opacity: 0.9; }
+    .login-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .error-msg {
+      color: #d32f2f;
+      font-size: 0.85rem;
+      margin-top: var(--spacing-sm);
+      display: none;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: var(--spacing-md);
+      color: var(--text-light);
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-header">
+      <div class="icon">&#x1F9D1;&#x200D;&#x1F3EB;</div>
+      <h1>Coach Login</h1>
+      <p>コーチ管理画面</p>
+    </div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="email">メールアドレス</label>
+        <input type="email" id="email" placeholder="coach@example.com" required>
+      </div>
+      <div class="form-group">
+        <label for="password">パスワード</label>
+        <input type="password" id="password" placeholder="パスワード" required>
+      </div>
+      <button type="submit" class="login-btn" id="loginBtn">ログイン</button>
+      <div class="error-msg" id="errorMsg"></div>
+    </form>
+
+    <a href="../index.html" class="back-link">メンバーページに戻る</a>
+  </div>
+
+  <script>
+    // 既にログイン済みならダッシュボードへ
+    const saved = localStorage.getItem('selfUnderstanding_coachUser');
+    if (saved) {
+      window.location.href = 'admin-dashboard.html';
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const btn = document.getElementById('loginBtn');
+      const errorMsg = document.getElementById('errorMsg');
+
+      btn.disabled = true;
+      btn.textContent = 'ログイン中...';
+      errorMsg.style.display = 'none';
+
+      try {
+        const response = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'ログインに失敗しました');
+        }
+
+        // コーチ情報を保存
+        localStorage.setItem('selfUnderstanding_coachUser', JSON.stringify({
+          userId: data.userId,
+          name: data.name,
+          email: data.email,
+          role: data.role
+        }));
+
+        window.location.href = 'admin-dashboard.html';
+
+      } catch (error) {
+        errorMsg.textContent = error.message;
+        errorMsg.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'ログイン';
+      }
+    });
+  </script>
+</body>
+</html>

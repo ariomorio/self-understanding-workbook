@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>コーチダッシュボード | 自己理解の教科書</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .admin-header {
+      background: linear-gradient(135deg, #1565c0, #42a5f5);
+      padding: var(--spacing-lg) var(--spacing-md);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 0 0 20px 20px;
+      margin-bottom: var(--spacing-lg);
+    }
+    .admin-header .coach-info h1 {
+      font-size: 1.2rem;
+      margin-bottom: 4px;
+    }
+    .admin-header .coach-info p {
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+    .admin-header .logout-btn {
+      padding: 8px 16px;
+      border: 1px solid rgba(255,255,255,0.5);
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--white);
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .admin-header .logout-btn:hover {
+      background: rgba(255,255,255,0.15);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--spacing-md);
+    }
+    .section-header h2 {
+      font-size: 1.1rem;
+      color: var(--text-dark);
+    }
+    .add-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: #1565c0;
+      color: var(--white);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+    .add-btn:hover { opacity: 0.9; }
+    .member-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md);
+      margin-bottom: var(--spacing-sm);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      cursor: pointer;
+      transition: box-shadow 0.2s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .member-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+    .member-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .member-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .member-info .name {
+      font-weight: bold;
+      color: var(--text-dark);
+      margin-bottom: 2px;
+    }
+    .member-info .email {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .member-arrow {
+      color: #bbb;
+      font-size: 1.2rem;
+    }
+    .empty-state {
+      text-align: center;
+      padding: var(--spacing-xl);
+      color: var(--text-light);
+    }
+    .empty-state .icon { font-size: 3rem; margin-bottom: var(--spacing-sm); }
+    .loading {
+      text-align: center;
+      padding: var(--spacing-xl);
+      color: var(--text-light);
+    }
+
+    /* モーダル */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    .modal h3 {
+      margin-bottom: var(--spacing-md);
+      color: var(--text-dark);
+    }
+    .modal input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      margin-bottom: var(--spacing-md);
+      box-sizing: border-box;
+    }
+    .modal input:focus {
+      outline: none;
+      border-color: #1565c0;
+    }
+    .modal-actions {
+      display: flex;
+      gap: var(--spacing-sm);
+      justify-content: flex-end;
+    }
+    .modal-actions button {
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      cursor: pointer;
+      border: none;
+    }
+    .modal-cancel {
+      background: #e0e0e0;
+      color: var(--text-dark);
+    }
+    .modal-submit {
+      background: #1565c0;
+      color: var(--white);
+      font-weight: bold;
+    }
+    .modal-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .modal-error {
+      color: #d32f2f;
+      font-size: 0.85rem;
+      margin-bottom: var(--spacing-sm);
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-header">
+    <div class="coach-info">
+      <h1 id="coachName">Loading...</h1>
+      <p id="coachEmail"></p>
+    </div>
+    <button class="logout-btn" id="logoutBtn">Logout</button>
+  </div>
+
+  <div class="container">
+    <div class="section-header">
+      <h2>Members</h2>
+      <button class="add-btn" id="addMemberBtn">+ Add</button>
+    </div>
+
+    <div id="membersList">
+      <div class="loading">Loading...</div>
+    </div>
+  </div>
+
+  <!-- メンバー追加モーダル -->
+  <div class="modal-overlay" id="addModal">
+    <div class="modal">
+      <h3>Add Member</h3>
+      <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: var(--spacing-md);">
+        Member's registered email address
+      </p>
+      <input type="email" id="memberEmail" placeholder="member@example.com">
+      <div class="modal-error" id="modalError"></div>
+      <div class="modal-actions">
+        <button class="modal-cancel" id="modalCancel">Cancel</button>
+        <button class="modal-submit" id="modalSubmit">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/admin-auth.js"></script>
+  <script src="../js/admin-api.js"></script>
+  <script>
+    let coach = null;
+
+    async function init() {
+      // コーチ認証チェック
+      coach = AdminAuth.getCoach();
+      if (!coach) {
+        window.location.href = 'admin-login.html';
+        return;
+      }
+
+      // UI にコーチ情報を表示
+      document.getElementById('coachName').textContent = coach.name;
+      document.getElementById('coachEmail').textContent = coach.email;
+
+      // サーバー側で認証を検証（バックグラウンド）
+      const result = await AdminAuth.verify();
+      if (!result.valid) {
+        AdminAuth.logout();
+        return;
+      }
+
+      // メンバー一覧を読み込み
+      await loadMembers();
+    }
+
+    async function loadMembers() {
+      const listEl = document.getElementById('membersList');
+      listEl.innerHTML = '<div class="loading">Loading...</div>';
+
+      try {
+        const data = await AdminAPI.getMembers(coach.userId);
+        renderMembers(data.members);
+      } catch (error) {
+        listEl.innerHTML = `<div class="empty-state"><div class="icon">&#x26A0;&#xFE0F;</div><p>${error.message}</p></div>`;
+      }
+    }
+
+    function renderMembers(members) {
+      const listEl = document.getElementById('membersList');
+
+      if (members.length === 0) {
+        listEl.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">&#x1F465;</div>
+            <p>No members yet.<br>Tap "Add" to assign a member.</p>
+          </div>
+        `;
+        return;
+      }
+
+      listEl.innerHTML = members.map(m => `
+        <a class="member-card" href="admin-member-view.html?member_id=${encodeURIComponent(m.userId)}">
+          <div class="member-avatar">&#x1F9D1;</div>
+          <div class="member-info">
+            <div class="name">${escapeHtml(m.name)}</div>
+            <div class="email">${escapeHtml(m.email)}</div>
+          </div>
+          <div class="member-arrow">&#x203A;</div>
+        </a>
+      `).join('');
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // ログアウト
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+      AdminAuth.logout();
+    });
+
+    // メンバー追加モーダル
+    const modal = document.getElementById('addModal');
+    const emailInput = document.getElementById('memberEmail');
+    const modalError = document.getElementById('modalError');
+    const submitBtn = document.getElementById('modalSubmit');
+
+    document.getElementById('addMemberBtn').addEventListener('click', function() {
+      modal.classList.add('active');
+      emailInput.value = '';
+      modalError.style.display = 'none';
+      emailInput.focus();
+    });
+
+    document.getElementById('modalCancel').addEventListener('click', function() {
+      modal.classList.remove('active');
+    });
+
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) modal.classList.remove('active');
+    });
+
+    submitBtn.addEventListener('click', async function() {
+      const email = emailInput.value.trim();
+      if (!email) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = '...';
+      modalError.style.display = 'none';
+
+      try {
+        await AdminAPI.assignMember(coach.userId, email);
+        modal.classList.remove('active');
+        await loadMembers();
+      } catch (error) {
+        modalError.textContent = error.message;
+        modalError.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Add';
+      }
+    });
+
+    // Enter キーで送信
+    emailInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        submitBtn.click();
+      }
+    });
+
+    // 初期化
+    init();
+  </script>
+</body>
+</html>

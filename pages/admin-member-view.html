@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Member Detail | Coach Dashboard</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .admin-header {
+      background: linear-gradient(135deg, #1565c0, #42a5f5);
+      padding: var(--spacing-md);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      border-radius: 0 0 20px 20px;
+      margin-bottom: var(--spacing-lg);
+    }
+    .back-btn {
+      padding: 8px 12px;
+      border: 1px solid rgba(255,255,255,0.5);
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--white);
+      cursor: pointer;
+      font-size: 0.9rem;
+      text-decoration: none;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.15); }
+    .admin-header .member-title {
+      flex: 1;
+    }
+    .admin-header .member-title h1 {
+      font-size: 1.1rem;
+      margin-bottom: 2px;
+    }
+    .admin-header .member-title p {
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+
+    /* アコーディオン */
+    .accordion {
+      margin-bottom: var(--spacing-sm);
+    }
+    .accordion-header {
+      background: var(--white);
+      padding: var(--spacing-md);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.2s;
+    }
+    .accordion-header:hover {
+      background: #f5f5f5;
+    }
+    .accordion-header .title {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+    .accordion-header .title .icon { font-size: 1.2rem; }
+    .accordion-header .title span { font-weight: bold; color: var(--text-dark); }
+    .accordion-header .status {
+      font-size: 0.8rem;
+      padding: 4px 8px;
+      border-radius: 12px;
+    }
+    .status-filled {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+    .status-empty {
+      background: #f5f5f5;
+      color: #999;
+    }
+    .accordion-header .arrow {
+      color: #bbb;
+      font-size: 1.2rem;
+      transition: transform 0.2s;
+    }
+    .accordion.open .accordion-header .arrow {
+      transform: rotate(90deg);
+    }
+    .accordion-body {
+      display: none;
+      background: var(--white);
+      padding: 0 var(--spacing-md) var(--spacing-md);
+      border-radius: 0 0 var(--radius-md) var(--radius-md);
+      margin-top: -8px;
+      box-shadow: var(--shadow-sm);
+    }
+    .accordion.open .accordion-body {
+      display: block;
+    }
+
+    /* データ表示 */
+    .data-item {
+      padding: var(--spacing-sm) 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .data-item:last-child { border-bottom: none; }
+    .data-label {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-bottom: 4px;
+    }
+    .data-value {
+      font-size: 0.95rem;
+      color: var(--text-dark);
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+    .data-value.empty {
+      color: #ccc;
+      font-style: italic;
+    }
+
+    .loading {
+      text-align: center;
+      padding: var(--spacing-xl);
+      color: var(--text-light);
+    }
+    .error-state {
+      text-align: center;
+      padding: var(--spacing-xl);
+      color: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-header">
+    <a href="admin-dashboard.html" class="back-btn">&larr; Back</a>
+    <div class="member-title">
+      <h1 id="memberName">Loading...</h1>
+      <p id="memberEmail"></p>
+    </div>
+  </div>
+
+  <div class="container" id="content">
+    <div class="loading" id="loadingState">Loading member data...</div>
+  </div>
+
+  <script src="../js/admin-auth.js"></script>
+  <script src="../js/admin-api.js"></script>
+  <script>
+    const WORK_SECTIONS = [
+      {
+        key: 'personality',
+        title: 'Personality',
+        icon: '&#x1F430;',
+        fields: [
+          { key: 'type', label: 'Type' },
+          { key: 'usagi_score', label: 'Usagi Score' },
+          { key: 'kame_score', label: 'Kame Score' },
+          { key: 'kirigirisu_score', label: 'Kirigirisu Score' },
+          { key: 'ari_score', label: 'Ari Score' }
+        ]
+      },
+      {
+        key: 'values',
+        title: 'Values',
+        icon: '&#x2764;&#xFE0F;',
+        fields: [
+          { key: 'q1_satisfied', label: 'Q1: Satisfied moments' },
+          { key: 'q2_angry', label: 'Q2: Angry moments' },
+          { key: 'q3_quit_job', label: 'Q3: Reason to quit' },
+          { key: 'q6_respect', label: 'Q6: Respected person' },
+          { key: 'q8_selected_values', label: 'Q8: Selected values', isJson: true },
+          { key: 'q10_priority', label: 'Q10: Priority ranking', isJson: true },
+          { key: 'summary', label: 'Summary' }
+        ]
+      },
+      {
+        key: 'talent',
+        title: 'Talent',
+        icon: '&#x1F31F;',
+        fields: [
+          { key: 'q1_thanked', label: 'Q1: Thanked for' },
+          { key: 'q2_surprised', label: 'Q2: Surprised others' },
+          { key: 'q3_cant_help', label: "Q3: Can't help doing" },
+          { key: 'q4_absorbed', label: 'Q4: Get absorbed in' },
+          { key: 'q5_not_aware', label: 'Q5: Not aware of' },
+          { key: 'q7_selected_talents', label: 'Q7: Selected talents', isJson: true },
+          { key: 'q8_priority', label: 'Q8: Priority ranking', isJson: true },
+          { key: 'q9_summary', label: 'Q9: Summary' }
+        ]
+      },
+      {
+        key: 'passion',
+        title: 'Passion',
+        icon: '&#x1F525;',
+        fields: [
+          { key: 'q1_youtube', label: 'Q1: YouTube topics' },
+          { key: 'q2_talk', label: 'Q2: Talk endlessly' },
+          { key: 'q3_free', label: 'Q3: Free to do anything' },
+          { key: 'q4_curious', label: 'Q4: Most curious' },
+          { key: 'q5_told', label: 'Q5: Others say' },
+          { key: 'q6_searched', label: 'Q6: Searched often' },
+          { key: 'q7_uninstructed', label: 'Q7: Do without being told' },
+          { key: 'q8_most_curious', label: 'Q8: Most curious thing' },
+          { key: 'q9_episodes', label: 'Q9: Episodes' },
+          { key: 'q10_common', label: 'Q10: Common thread' },
+          { key: 'q11_keywords', label: 'Q11: Keywords' },
+          { key: 'q12_state', label: 'Q12: Ideal state' },
+          { key: 'q13_daily_change', label: 'Q13: Daily change' },
+          { key: 'q14_shape', label: 'Q14: Give it shape' },
+          { key: 'passion_manual', label: 'Passion manual' }
+        ]
+      },
+      {
+        key: 'mission',
+        title: 'Mission',
+        icon: '&#x1F9ED;',
+        fields: [
+          { key: 'valley1_json', label: 'Valley 1', isJson: true },
+          { key: 'valley2_json', label: 'Valley 2', isJson: true },
+          { key: 'valley3_json', label: 'Valley 3', isJson: true },
+          { key: 'valley_summary', label: 'Valley summary' },
+          { key: 'mountain1_json', label: 'Mountain 1', isJson: true },
+          { key: 'mountain2_json', label: 'Mountain 2', isJson: true },
+          { key: 'mountain3_json', label: 'Mountain 3', isJson: true },
+          { key: 'mountain_summary', label: 'Mountain summary' },
+          { key: 'core_words', label: 'Core words' },
+          { key: 'verbalize', label: 'Verbalize' },
+          { key: 'life_purpose', label: 'Life purpose' },
+          { key: 'life_mission', label: 'Life mission' },
+          { key: 'life_compass', label: 'Life compass' }
+        ]
+      },
+      {
+        key: 'lifeManual',
+        title: 'Life Manual',
+        icon: '&#x1F331;',
+        fields: [
+          { key: 'item1_character', label: '1. Character' },
+          { key: 'item2_strength', label: '2. Strength' },
+          { key: 'item3_challenge', label: '3. Challenge' },
+          { key: 'item4_trigger', label: '4. Trigger & recovery' },
+          { key: 'item5_values_top5', label: '5. Values TOP5' },
+          { key: 'item6_passion_theme', label: '6. Passion theme' },
+          { key: 'item7_work_style', label: '7. Work style' },
+          { key: 'item8_lifestyle', label: '8. Lifestyle' },
+          { key: 'item9_sns_theme', label: '9. SNS theme' },
+          { key: 'item10_target', label: '10. Target audience' },
+          { key: 'item11_pain', label: '11. Their pain' },
+          { key: 'item12_value', label: '12. Value to deliver' },
+          { key: 'item13_service', label: '13. Service idea' },
+          { key: 'final_manual', label: 'Final manual' }
+        ]
+      }
+    ];
+
+    async function init() {
+      // コーチ認証チェック
+      const coach = AdminAuth.getCoach();
+      if (!coach) {
+        window.location.href = 'admin-login.html';
+        return;
+      }
+
+      // URLからメンバーIDを取得
+      const params = new URLSearchParams(window.location.search);
+      const memberId = params.get('member_id');
+      if (!memberId) {
+        document.getElementById('loadingState').innerHTML = '<div class="error-state">Member ID is not specified.</div>';
+        return;
+      }
+
+      try {
+        const data = await AdminAPI.getMemberData(coach.userId, memberId);
+
+        document.getElementById('memberName').textContent = data.memberName || 'Member';
+        document.getElementById('memberEmail').textContent = data.memberEmail || '';
+
+        renderWorkData(data);
+      } catch (error) {
+        document.getElementById('loadingState').innerHTML = `<div class="error-state">${escapeHtml(error.message)}</div>`;
+      }
+    }
+
+    function renderWorkData(data) {
+      const content = document.getElementById('content');
+      content.innerHTML = '';
+
+      WORK_SECTIONS.forEach(section => {
+        const workData = data[section.key];
+        const hasData = workData && Object.keys(workData).some(k => {
+          if (k === 'user_id' || k === 'updated_at') return false;
+          const val = workData[k];
+          return val && val !== '' && val !== '{}' && val !== '[]';
+        });
+
+        const accordion = document.createElement('div');
+        accordion.className = 'accordion';
+        if (hasData) accordion.className += ' open';
+
+        const statusClass = hasData ? 'status-filled' : 'status-empty';
+        const statusText = hasData ? 'Filled' : 'Empty';
+
+        accordion.innerHTML = `
+          <div class="accordion-header">
+            <div class="title">
+              <span class="icon">${section.icon}</span>
+              <span>${section.title}</span>
+            </div>
+            <span class="status ${statusClass}">${statusText}</span>
+            <span class="arrow">&#x203A;</span>
+          </div>
+          <div class="accordion-body">
+            ${hasData ? renderFields(section.fields, workData) : '<p style="color: #999; padding-top: var(--spacing-sm);">No data yet.</p>'}
+          </div>
+        `;
+
+        accordion.querySelector('.accordion-header').addEventListener('click', function() {
+          accordion.classList.toggle('open');
+        });
+
+        content.appendChild(accordion);
+      });
+    }
+
+    function renderFields(fields, data) {
+      if (!data) return '<p style="color: #999;">No data</p>';
+
+      return fields.map(f => {
+        let value = getFieldValue(data[f.key]);
+
+        if (f.isJson && value) {
+          try {
+            const parsed = typeof value === 'string' ? JSON.parse(value) : value;
+            if (Array.isArray(parsed)) {
+              value = parsed.map((item, i) => {
+                if (typeof item === 'object') return JSON.stringify(item, null, 2);
+                return `${i + 1}. ${item}`;
+              }).join('\n');
+            } else if (typeof parsed === 'object') {
+              value = Object.entries(parsed).map(([k, v]) => `${k}: ${v}`).join('\n');
+            }
+          } catch (e) {
+            // keep as is
+          }
+        }
+
+        const isEmpty = !value || value === '0';
+        return `
+          <div class="data-item">
+            <div class="data-label">${escapeHtml(f.label)}</div>
+            <div class="data-value ${isEmpty ? 'empty' : ''}">${isEmpty ? '(empty)' : escapeHtml(String(value))}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function getFieldValue(field) {
+      if (field === null || field === undefined) return '';
+      if (Array.isArray(field)) return field[0]?.text || field[0] || '';
+      return field;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    init();
+  </script>
+</body>
+</html>
