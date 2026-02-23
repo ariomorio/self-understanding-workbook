@@ -123,6 +123,40 @@
         margin-top: var(--spacing-xs);
       }
     }
+
+    .result-images {
+      display: none;
+      margin-top: var(--spacing-lg);
+      padding: var(--spacing-md);
+      background: var(--white);
+      border-radius: var(--radius-md);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .result-images.show {
+      display: block;
+    }
+    .result-images h3 {
+      text-align: center;
+      color: var(--primary-brown);
+      margin-bottom: var(--spacing-md);
+      font-size: 1.1rem;
+    }
+    .result-images-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-md);
+    }
+    .result-images-grid img {
+      width: 100%;
+      height: auto;
+      border-radius: var(--radius-sm);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    @media (max-width: 600px) {
+      .result-images-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -230,6 +264,15 @@
           <li>マイペースが心地よい</li>
         </ul>
         <p><strong>やる気スイッチ：</strong>理想を描いてコツコツ努力を積み重ねる</p>
+      </div>
+    </div>
+
+    <!-- タイプ別画像 -->
+    <div class="result-images" id="result-images">
+      <h3 id="result-images-title"></h3>
+      <div class="result-images-grid">
+        <img id="type-img-1" src="" alt="" />
+        <img id="type-img-2" src="" alt="" />
       </div>
     </div>
   </div>
@@ -378,6 +421,19 @@
       document.querySelectorAll('.type-card').forEach(card => card.classList.remove('show'));
       const cardId = 'card-' + (behavior === 'うさ' ? 'usa' : 'kame') + (motivation === 'ギリス' ? 'giri' : 'ari');
       document.getElementById(cardId).classList.add('show');
+
+      // タイプ別画像を表示
+      var imgSection = document.getElementById('result-images');
+      var imgTitle = document.getElementById('result-images-title');
+      var img1 = document.getElementById('type-img-1');
+      var img2 = document.getElementById('type-img-2');
+      var typeName = type + 'タイプ';
+      imgTitle.textContent = typeName + 'の特徴';
+      img1.src = '../docs/' + encodeURIComponent(typeName + '①') + '.png';
+      img1.alt = typeName + ' 解説1';
+      img2.src = '../docs/' + encodeURIComponent(typeName + '②') + '.png';
+      img2.alt = typeName + ' 解説2';
+      imgSection.classList.add('show');
 
       // スクロール
       resultSection.scrollIntoView({ behavior: 'smooth' });
