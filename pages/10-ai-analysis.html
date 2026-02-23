@@ -40,7 +40,44 @@
     .data-item .value { font-weight: bold; }
     .data-item .value.complete { color: var(--primary-green); }
     .data-item .value.incomplete { color: var(--gray); }
-    .analysis-btn {
+
+    /* ステップカード */
+    .step-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-md);
+      box-shadow: var(--shadow-sm);
+      border-left: 4px solid #673ab7;
+    }
+    .step-card .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #673ab7, #9c27b0);
+      color: white;
+      font-weight: bold;
+      font-size: 0.9rem;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+    .step-card h3 {
+      display: flex;
+      align-items: center;
+      color: #673ab7;
+      margin-bottom: var(--spacing-sm);
+    }
+    .step-card p {
+      color: var(--text-light);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    /* 全出しボタン */
+    .export-all-btn {
       display: block;
       width: 100%;
       background: linear-gradient(135deg, #673ab7, #9c27b0);
@@ -52,116 +89,103 @@
       font-weight: bold;
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
-      margin-bottom: var(--spacing-lg);
     }
-    .analysis-btn:hover:not(:disabled) {
+    .export-all-btn:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-md);
     }
-    .analysis-btn:disabled {
-      background: var(--gray);
-      cursor: not-allowed;
-    }
-    .analysis-result {
-      background: var(--white);
-      border-radius: var(--radius-md);
-      padding: var(--spacing-md);
-      box-shadow: var(--shadow-sm);
-      display: none;
-    }
-    .analysis-result.show { display: block; }
-    .analysis-result h3 {
-      color: #673ab7;
-      margin-bottom: var(--spacing-md);
-      text-align: center;
-    }
-    .analysis-section {
-      background: var(--gray-light);
-      padding: var(--spacing-md);
-      border-radius: var(--radius-sm);
-      margin-bottom: var(--spacing-md);
-    }
-    .analysis-section h4 {
-      color: var(--primary-brown);
-      margin-bottom: var(--spacing-sm);
-    }
-    .export-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--spacing-xs);
-      background: var(--primary-green);
-      color: var(--white);
-      padding: var(--spacing-sm) var(--spacing-md);
-      border: none;
-      border-radius: var(--radius-sm);
-      font-weight: bold;
-      cursor: pointer;
-      margin-right: var(--spacing-sm);
-      margin-bottom: var(--spacing-sm);
-    }
-    .export-btn:hover { opacity: 0.9; }
-    .copy-prompt-box {
+
+    /* 出力ボックス */
+    .output-box {
       background: #f5f5f5;
       padding: var(--spacing-md);
       border-radius: var(--radius-sm);
       margin-top: var(--spacing-md);
       position: relative;
+      display: none;
     }
-    .copy-prompt-box pre {
+    .output-box.show { display: block; }
+    .output-box pre {
       white-space: pre-wrap;
       word-wrap: break-word;
       font-size: 0.85rem;
-      max-height: 300px;
+      max-height: 400px;
       overflow-y: auto;
+      line-height: 1.6;
     }
     .copy-btn {
       position: absolute;
       top: 8px;
       right: 8px;
-      background: var(--primary-orange);
+      background: linear-gradient(135deg, #ff9800, #ffc107);
       color: var(--white);
       border: none;
-      padding: 6px 12px;
+      padding: 8px 16px;
       border-radius: var(--radius-sm);
       cursor: pointer;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
+      font-weight: bold;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    /* マークダウン風の分析結果表示 */
-    #resultContent h1, #resultContent h2, #resultContent h3 {
-      color: #673ab7;
-      margin: var(--spacing-md) 0 var(--spacing-sm);
+    .copy-btn:active { transform: scale(0.95); }
+
+    /* おさるAIリンク */
+    .osaru-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: var(--spacing-md);
+      background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      color: var(--primary-brown);
+      margin-top: var(--spacing-sm);
+      transition: transform 0.2s;
     }
-    #resultContent h1 { font-size: 1.4rem; border-bottom: 2px solid #673ab7; padding-bottom: 8px; }
-    #resultContent h2 { font-size: 1.2rem; }
-    #resultContent h3 { font-size: 1.05rem; }
-    #resultContent ul, #resultContent ol {
-      padding-left: var(--spacing-md);
-      margin: var(--spacing-sm) 0;
+    .osaru-link:hover { transform: translateY(-2px); }
+    .osaru-link .osaru-icon { font-size: 2rem; }
+    .osaru-link .osaru-text { font-weight: bold; }
+    .osaru-link .osaru-sub { font-size: 0.85rem; color: var(--text-light); }
+
+    /* 人生説明書リンク */
+    .manual-link {
+      display: block;
+      text-align: center;
+      padding: var(--spacing-md);
+      background: linear-gradient(135deg, #4caf50, #81c784);
+      color: white;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.05rem;
+      margin-top: var(--spacing-sm);
+      transition: transform 0.2s;
     }
-    #resultContent li { margin-bottom: 6px; line-height: 1.6; }
-    #resultContent p { margin: var(--spacing-sm) 0; line-height: 1.7; }
-    #resultContent strong { color: var(--primary-brown); }
-    #resultContent blockquote {
-      border-left: 4px solid #673ab7;
-      padding: 8px 16px;
-      background: #f3e5f5;
-      border-radius: 0 8px 8px 0;
-      margin: var(--spacing-sm) 0;
+    .manual-link:hover { transform: translateY(-2px); }
+
+    /* コピー済みメッセージ */
+    .copied-msg {
+      display: none;
+      text-align: center;
+      padding: 8px;
+      background: #e8f5e9;
+      color: #2e7d32;
+      border-radius: var(--radius-sm);
+      font-weight: bold;
+      margin-top: 8px;
     }
-    #resultContent hr { border: none; border-top: 1px solid #e0e0e0; margin: var(--spacing-md) 0; }
+    .copied-msg.show { display: block; }
   </style>
 </head>
 <body>
   <header class="page-header" style="background: linear-gradient(135deg, #673ab7, #9c27b0);">
-    <h1><span class="icon">🤖</span> AI自己分析</h1>
+    <h1><span class="icon">🐵</span> AI自己分析</h1>
   </header>
 
   <div class="container">
     <div class="ai-header">
-      <div class="emoji">🤖</div>
-      <h2>入力したデータをAIが総合分析</h2>
-      <p>これまでのワークの回答をもとに<br>あなたの自己理解を深めるサポートをします</p>
+      <div class="emoji">🐵</div>
+      <h2>おさるAIで人生の説明書を作ろう</h2>
+      <p>これまでのワーク内容をおさるAIに渡して<br>あなただけの「人生の説明書」を完成させましょう</p>
     </div>
 
     <!-- データ状況 -->
@@ -188,52 +212,50 @@
         <span class="value" id="status-mission">未入力</span>
       </div>
       <div class="data-item">
-        <span class="label">人生の説明書</span>
-        <span class="value" id="status-life-manual">未入力</span>
+        <span class="label">なりたい自分ワーク</span>
+        <span class="value" id="status-become">未入力</span>
       </div>
     </div>
 
-    <!-- AI分析実行 -->
-    <div class="data-summary">
-      <h3>🎯 AIに分析してもらう</h3>
-      <p style="margin-bottom: var(--spacing-md);">ボタンを押すと、AIがあなたの全ワークデータを分析してレポートを作成します。</p>
-
-      <button class="analysis-btn" id="aiAnalyzeBtn" onclick="runAIAnalysis()">
-        🤖 AIに分析してもらう
+    <!-- STEP 1 -->
+    <div class="step-card">
+      <h3><span class="step-num">1</span> 入力内容を全出しする</h3>
+      <p>これまでのワークで入力した内容をすべてテキストにまとめます。<br>ボタンを押して、表示されたテキストをコピーしてください。</p>
+      <button class="export-all-btn" onclick="exportAllData()">
+        📋 入力内容を全出し
       </button>
-
-      <div id="analysisLoading" style="display:none; text-align:center; padding: var(--spacing-lg);">
-        <div style="width:48px;height:48px;border:4px solid #f0f0f0;border-top-color:#673ab7;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px;"></div>
-        <p style="font-weight:bold;color:#673ab7;">AIが分析中...</p>
-        <p style="font-size:0.9rem;color:var(--text-light);">30秒〜1分ほどお待ちください</p>
+      <div class="output-box" id="outputBox">
+        <button class="copy-btn" onclick="copyOutput()">コピー</button>
+        <pre id="outputText"></pre>
       </div>
-
-      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:var(--spacing-sm);">
-        <button class="export-btn" onclick="generatePrompt()">
-          📋 プロンプトをコピー
-        </button>
-        <button class="export-btn" onclick="exportJSON()" style="background: #2196f3;">
-          💾 JSONエクスポート
-        </button>
-        <button class="export-btn" onclick="clearAllData()" style="background: #f44336;">
-          🗑️ データリセット
-        </button>
-      </div>
-
-      <div class="copy-prompt-box" id="promptBox" style="display: none;">
-        <button class="copy-btn" onclick="copyPrompt()">コピー</button>
-        <pre id="promptText"></pre>
-      </div>
+      <div class="copied-msg" id="copiedMsg">✅ コピーしました！次のステップへ進みましょう</div>
     </div>
 
-    <!-- 分析結果 -->
-    <div class="analysis-result" id="analysisResult">
-      <h3>📈 AI分析レポート</h3>
-      <div class="analysis-section" id="resultContent"></div>
-      <div style="display:flex;gap:8px;margin-top:var(--spacing-md);">
-        <button class="export-btn" onclick="copyAnalysis()" style="background:#673ab7;">📋 分析結果をコピー</button>
-        <button class="export-btn" onclick="runAIAnalysis()" style="background:#ff9800;">🔄 再分析する</button>
+    <!-- STEP 2 -->
+    <div class="step-card">
+      <h3><span class="step-num">2</span> おさるAIに貼り付けて分析</h3>
+      <p>コピーした内容をおさるAIに貼り付けて、<br>「これをもとに人生の説明書を作ってください」と伝えましょう。</p>
+      <div style="background:#f3e5f5; padding:12px; border-radius:8px; font-size:0.9rem; margin-bottom:var(--spacing-sm);">
+        💡 <strong>ヒント</strong>：おさるAIに以下のように伝えると効果的です<br><br>
+        「上記のワーク結果をもとに、13項目の人生の説明書テンプレートを埋めてください。最後にYOUとは？のまとめも作ってください」
       </div>
+      <a href="01-osaru-ai.html" class="osaru-link">
+        <div class="osaru-icon">🐵</div>
+        <div>
+          <div class="osaru-text">おさるAIを開く</div>
+          <div class="osaru-sub">ワーク結果を貼り付けて分析してもらおう</div>
+        </div>
+      </a>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step-card">
+      <h3><span class="step-num">3</span> 人生の説明書に反映する</h3>
+      <p>おさるAIが作ってくれた結果を<br>「人生の説明書」ページに貼り付けて保存しましょう。</p>
+      <p>保存すると、マイコンパスのトップページから<br>美しいビューアーで閲覧・壁紙ダウンロードできるようになります。</p>
+      <a href="09-life-manual.html" class="manual-link">
+        🌱 人生の説明書ページへ
+      </a>
     </div>
   </div>
 
@@ -243,272 +265,218 @@
   </nav>
   <div class="toast" id="toast"></div>
 
-  <!-- Lark API連携 -->
-  <script src="../js/lark-api.js"></script>
-  <script src="../js/lark-config.js"></script>
-  <script src="../js/data-sync.js"></script>
-
   <script>
     // データ状況をチェック
     function checkDataStatus() {
-      const pages = ['personality', 'values', 'talent', 'passion', 'mission', 'life-manual'];
-
-      pages.forEach(page => {
-        const data = localStorage.getItem(`selfUnderstanding_${page}`);
-        const statusEl = document.getElementById(`status-${page}`);
-        if (data) {
-          statusEl.textContent = '✅ 入力済み';
-          statusEl.classList.add('complete');
-        } else {
-          statusEl.textContent = '❌ 未入力';
-          statusEl.classList.add('incomplete');
+      var pages = ['personality', 'values', 'talent', 'passion', 'mission', 'become'];
+      pages.forEach(function(page) {
+        var data = localStorage.getItem('selfUnderstanding_' + page);
+        var statusEl = document.getElementById('status-' + page);
+        if (statusEl) {
+          if (data) {
+            statusEl.textContent = '\u2705 入力済み';
+            statusEl.classList.add('complete');
+          } else {
+            statusEl.textContent = '\u274C 未入力';
+            statusEl.classList.add('incomplete');
+          }
         }
       });
     }
 
-    // すべてのデータを取得
-    function getAllData() {
-      const data = {};
-      const keys = ['personality', 'values', 'talent', 'passion', 'mission', 'life-manual'];
+    // 全データをテキスト形式で出力
+    function exportAllData() {
+      var userName = localStorage.getItem('selfUnderstanding_userName') || '匿名';
+      var output = '';
+      var hasAnyData = false;
 
-      keys.forEach(key => {
-        const stored = localStorage.getItem(`selfUnderstanding_${key}`);
-        if (stored) {
-          data[key] = JSON.parse(stored);
-        }
-      });
-
-      data.userName = localStorage.getItem('selfUnderstanding_userName') || '匿名';
-      return data;
-    }
-
-    // 分析用プロンプトを生成
-    function generatePrompt() {
-      const data = getAllData();
-
-      let prompt = `# 自己理解ワーク 分析依頼\n\n`;
-      prompt += `ユーザー名: ${data.userName}\n\n`;
+      output += '========================================\n';
+      output += userName + ' さんの自己理解ワーク結果\n';
+      output += '========================================\n\n';
 
       // 性格診断
-      if (data.personality) {
-        prompt += `## 性格診断結果\n`;
-        prompt += `- タイプ: ${data.personality.resultType || '未診断'}\n`;
-        prompt += `- うさぎ（短期集中型）: ${data.personality.scores?.usagi || 0}点\n`;
-        prompt += `- かめ（長期分散型）: ${data.personality.scores?.kame || 0}点\n`;
-        prompt += `- キリギリス（快楽追求型）: ${data.personality.scores?.kirigirisu || 0}点\n`;
-        prompt += `- アリ（リスク回避型）: ${data.personality.scores?.ari || 0}点\n\n`;
+      var personality = getStoredData('personality');
+      if (personality) {
+        hasAnyData = true;
+        output += '【性格診断結果】\n';
+        output += 'タイプ: ' + (personality.resultType || '未診断') + '\n';
+        if (personality.scores) {
+          output += 'うさぎ（短期集中型）: ' + (personality.scores.usagi || 0) + '点\n';
+          output += 'かめ（長期分散型）: ' + (personality.scores.kame || 0) + '点\n';
+          output += 'キリギリス（快楽追求型）: ' + (personality.scores.kirigirisu || 0) + '点\n';
+          output += 'アリ（リスク回避型）: ' + (personality.scores.ari || 0) + '点\n';
+        }
+        output += '\n';
       }
 
-      // 価値観
-      if (data.values) {
-        prompt += `## 価値観ワーク\n`;
-        prompt += `### 満たされた体験\n${data.values.q1 || '未入力'}\n\n`;
-        prompt += `### イラっとした体験\n${data.values.q2 || '未入力'}\n\n`;
-        prompt += `### 選んだ価値観\n${data.values.q8?.selected?.join(', ') || '未選択'}\n\n`;
-        prompt += `### 価値観の説明書\n${data.values.summary || '未入力'}\n\n`;
+      // 価値観ワーク
+      var values = getStoredData('values');
+      if (values) {
+        hasAnyData = true;
+        output += '【価値観ワーク】\n';
+        if (values.q1) output += '満たされた体験: ' + values.q1 + '\n';
+        if (values.q2) output += 'イラっとした体験: ' + values.q2 + '\n';
+        if (values.q3) output += '嬉しかった体験: ' + values.q3 + '\n';
+        if (values.q4) output += '許せなかった体験: ' + values.q4 + '\n';
+        if (values.q5) output += '心が動いた瞬間: ' + values.q5 + '\n';
+        if (values.q6) {
+          var q6 = typeof values.q6 === 'string' ? values.q6 : JSON.stringify(values.q6);
+          output += 'ジャンル選択: ' + q6 + '\n';
+        }
+        if (values.q7) output += '優先順位: ' + values.q7 + '\n';
+        if (values.q8) {
+          var selected = values.q8.selected || values.q8;
+          if (Array.isArray(selected)) output += '選んだ価値観: ' + selected.join(', ') + '\n';
+          else output += '選んだ価値観: ' + selected + '\n';
+        }
+        if (values.q9) output += '価値観TOP5: ' + values.q9 + '\n';
+        if (values.q10) output += '価値観の説明書: ' + values.q10 + '\n';
+        if (values.summary) output += '価値観まとめ: ' + values.summary + '\n';
+        output += '\n';
       }
 
-      // 才能
-      if (data.talent) {
-        prompt += `## 才能ワーク\n`;
-        prompt += `### 感謝された体験\n${data.talent.q1 || '未入力'}\n\n`;
-        prompt += `### 選んだ才能\n${data.talent.q7?.join(', ') || '未選択'}\n\n`;
-        prompt += `### 才能の優先順位\n${data.talent.q8 || '未入力'}\n\n`;
-        prompt += `### 才能の説明書\n${data.talent.q9 || '未入力'}\n\n`;
+      // 才能ワーク
+      var talent = getStoredData('talent');
+      if (talent) {
+        hasAnyData = true;
+        output += '【才能ワーク】\n';
+        if (talent.q1) output += '感謝された体験: ' + talent.q1 + '\n';
+        if (talent.q2) output += '自然とやってしまうこと: ' + talent.q2 + '\n';
+        if (talent.q3) output += '人に教えられること: ' + talent.q3 + '\n';
+        if (talent.q4) output += '夢中になれること: ' + talent.q4 + '\n';
+        if (talent.q5) output += '他の人と違うところ: ' + talent.q5 + '\n';
+        if (talent.q6) output += '才能の種: ' + talent.q6 + '\n';
+        if (talent.q7) {
+          var talents = Array.isArray(talent.q7) ? talent.q7.join(', ') : talent.q7;
+          output += '選んだ才能: ' + talents + '\n';
+        }
+        if (talent.q8) output += '才能の優先順位: ' + talent.q8 + '\n';
+        if (talent.q9) output += '才能の説明書: ' + talent.q9 + '\n';
+        output += '\n';
       }
 
-      // 情熱
-      if (data.passion) {
-        prompt += `## 情熱ワーク\n`;
-        prompt += `### つい見てしまうコンテンツ\n${data.passion.q1 || '未入力'}\n\n`;
-        prompt += `### 時間を忘れる話題\n${data.passion.q2 || '未入力'}\n\n`;
-        prompt += `### 情熱チェック結果: ${data.passion.q7?.filter(a => a === 'yes').length || 0}/10 YES\n\n`;
-        prompt += `### 情熱を一言で\n${data.passion.q11 || '未入力'}\n\n`;
+      // 情熱ワーク
+      var passion = getStoredData('passion');
+      if (passion) {
+        hasAnyData = true;
+        output += '【情熱ワーク】\n';
+        if (passion.q1) output += 'つい見てしまうコンテンツ: ' + passion.q1 + '\n';
+        if (passion.q2) output += '時間を忘れる話題: ' + passion.q2 + '\n';
+        if (passion.q3) output += 'お金を使っても惜しくないもの: ' + passion.q3 + '\n';
+        if (passion.q4) output += '人に語りたくなること: ' + passion.q4 + '\n';
+        if (passion.q5) output += '子どもの頃好きだったこと: ' + passion.q5 + '\n';
+        if (passion.q6) output += '情熱キーワード: ' + passion.q6 + '\n';
+        if (passion.q7) {
+          var yesCount = 0;
+          for (var j = 0; j < passion.q7.length; j++) {
+            if (passion.q7[j] === 'yes') yesCount++;
+          }
+          output += '情熱チェック結果: ' + yesCount + '/10 YES\n';
+        }
+        if (passion.q8) output += '情熱テーマ: ' + passion.q8 + '\n';
+        if (passion.q9) output += '情熱の深掘り: ' + passion.q9 + '\n';
+        if (passion.q10) output += '情熱ランキング: ' + passion.q10 + '\n';
+        if (passion.q11) output += '情熱を一言で: ' + passion.q11 + '\n';
+        output += '\n';
       }
 
-      // 使命
-      if (data.mission) {
-        prompt += `## 使命・判断軸ワーク\n`;
-        prompt += `### 自分らしさワード\n${data.mission.coreWords || '未入力'}\n\n`;
-        prompt += `### 人生の目的\n${data.mission.lifePurpose || '未入力'}\n\n`;
-        prompt += `### 人生の使命\n${data.mission.lifeMission || '未入力'}\n\n`;
-        prompt += `### 人生の判断軸\n${data.mission.lifeCompass || '未入力'}\n\n`;
+      // 使命・判断軸ワーク
+      var mission = getStoredData('mission');
+      if (mission) {
+        hasAnyData = true;
+        output += '【使命・判断軸ワーク】\n';
+        if (mission.valley) {
+          var valleys = Array.isArray(mission.valley) ? mission.valley : Object.values(mission.valley || {});
+          var filteredValleys = [];
+          for (var v = 0; v < valleys.length; v++) { if (valleys[v]) filteredValleys.push(valleys[v]); }
+          if (filteredValleys.length) output += '人生の谷: ' + filteredValleys.join(' / ') + '\n';
+        }
+        if (mission.mountain) {
+          var mountains = Array.isArray(mission.mountain) ? mission.mountain : Object.values(mission.mountain || {});
+          var filteredMountains = [];
+          for (var m = 0; m < mountains.length; m++) { if (mountains[m]) filteredMountains.push(mountains[m]); }
+          if (filteredMountains.length) output += '人生の山: ' + filteredMountains.join(' / ') + '\n';
+        }
+        if (mission.coreWords) output += '自分らしさワード: ' + mission.coreWords + '\n';
+        if (mission.lifePurpose) output += '人生の目的: ' + mission.lifePurpose + '\n';
+        if (mission.lifeMission) output += '人生の使命: ' + mission.lifeMission + '\n';
+        if (mission.lifeCompass) output += '人生の判断軸: ' + mission.lifeCompass + '\n';
+        output += '\n';
       }
 
-      // 人生の説明書
-      if (data['life-manual']) {
-        prompt += `## 人生の説明書\n`;
-        prompt += `${data['life-manual'].finalManual || '未入力'}\n\n`;
+      // なりたい自分ワーク
+      var become = getStoredData('become');
+      if (become) {
+        hasAnyData = true;
+        output += '【なりたい自分ワーク】\n';
+        if (become.q1) output += '5年後の理想: ' + become.q1 + '\n';
+        if (become.q2) output += '3年後の理想: ' + become.q2 + '\n';
+        if (become.q3) output += '1年後の理想: ' + become.q3 + '\n';
+        if (become.q4) output += '半年後の理想: ' + become.q4 + '\n';
+        if (become.q5) output += '理想の1日: ' + become.q5 + '\n';
+        if (become.q6) output += '最初の一歩: ' + become.q6 + '\n';
+        output += '\n';
       }
 
-      prompt += `---\n\n`;
-      prompt += `上記の自己理解ワークの結果を分析して、以下についてアドバイスをください：\n`;
-      prompt += `1. この人の強みと特徴のまとめ\n`;
-      prompt += `2. SNS発信で活かせるテーマや切り口\n`;
-      prompt += `3. 商品・サービス化するならどんな形が合いそうか\n`;
-      prompt += `4. 今後のアクションプランの提案\n`;
-
-      document.getElementById('promptText').textContent = prompt;
-      document.getElementById('promptBox').style.display = 'block';
-      showToast('プロンプトを生成しました', 'success');
-    }
-
-    // プロンプトをコピー
-    function copyPrompt() {
-      const text = document.getElementById('promptText').textContent;
-      navigator.clipboard.writeText(text).then(() => {
-        showToast('コピーしました！', 'success');
-      });
-    }
-
-    // JSONエクスポート
-    function exportJSON() {
-      const data = getAllData();
-      const json = JSON.stringify(data, null, 2);
-      const blob = new Blob([json], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `self-understanding-${new Date().toISOString().split('T')[0]}.json`;
-      a.click();
-
-      URL.revokeObjectURL(url);
-      showToast('エクスポートしました', 'success');
-    }
-
-    // データリセット
-    function clearAllData() {
-      if (confirm('すべてのデータを削除しますか？この操作は取り消せません。')) {
-        const keys = ['personality', 'values', 'talent', 'passion', 'mission', 'life-manual', 'userName'];
-        keys.forEach(key => {
-          localStorage.removeItem(`selfUnderstanding_${key}`);
-        });
-        checkDataStatus();
-        showToast('データをリセットしました', 'success');
+      // 人生の説明書（既に入力済みなら表示）
+      var lifeManual = getStoredData('life-manual');
+      if (lifeManual) {
+        hasAnyData = true;
+        output += '【人生の説明書（既存）】\n';
+        for (var i = 1; i <= 13; i++) {
+          if (lifeManual['item' + i]) {
+            output += 'item' + i + ': ' + lifeManual['item' + i] + '\n';
+          }
+        }
+        if (lifeManual.finalManual) {
+          output += 'YOUとは: ' + lifeManual.finalManual + '\n';
+        }
+        output += '\n';
       }
-    }
 
-    // === AI分析を実行 ===
-    async function runAIAnalysis() {
-      const userData = getAllData();
-      const dataKeys = ['personality', 'values', 'talent', 'passion', 'mission', 'life-manual'];
-      const hasData = dataKeys.some(k => userData[k]);
+      output += '========================================\n';
+      output += '以上が自己理解ワークの全結果です。\n';
+      output += 'これをもとに「人生の説明書」の13項目テンプレートを埋めてください。\n';
+      output += '最後に「YOUとは？」のまとめも作ってください。\n';
+      output += '========================================\n';
 
-      if (!hasData) {
+      if (!hasAnyData) {
         showToast('ワークデータがありません。先にワークを完了してください。', 'error');
         return;
       }
 
-      const btn = document.getElementById('aiAnalyzeBtn');
-      const loading = document.getElementById('analysisLoading');
-      const result = document.getElementById('analysisResult');
+      document.getElementById('outputText').textContent = output;
+      document.getElementById('outputBox').classList.add('show');
+      showToast('入力内容を出力しました！', 'success');
+    }
 
-      btn.disabled = true;
-      btn.style.display = 'none';
-      loading.style.display = 'block';
-      result.classList.remove('show');
+    // 出力テキストをコピー
+    function copyOutput() {
+      var text = document.getElementById('outputText').textContent;
+      navigator.clipboard.writeText(text).then(function() {
+        document.getElementById('copiedMsg').classList.add('show');
+        showToast('コピーしました！おさるAIに貼り付けてください', 'success');
+      });
+    }
 
-      try {
-        // 管理画面で設定したカスタムプロンプトがあれば使う
-        const customPrompt = localStorage.getItem('selfUnderstanding_adminPrompt') || undefined;
-
-        const response = await fetch('/api/ai-analyze', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userData, customPrompt })
-        });
-
-        if (!response.ok) {
-          const err = await response.json();
-          throw new Error(err.error || 'AI分析に失敗しました');
-        }
-
-        const data = await response.json();
-        document.getElementById('resultContent').innerHTML = markdownToHtml(data.analysis);
-        result.classList.add('show');
-
-        // 分析結果をlocalStorageに保存
-        localStorage.setItem('selfUnderstanding_aiAnalysis', JSON.stringify({
-          analysis: data.analysis,
-          timestamp: new Date().toISOString()
-        }));
-
-        showToast('分析が完了しました!', 'success');
-
-      } catch (error) {
-        console.error('AI analysis error:', error);
-        showToast(error.message || 'AI分析中にエラーが発生しました', 'error');
-      } finally {
-        btn.disabled = false;
-        btn.style.display = 'block';
-        loading.style.display = 'none';
+    // ヘルパー
+    function getStoredData(key) {
+      var stored = localStorage.getItem('selfUnderstanding_' + key);
+      if (stored) {
+        try { return JSON.parse(stored); }
+        catch(e) { return null; }
       }
+      return null;
     }
 
-    // 分析結果をコピー
-    function copyAnalysis() {
-      const saved = localStorage.getItem('selfUnderstanding_aiAnalysis');
-      if (saved) {
-        const { analysis } = JSON.parse(saved);
-        navigator.clipboard.writeText(analysis).then(() => showToast('コピーしました!', 'success'));
-      }
-    }
-
-    // 簡易マークダウン → HTML変換
-    function markdownToHtml(md) {
-      if (!md) return '';
-      let html = md
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-        // 見出し
-        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
-        // 太字・斜体
-        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.+?)\*/g, '<em>$1</em>')
-        // 水平線
-        .replace(/^---$/gm, '<hr>')
-        // 引用
-        .replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>')
-        // リスト
-        .replace(/^- (.+)$/gm, '<li>$1</li>')
-        .replace(/^(\d+)\. (.+)$/gm, '<li>$2</li>');
-
-      // <li>の連続をul/olで囲む
-      html = html.replace(/((<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>');
-      // 残りの行を<p>で囲む（空行区切り）
-      html = html.split('\n\n').map(block => {
-        block = block.trim();
-        if (!block) return '';
-        if (block.startsWith('<h') || block.startsWith('<ul') || block.startsWith('<ol') || block.startsWith('<hr') || block.startsWith('<blockquote')) return block;
-        return '<p>' + block.replace(/\n/g, '<br>') + '</p>';
-      }).join('\n');
-
-      return html;
-    }
-
-    // 保存済み分析結果を表示
-    function loadSavedAnalysis() {
-      const saved = localStorage.getItem('selfUnderstanding_aiAnalysis');
-      if (saved) {
-        const { analysis } = JSON.parse(saved);
-        document.getElementById('resultContent').innerHTML = markdownToHtml(analysis);
-        document.getElementById('analysisResult').classList.add('show');
-      }
-    }
-
-    function showToast(message, type = 'success') {
-      const toast = document.getElementById('toast');
+    function showToast(message, type) {
+      var toast = document.getElementById('toast');
       toast.textContent = message;
-      toast.className = 'toast ' + type + ' show';
-      setTimeout(() => toast.classList.remove('show'), 3000);
+      toast.className = 'toast ' + (type || 'success') + ' show';
+      setTimeout(function() { toast.classList.remove('show'); }, 3000);
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      checkDataStatus();
-      loadSavedAnalysis();
-    });
+    document.addEventListener('DOMContentLoaded', checkDataStatus);
   </script>
 </body>
 </html>
