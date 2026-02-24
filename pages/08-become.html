@@ -24,7 +24,7 @@
       color: var(--primary-brown); transform: translateY(-2px);
     }
     .period-tab .tab-num {
-      display: block; font-size: 1.3rem; color: var(--primary-brown);
+      font-size: 1.1rem; font-weight: 900; color: var(--primary-brown);
     }
 
     /* セクション切り替え */
@@ -180,14 +180,14 @@
 
     <!-- タブ -->
     <div class="period-tabs" id="periodTabs">
-      <div class="period-tab active" data-period="5year" onclick="switchPeriod('5year')">~<span class="tab-num">5</span>年後</div>
-      <div class="period-tab" data-period="3year" onclick="switchPeriod('3year')">~<span class="tab-num">3</span>年後</div>
-      <div class="period-tab" data-period="1year" onclick="switchPeriod('1year')">~<span class="tab-num">1</span>年後</div>
-      <div class="period-tab" data-period="half" onclick="switchPeriod('half')">~<span class="tab-num">半</span>年後</div>
+      <div class="period-tab active" data-period="half" onclick="switchPeriod('half')">~半年後</div>
+      <div class="period-tab" data-period="1year" onclick="switchPeriod('1year')">~1年後</div>
+      <div class="period-tab" data-period="3year" onclick="switchPeriod('3year')">~3年後</div>
+      <div class="period-tab" data-period="5year" onclick="switchPeriod('5year')">~5年後</div>
     </div>
 
     <!-- 5年後 -->
-    <div class="period-section active" id="section-5year">
+    <div class="period-section" id="section-5year">
       <div class="work-card">
         <div class="work-card-header">「 <span class="period-num">5</span>年後のわたしはこれを実現した」</div>
         <textarea class="work-textarea" id="text-5year" placeholder="5年後に実現したいことを自由に書いてください..." oninput="autoSave()"></textarea>
@@ -244,7 +244,7 @@
     </div>
 
     <!-- 半年後 -->
-    <div class="period-section" id="section-half">
+    <div class="period-section active" id="section-half">
       <div class="work-card">
         <div class="work-card-header">「 <span class="period-num">半年</span>後のわたしはこれを実現した」</div>
         <textarea class="work-textarea" id="text-half" placeholder="半年後に実現したいことを自由に書いてください..." oninput="autoSave()"></textarea>
