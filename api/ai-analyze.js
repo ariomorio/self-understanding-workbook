@@ -9,12 +9,10 @@ const LARK_CONFIG = {
   appToken: process.env.LARK_APP_TOKEN || 'Hr8xbtPOVaiYpasng71jryL9pfh'
 };
 
-const SETTINGS_TABLE_ID = process.env.LARK_SETTINGS_TABLE_ID || '';
+const USERS_TABLE_ID = process.env.LARK_USERS_TABLE_ID || 'tbls6sCjskyHEaHK';
 
-// Lark Baseからプロンプト設定を取得
+// Lark Baseからコーチのカスタムプロンプトを取得
 async function getPromptFromLarkBase() {
-  if (!SETTINGS_TABLE_ID) return null;
-
   try {
     const tokenRes = await fetch('https://open.larksuite.com/open-apis/auth/v3/tenant_access_token/internal', {
       method: 'POST',
@@ -24,7 +22,8 @@ async function getPromptFromLarkBase() {
     const tokenData = await tokenRes.json();
     if (tokenData.code !== 0) return null;
 
-    const url = `https://open.larksuite.com/open-apis/bitable/v1/apps/${LARK_CONFIG.appToken}/tables/${SETTINGS_TABLE_ID}/records/search`;
+    // role=coachのユーザーからai_promptフィールドを取得
+    const url = `https://open.larksuite.com/open-apis/bitable/v1/apps/${LARK_CONFIG.appToken}/tables/${USERS_TABLE_ID}/records/search`;
     const res = await fetch(url, {
       method: 'POST',
       headers: {
@@ -34,16 +33,24 @@ async function getPromptFromLarkBase() {
       body: JSON.stringify({
         filter: {
           conjunction: 'and',
-          conditions: [{ field_name: 'key', operator: 'is', value: ['ai_analysis_prompt'] }]
+          conditions: [{ field_name: 'role', operator: 'is', value: ['coach'] }]
         }
       })
     });
     const data = await res.json();
     const items = data.data?.items || [];
-    if (items.length > 0) {
-      const val = items[0].fields?.value;
-      if (Array.isArray(val)) return val[0]?.text || val[0] || null;
-      return val || null;
+    // 最初に見つかったコーチのプロンプトを使用
+    for (const item of items) {
+      const aiPrompt = item.fields?.ai_prompt;
+      const val = Array.isArray(aiPrompt) ? (aiPrompt[0]?.text || aiPrompt[0]) : aiPrompt;
+      if (val) {
+        try {
+          const parsed = JSON.parse(val);
+          if (parsed.prompt) return parsed.prompt;
+        } catch {
+          return val;
+        }
+      }
     }
   } catch (e) {
     console.error('Failed to get prompt from Lark Base:', e);

@@ -184,6 +184,131 @@
       margin-bottom: var(--spacing-sm);
       display: none;
     }
+
+    /* タブナビゲーション */
+    .tab-nav {
+      display: flex;
+      gap: 0;
+      margin-bottom: var(--spacing-lg);
+      background: #f5f5f5;
+      border-radius: var(--radius-md);
+      padding: 4px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 12px 8px;
+      border: none;
+      border-radius: calc(var(--radius-md) - 2px);
+      background: transparent;
+      color: var(--text-light);
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: var(--white);
+      color: #1565c0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* プロンプト設定 */
+    .prompt-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-md);
+      box-shadow: var(--shadow-sm);
+    }
+    .prompt-card h3 {
+      color: #1565c0;
+      margin-bottom: var(--spacing-sm);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .prompt-textarea {
+      width: 100%;
+      min-height: 300px;
+      padding: var(--spacing-md);
+      border: 2px solid #e0e0e0;
+      border-radius: var(--radius-sm);
+      font-family: monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      resize: vertical;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+    .prompt-textarea:focus {
+      outline: none;
+      border-color: #1565c0;
+    }
+    .prompt-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: var(--spacing-md);
+      flex-wrap: wrap;
+    }
+    .prompt-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: opacity 0.2s;
+    }
+    .prompt-btn:hover { opacity: 0.9; }
+    .prompt-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .prompt-btn.primary { background: #1565c0; color: white; }
+    .prompt-btn.secondary { background: #e0e0e0; color: #333; }
+    .prompt-btn.test { background: #4caf50; color: white; }
+    .char-count {
+      text-align: right;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+    .prompt-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      margin-left: auto;
+    }
+    .prompt-status.saved { background: #e8f5e9; color: #2e7d32; }
+    .prompt-status.default { background: #fff3e0; color: #e65100; }
+    .prompt-status.loading { background: #e3f2fd; color: #1565c0; }
+    .hint-card {
+      background: #e8f5e9;
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md);
+      margin-bottom: var(--spacing-md);
+    }
+    .hint-card h4 { color: #2e7d32; margin-bottom: var(--spacing-sm); }
+    .hint-card li { margin-bottom: 6px; line-height: 1.6; }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: bold;
+      z-index: 2000;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .toast.success { background: #e8f5e9; color: #2e7d32; }
+    .toast.error { background: #ffebee; color: #c62828; }
+    .toast.show { opacity: 1; }
   </style>
 </head>
 <body>
@@ -196,15 +321,62 @@
   </div>
 
   <div class="container">
-    <div class="section-header">
-      <h2>メンバー一覧</h2>
-      <button class="add-btn" id="addMemberBtn">+ 追加</button>
+    <!-- タブナビゲーション -->
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="members" onclick="switchTab('members')">メンバー</button>
+      <button class="tab-btn" data-tab="prompt" onclick="switchTab('prompt')">AIプロンプト設定</button>
     </div>
 
-    <div id="membersList">
-      <div class="loading">読み込み中...</div>
+    <!-- メンバータブ -->
+    <div class="tab-content active" id="tab-members">
+      <div class="section-header">
+        <h2>メンバー一覧</h2>
+        <button class="add-btn" id="addMemberBtn">+ 追加</button>
+      </div>
+      <div id="membersList">
+        <div class="loading">読み込み中...</div>
+      </div>
+    </div>
+
+    <!-- AIプロンプト設定タブ -->
+    <div class="tab-content" id="tab-prompt">
+      <div class="prompt-card">
+        <h3>
+          <span>&#x1F916; AI分析プロンプト</span>
+          <span class="prompt-status loading" id="promptStatus">読み込み中...</span>
+        </h3>
+        <p style="color:var(--text-light); font-size:0.9rem; margin-bottom:var(--spacing-md);">
+          メンバーがAI自己分析を実行する際に使われるシステムプロンプトです。<br>
+          <code>{userName}</code> はメンバーの名前に自動置換されます。
+        </p>
+        <textarea class="prompt-textarea" id="promptEditor" placeholder="プロンプトを読み込み中..."></textarea>
+        <div class="char-count"><span id="charCount">0</span>文字</div>
+        <div class="prompt-actions">
+          <button class="prompt-btn primary" id="savePromptBtn" onclick="savePrompt()">&#x1F4BE; 保存する</button>
+          <button class="prompt-btn secondary" onclick="loadDefaultPrompt()">&#x1F504; デフォルトに戻す</button>
+          <button class="prompt-btn test" onclick="testPrompt()">&#x25B6; テスト分析</button>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <h4>&#x1F4A1; プロンプト設計のヒント</h4>
+        <ul style="padding-left: var(--spacing-md);">
+          <li><strong>分析の切り口を指定</strong>: 「強み」「SNS発信テーマ」「アクションプラン」など</li>
+          <li><strong>口調を指定</strong>: 「暖かく応援する」「論理的に」「友達のように」など</li>
+          <li><strong>フォーマットを指定</strong>: 「マークダウンで」「見出し付きで」「箇条書きで」</li>
+          <li><strong>ペルソナを設定</strong>: 「あなたは自己理解コーチです」など</li>
+          <li><strong>具体例の引用</strong>: 「ユーザーのエピソードを引用して」</li>
+        </ul>
+      </div>
+
+      <!-- テスト結果 -->
+      <div class="prompt-card" id="testResultCard" style="display:none;">
+        <h3>&#x1F9EA; テスト結果</h3>
+        <div id="testResult" style="white-space:pre-wrap; line-height:1.8; font-size:0.9rem; max-height:400px; overflow-y:auto; padding:var(--spacing-md); background:#f5f5f5; border-radius:var(--radius-sm);"></div>
+      </div>
     </div>
   </div>
+  <div class="toast" id="toast"></div>
 
   <!-- メンバー追加モーダル -->
   <div class="modal-overlay" id="addModal">
@@ -347,6 +519,155 @@
         submitBtn.click();
       }
     });
+
+    // ── タブ切り替え ──
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-tab') === tabName);
+      });
+      document.querySelectorAll('.tab-content').forEach(function(content) {
+        content.classList.toggle('active', content.id === 'tab-' + tabName);
+      });
+      // プロンプトタブに切り替えたら読み込み
+      if (tabName === 'prompt' && !promptLoaded) {
+        loadPrompt();
+      }
+    }
+
+    // ── AIプロンプト設定 ──
+    var promptLoaded = false;
+
+    var DEFAULT_PROMPT = 'あなたは自己理解コーチ「おさるAI」です。\n以下のワークデータを分析して、ユーザーの自己理解を深める総合レポートを作成してください。\n\n## 分析してほしいこと\n1. **あなたの強み・特徴まとめ** - 全体を通して見えてくるユーザーの本質的な強みと特徴\n2. **価値観・才能・情熱の一貫性** - 3つの柱がどのように繋がっているか\n3. **SNS発信で活かせるテーマ** - ユーザーに合った発信テーマや切り口の提案\n4. **商品・サービス化の方向性** - ユーザーの強みを活かしたビジネスの可能性\n5. **今後のアクションプラン** - 具体的な次のステップ3つ\n\n## ルール\n- 暖かく、応援する口調で書く\n- 具体的なエピソードを引用しながら分析する\n- マークダウン形式で見出し・箇条書きを使う\n- 「あなた」ではなく入力した名前で呼びかける（名前が無い場合は「あなた」）';
+
+    async function loadPrompt() {
+      if (!coach) return;
+      var editor = document.getElementById('promptEditor');
+      var statusEl = document.getElementById('promptStatus');
+
+      statusEl.className = 'prompt-status loading';
+      statusEl.textContent = '読み込み中...';
+
+      try {
+        var data = await AdminAPI.getPrompt(coach.userId);
+        if (data.prompt) {
+          editor.value = data.prompt;
+          statusEl.className = 'prompt-status saved';
+          statusEl.textContent = '\u2705 カスタム設定';
+        } else {
+          editor.value = DEFAULT_PROMPT;
+          statusEl.className = 'prompt-status default';
+          statusEl.textContent = '\u26A0\uFE0F デフォルト';
+        }
+        promptLoaded = true;
+      } catch (error) {
+        editor.value = DEFAULT_PROMPT;
+        statusEl.className = 'prompt-status default';
+        statusEl.textContent = '\u26A0\uFE0F デフォルト';
+        promptLoaded = true;
+      }
+      updateCharCount();
+    }
+
+    async function savePrompt() {
+      if (!coach) return;
+      var editor = document.getElementById('promptEditor');
+      var text = editor.value.trim();
+      if (!text) {
+        showToast('\u30D7\u30ED\u30F3\u30D7\u30C8\u304C\u7A7A\u3067\u3059', 'error');
+        return;
+      }
+
+      var btn = document.getElementById('savePromptBtn');
+      btn.disabled = true;
+      btn.textContent = '\u4FDD\u5B58\u4E2D...';
+
+      try {
+        await AdminAPI.savePrompt(coach.userId, text);
+        var statusEl = document.getElementById('promptStatus');
+        statusEl.className = 'prompt-status saved';
+        statusEl.textContent = '\u2705 カスタム設定';
+        showToast('\u30D7\u30ED\u30F3\u30D7\u30C8\u3092\u4FDD\u5B58\u3057\u307E\u3057\u305F');
+      } catch (error) {
+        showToast('\u4FDD\u5B58\u306B\u5931\u6557: ' + error.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '\uD83D\uDCBE \u4FDD\u5B58\u3059\u308B';
+      }
+    }
+
+    function loadDefaultPrompt() {
+      if (confirm('\u30C7\u30D5\u30A9\u30EB\u30C8\u306E\u30D7\u30ED\u30F3\u30D7\u30C8\u306B\u623B\u3057\u307E\u3059\u304B\uFF1F')) {
+        document.getElementById('promptEditor').value = DEFAULT_PROMPT;
+        updateCharCount();
+        showToast('\u30C7\u30D5\u30A9\u30EB\u30C8\u306B\u623B\u3057\u307E\u3057\u305F');
+      }
+    }
+
+    async function testPrompt() {
+      if (!coach) return;
+      var prompt = document.getElementById('promptEditor').value.trim();
+      if (!prompt) {
+        showToast('\u30D7\u30ED\u30F3\u30D7\u30C8\u304C\u7A7A\u3067\u3059', 'error');
+        return;
+      }
+
+      showToast('\u30C6\u30B9\u30C8\u5206\u6790\u3092\u958B\u59CB\u3057\u3066\u3044\u307E\u3059...');
+
+      try {
+        var response = await fetch('/api/ai-analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userData: {
+              userName: '\u30C6\u30B9\u30C8\u30E6\u30FC\u30B6\u30FC',
+              values: {
+                q1: '\u30C1\u30FC\u30E0\u3067\u5927\u304D\u306A\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8\u3092\u6210\u529F\u3055\u305B\u305F\u3068\u304D',
+                q8: { selected: ['\u4FE1\u983C', '\u6311\u6226', '\u81EA\u5DF1\u6210\u9577', '\u81EA\u7531', '\u611F\u8B1D\u3055\u308C\u308B'] },
+                summary: '\u4FE1\u983C\u95A2\u4FC2\u3092\u5927\u5207\u306B\u3057\u306A\u304C\u3089\u3001\u6311\u6226\u3092\u901A\u3058\u3066\u6210\u9577\u3057\u3066\u3044\u304D\u305F\u3044'
+              },
+              talent: {
+                q1: '\u4EBA\u306E\u8A71\u3092\u4E01\u5BE7\u306B\u805E\u3044\u3066\u304F\u308C\u308B\u3068\u611F\u8B1D\u3055\u308C\u305F',
+                q7: ['\u50BE\u8074\u529B', '\u30B3\u30DF\u30E5\u30CB\u30B1\u30FC\u30B7\u30E7\u30F3\u529B', '\u5171\u611F\u529B'],
+                q9: '\u4EBA\u306E\u6C17\u6301\u3061\u306B\u5BC4\u308A\u6DFB\u3044\u306A\u304C\u3089\u3001\u89E3\u6C7A\u7B56\u3092\u4E00\u7DD2\u306B\u8003\u3048\u308B\u529B\u304C\u3042\u308B'
+              }
+            },
+            customPrompt: prompt
+          })
+        });
+
+        if (!response.ok) {
+          var err = await response.json();
+          throw new Error(err.error || '\u30C6\u30B9\u30C8\u5931\u6557');
+        }
+
+        var data = await response.json();
+        document.getElementById('testResult').textContent = data.analysis || '\u7D50\u679C\u306A\u3057';
+        document.getElementById('testResultCard').style.display = 'block';
+        showToast('\u30C6\u30B9\u30C8\u5206\u6790\u304C\u5B8C\u4E86\u3057\u307E\u3057\u305F');
+      } catch (error) {
+        showToast('\u30C6\u30B9\u30C8\u5931\u6557: ' + error.message, 'error');
+      }
+    }
+
+    function updateCharCount() {
+      var editor = document.getElementById('promptEditor');
+      if (editor) {
+        document.getElementById('charCount').textContent = editor.value.length;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var editor = document.getElementById('promptEditor');
+      if (editor) editor.addEventListener('input', updateCharCount);
+    });
+
+    function showToast(message, type) {
+      var toast = document.getElementById('toast');
+      if (!toast) return;
+      toast.textContent = message;
+      toast.className = 'toast ' + (type || 'success') + ' show';
+      setTimeout(function() { toast.classList.remove('show'); }, 3000);
+    }
 
     // 初期化
     init();

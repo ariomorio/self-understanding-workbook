@@ -50,6 +50,39 @@ const AdminAPI = {
       throw new Error(err.error || 'メンバーの追加に失敗しました');
     }
     return response.json();
+  },
+
+  /**
+   * AIプロンプト設定を取得
+   * @param {string} coachId
+   * @returns {Promise<{prompt: string|null, updatedAt: string|null}>}
+   */
+  async getPrompt(coachId) {
+    const response = await fetch(`/api/admin/prompt?coach_id=${encodeURIComponent(coachId)}`);
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error || 'プロンプトの取得に失敗しました');
+    }
+    return response.json();
+  },
+
+  /**
+   * AIプロンプト設定を保存
+   * @param {string} coachId
+   * @param {string} prompt
+   * @returns {Promise<{success: boolean}>}
+   */
+  async savePrompt(coachId, prompt) {
+    const response = await fetch('/api/admin/prompt', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ coach_id: coachId, prompt: prompt })
+    });
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error || 'プロンプトの保存に失敗しました');
+    }
+    return response.json();
   }
 };
 
