@@ -7,28 +7,23 @@
   <link rel="stylesheet" href="../css/style.css">
   <style>
     .values-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-      gap: 8px;
-      max-height: 400px;
-      overflow-y: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
       padding: var(--spacing-sm);
       background: var(--gray-light);
       border-radius: var(--radius-sm);
     }
     .value-tag {
-      padding: 6px 4px;
+      padding: 7px 12px;
       background: var(--white);
       border: 2px solid #e0e0e0;
       border-radius: 20px;
-      font-size: 0.72rem;
+      font-size: 0.78rem;
       cursor: pointer;
       text-align: center;
       transition: all 0.2s;
       white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      line-height: 1.4;
     }
     .value-tag:hover {
       border-color: var(--primary-orange);
