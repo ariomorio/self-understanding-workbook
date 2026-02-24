@@ -6,100 +6,139 @@
   <title>なりたい自分ワーク | マイコンパス</title>
   <link rel="stylesheet" href="../css/style.css">
   <style>
-    .external-link-card {
-      background: linear-gradient(135deg, #e91e63, #f06292);
-      padding: var(--spacing-xl);
-      border-radius: var(--radius-lg);
-      text-align: center;
-      color: var(--white);
-      margin-bottom: var(--spacing-lg);
+    /* タブナビゲーション */
+    .period-tabs {
+      display: flex; gap: 4px; margin-bottom: var(--spacing-md);
+      overflow-x: auto; padding-bottom: 4px;
     }
-    .external-link-card .emoji { font-size: 4rem; margin-bottom: var(--spacing-md); }
-    .external-link-card h2 { margin-bottom: var(--spacing-md); }
-    .external-link-card a {
-      display: inline-block;
-      background: var(--white);
-      color: #e91e63;
-      padding: var(--spacing-md) var(--spacing-lg);
-      border-radius: var(--radius-md);
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1.1rem;
-      transition: transform 0.2s, box-shadow 0.2s;
+    .period-tab {
+      flex: 1; min-width: 70px; padding: 10px 8px;
+      background: var(--white); border: 2px solid #e0e0e0;
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      font-weight: bold; font-size: 0.9rem; color: var(--text-light);
+      cursor: pointer; text-align: center; transition: all 0.2s;
+      white-space: nowrap;
     }
-    .external-link-card a:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
+    .period-tab.active {
+      background: var(--primary-yellow); border-color: var(--primary-orange);
+      color: var(--primary-brown); transform: translateY(-2px);
     }
-    .info-card {
-      background: var(--white);
-      padding: var(--spacing-md);
-      border-radius: var(--radius-md);
-      margin-bottom: var(--spacing-md);
+    .period-tab .tab-num {
+      display: block; font-size: 1.3rem; color: var(--primary-brown);
+    }
+
+    /* セクション切り替え */
+    .period-section { display: none; }
+    .period-section.active { display: block; }
+
+    /* ワークカード */
+    .work-card {
+      background: var(--white); border-radius: var(--radius-lg);
+      padding: var(--spacing-lg); margin-bottom: var(--spacing-md);
       box-shadow: var(--shadow-sm);
     }
-    .info-card h3 {
-      color: var(--primary-brown);
+    .work-card-header {
+      display: inline-block;
+      background: var(--primary-yellow); padding: 8px 24px;
+      border-radius: 30px; margin-bottom: var(--spacing-md);
+      font-weight: bold; color: var(--primary-brown); font-size: 1.05rem;
+    }
+    .work-card-header .period-num {
+      font-size: 1.6rem; font-weight: 900;
+    }
+    .work-card h3 {
+      color: var(--primary-brown); font-size: 1.2rem;
       margin-bottom: var(--spacing-sm);
     }
-  </style>
-</head>
-<body>
-  <header class="page-header">
-    <h1><span class="icon">🫶</span> なりたい自分ワーク</h1>
-    <div class="video-section">      <h3>📺 解説動画</h3>      <div class="video-embed">        <iframe src="https://drive.google.com/file/d/14lhkik4eJjwrNhmV4BuilkEjc4m8vKdn/preview" allow="autoplay" allowfullscreen></iframe>      </div>      <div class="video-fallback">        <a href="https://drive.google.com/file/d/14lhkik4eJjwrNhmV4BuilkEjc4m8vKdn/view" target="_blank">動画が表示されない場合はこちら</a>      </div>    </div>
-  </header>
 
-  <div class="container">
-    <div class="external-link-card">
-      <div class="emoji">🫶</div>
-      <h2>このワークはCanvaで行います</h2>
-      <p style="margin-bottom: var(--spacing-md);">5年後〜半年後の目標と理由を<br>ビジュアルで整理できるシートです</p>
-      <a href="https://www.canva.com/design/DAGkYPLYZlM/A2yQMB_SYvp69HqwopVnPw/edit" target="_blank">
-        📝 Canvaでシートを開く
-      </a>
-    </div>
+    /* テキストエリア */
+    .work-textarea {
+      width: 100%; min-height: 200px; padding: var(--spacing-md);
+      border: 2px solid #e8e0d0; border-radius: var(--radius-md);
+      font-family: var(--font-family); font-size: 1rem;
+      line-height: 1.8; resize: vertical; background: #fffdf8;
+      transition: border-color 0.2s;
+    }
+    .work-textarea:focus {
+      outline: none; border-color: var(--primary-orange);
+      box-shadow: 0 0 0 3px rgba(245,166,35,0.15);
+    }
+    .work-textarea::placeholder { color: #ccc; }
 
-    <div class="info-card">
-      <h3>📋 ワークの流れ</h3>
-      <ol style="padding-left: var(--spacing-md);">
-        <li>上のボタンからCanvaのシートを開く</li>
-        <li>シートをコピーして自分用に編集</li>
-        <li>5年後、3年後、1年後、半年後の目標を記入</li>
-        <li>それぞれの目標の「理由」も書き出す</li>
-        <li>完成したらスクショを保存しておこう</li>
-      </ol>
-    </div>
+    /* ビジョンボード */
+    .vision-board {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .vision-slot {
+      aspect-ratio: 4/3; border: 2px dashed #d0c8b8;
+      border-radius: var(--radius-sm); overflow: hidden;
+      cursor: pointer; position: relative;
+      background: linear-gradient(135deg, #f0ebe3 0%, #e8e0d0 100%);
+      transition: all 0.2s; display: flex;
+      align-items: center; justify-content: center;
+    }
+    .vision-slot:hover { border-color: var(--primary-orange); background: #fff5e0; }
+    .vision-slot.has-image { border-style: solid; border-color: var(--primary-orange); }
+    .vision-slot img {
+      width: 100%; height: 100%; object-fit: cover;
+      position: absolute; top: 0; left: 0;
+    }
+    .vision-slot .slot-icon {
+      font-size: 1.5rem; color: #c0b8a8; pointer-events: none;
+    }
+    .vision-slot .slot-remove {
+      position: absolute; top: 4px; right: 4px;
+      background: rgba(0,0,0,0.5); color: white;
+      border: none; border-radius: 50%; width: 24px; height: 24px;
+      font-size: 0.8rem; cursor: pointer; display: none;
+      align-items: center; justify-content: center; z-index: 2;
+    }
+    .vision-slot.has-image .slot-remove { display: flex; }
+    .vision-slot .slot-remove:hover { background: rgba(220,50,50,0.8); }
 
-    <div class="info-card">
-      <h3>💡 このワークのポイント</h3>
-      <ul style="padding-left: var(--spacing-md);">
-        <li><strong>逆算思考</strong>：5年後から逆算して、今何をすべきかが見える</li>
-        <li><strong>理由を書く</strong>：「なぜその目標なのか」を明確にすると、迷いが減る</li>
-        <li><strong>ビジュアル化</strong>：文字だけでなくイメージで整理すると記憶に残りやすい</li>
-      </ul>
-    </div>
+    /* プログレスバー */
+    .progress-bar-wrap {
+      background: #e8e0d0; border-radius: 10px; height: 8px;
+      margin-bottom: var(--spacing-xs); overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%; background: linear-gradient(90deg, var(--primary-orange), var(--primary-yellow));
+      border-radius: 10px; transition: width 0.4s ease;
+    }
+    .progress-text {
+      font-size: 0.85rem; color: var(--text-light); text-align: right;
+    }
 
-    <div class="info-card" style="background: var(--light-yellow);">
-      <h3>📌 次のステップ</h3>
-      <p>このワークが完了したら、いよいよ最後の<strong>「人生の説明書」</strong>を作成します。</p>
-      <p style="margin-top: var(--spacing-sm);">これまでのワーク（価値観・才能・情熱・使命・なりたい自分）をすべて統合して、あなただけの「人生の説明書」を完成させましょう！</p>
-    </div>
-  </div>
+    /* セクションタイトル */
+    .section-divider {
+      display: flex; align-items: center; gap: 8px;
+      margin: var(--spacing-md) 0 var(--spacing-sm);
+      color: var(--primary-brown); font-weight: bold;
+    }
+    .section-divider::before, .section-divider::after {
+      content: ''; flex: 1; height: 1px; background: #e0d8c8;
+    }
 
-  <div class="container" style="margin-top: var(--spacing-md);">
-    <label class="completion-check" id="completionCheck">
-      <input type="checkbox" id="pageComplete" onchange="toggleComplete()">
-      <span class="checkmark"></span>
-      <span class="check-label">このワークを完了しました</span>
-    </label>
-  </div>
+    /* 保存インジケータ */
+    .save-indicator {
+      position: fixed; bottom: 80px; right: 16px;
+      background: var(--primary-green); color: white;
+      padding: 8px 16px; border-radius: 20px;
+      font-size: 0.85rem; box-shadow: var(--shadow-md);
+      opacity: 0; transition: opacity 0.3s; pointer-events: none;
+      z-index: 100;
+    }
+    .save-indicator.show { opacity: 1; }
 
-  <style>
+    .hidden-input { display: none; }
+
+    /* 完了チェック */
     .completion-check {
       display: flex; align-items: center; gap: 12px; padding: 16px;
       background: var(--white); border: 2px solid #e0e0e0; border-radius: 12px;
       cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm);
+      margin-top: var(--spacing-md);
     }
     .completion-check:hover { border-color: var(--primary-orange); }
     .completion-check.checked { background: var(--light-green); border-color: #4caf50; }
@@ -112,32 +151,369 @@
     .completion-check.checked .checkmark { background: #4caf50; border-color: #4caf50; color: white; }
     .completion-check .check-label { font-weight: bold; color: var(--primary-brown); }
   </style>
+</head>
+<body>
+  <header class="page-header">
+    <h1><span class="icon">&#x1FAF6;</span> なりたい自分ワーク</h1>
+    <div class="video-section">
+      <h3>&#x1F4FA; 解説動画</h3>
+      <div class="video-embed">
+        <iframe src="https://drive.google.com/file/d/14lhkik4eJjwrNhmV4BuilkEjc4m8vKdn/preview" allow="autoplay" allowfullscreen></iframe>
+      </div>
+      <div class="video-fallback">
+        <a href="https://drive.google.com/file/d/14lhkik4eJjwrNhmV4BuilkEjc4m8vKdn/view" target="_blank">動画が表示されない場合はこちら</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- プログレス -->
+    <div class="work-card" style="padding: var(--spacing-md);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+        <strong style="color:var(--primary-brown); font-size:0.9rem;">&#x1F4CA; 進捗</strong>
+        <span class="progress-text" id="progressText">0%</span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- タブ -->
+    <div class="period-tabs" id="periodTabs">
+      <div class="period-tab active" data-period="5year" onclick="switchPeriod('5year')">~<span class="tab-num">5</span>年後</div>
+      <div class="period-tab" data-period="3year" onclick="switchPeriod('3year')">~<span class="tab-num">3</span>年後</div>
+      <div class="period-tab" data-period="1year" onclick="switchPeriod('1year')">~<span class="tab-num">1</span>年後</div>
+      <div class="period-tab" data-period="half" onclick="switchPeriod('half')">~<span class="tab-num">半</span>年後</div>
+    </div>
+
+    <!-- 5年後 -->
+    <div class="period-section active" id="section-5year">
+      <div class="work-card">
+        <div class="work-card-header">「 <span class="period-num">5</span>年後のわたしはこれを実現した」</div>
+        <textarea class="work-textarea" id="text-5year" placeholder="5年後に実現したいことを自由に書いてください..." oninput="autoSave()"></textarea>
+      </div>
+      <div class="work-card">
+        <div class="work-card-header">「 <span class="period-num">5</span>年後のわたしはこれを実現した」</div>
+        <h3>-実現したい理由-</h3>
+        <textarea class="work-textarea" id="reason-5year" placeholder="なぜそれを実現したいのか、理由を書いてください..." oninput="autoSave()"></textarea>
+      </div>
+      <div class="work-card">
+        <div class="work-card-header">「 <span class="period-num">5</span>年後のわたしはこれを実現した」</div>
+        <div class="section-divider">&#x1F5BC;&#xFE0F; ビジョンボード</div>
+        <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:var(--spacing-sm);">タップして画像を追加してください</p>
+        <div class="vision-board" id="board-5year"></div>
+      </div>
+    </div>
+
+    <!-- 3年後 -->
+    <div class="period-section" id="section-3year">
+      <div class="work-card">
+        <div class="work-card-header">「 <span class="period-num">3</span>年後のわたしはこれを実現した」</div>
+        <textarea class="work-textarea" id="text-3year" placeholder="3年後に実現したいことを自由に書いてください..." oninput="autoSave()"></textarea>
+      </div>
+      <div class="work-card">
+        <div class="work-card-header">「 <span class="period-num">3</span>年後のわたしはこれを実現した」</div>
+        <h3>-実現したい理由-</h3>
+        <textarea class="work-textarea" id="reason-3year" placeholder="なぜそれを実現したいのか、理由を書いてください..." oninput="autoSave()"></textarea>
+      </div>
+      <div class="work-card">
+        <div class="work-card-header">「 <span class="period-num">3</span>年後のわたしはこれを実現した」</div>
+        <div class="section-divider">&#x1F5BC;&#xFE0F; ビジョンボード</div>
+        <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:var(--spacing-sm);">タップして画像を追加してください</p>
+        <div class="vision-board" id="board-3year"></div>
+      </div>
+    </div>
+
+    <!-- 1年後 -->
+    <div class="period-section" id="section-1year">
+      <div class="work-card">
+        <div class="work-card-header">「 <span class="period-num">1</span>年後のわたしはこれを実現した」</div>
+        <textarea class="work-textarea" id="text-1year" placeholder="1年後に実現したいことを自由に書いてください..." oninput="autoSave()"></textarea>
+      </div>
+      <div class="work-card">
+        <div class="work-card-header">「 <span class="period-num">1</span>年後のわたしはこれを実現した」</div>
+        <h3>-実現したい理由-</h3>
+        <textarea class="work-textarea" id="reason-1year" placeholder="なぜそれを実現したいのか、理由を書いてください..." oninput="autoSave()"></textarea>
+      </div>
+      <div class="work-card">
+        <div class="work-card-header">「 <span class="period-num">1</span>年後のわたしはこれを実現した」</div>
+        <div class="section-divider">&#x1F5BC;&#xFE0F; ビジョンボード</div>
+        <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:var(--spacing-sm);">タップして画像を追加してください</p>
+        <div class="vision-board" id="board-1year"></div>
+      </div>
+    </div>
+
+    <!-- 半年後 -->
+    <div class="period-section" id="section-half">
+      <div class="work-card">
+        <div class="work-card-header">「 <span class="period-num">半年</span>後のわたしはこれを実現した」</div>
+        <textarea class="work-textarea" id="text-half" placeholder="半年後に実現したいことを自由に書いてください..." oninput="autoSave()"></textarea>
+      </div>
+      <div class="work-card">
+        <div class="work-card-header">「 <span class="period-num">半年</span>後のわたしはこれを実現した」</div>
+        <h3>-実現したい理由-</h3>
+        <textarea class="work-textarea" id="reason-half" placeholder="なぜそれを実現したいのか、理由を書いてください..." oninput="autoSave()"></textarea>
+      </div>
+      <div class="work-card">
+        <div class="work-card-header">「 <span class="period-num">半年</span>後のわたしはこれを実現した」</div>
+        <div class="section-divider">&#x1F5BC;&#xFE0F; ビジョンボード</div>
+        <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:var(--spacing-sm);">タップして画像を追加してください</p>
+        <div class="vision-board" id="board-half"></div>
+      </div>
+    </div>
+
+    <!-- ポイント -->
+    <div class="work-card" style="background: var(--light-yellow);">
+      <h3 style="color:var(--primary-brown);">&#x1F4A1; このワークのポイント</h3>
+      <ul style="padding-left: var(--spacing-md); margin-top: var(--spacing-sm);">
+        <li><strong>逆算思考</strong>：5年後から逆算して、今何をすべきかが見える</li>
+        <li><strong>理由を書く</strong>：「なぜその目標なのか」を明確にすると、迷いが減る</li>
+        <li><strong>ビジュアル化</strong>：画像でイメージを整理すると記憶に残りやすい</li>
+      </ul>
+    </div>
+
+    <!-- 次のステップ -->
+    <div class="work-card">
+      <h3 style="color:var(--primary-brown);">&#x1F4CC; 次のステップ</h3>
+      <p>このワークが完了したら、いよいよ最後の<strong>「人生の説明書」</strong>を作成します。</p>
+      <p style="margin-top: var(--spacing-sm);">これまでのワーク（価値観・才能・情熱・使命・なりたい自分）をすべて統合して、あなただけの「人生の説明書」を完成させましょう！</p>
+    </div>
+
+    <!-- 完了チェック -->
+    <label class="completion-check" id="completionCheck">
+      <input type="checkbox" id="pageComplete" onchange="toggleComplete()">
+      <span class="checkmark"></span>
+      <span class="check-label">このワークを完了しました</span>
+    </label>
+  </div>
+
+  <!-- 保存インジケータ -->
+  <div class="save-indicator" id="saveIndicator">&#x2714; 保存しました</div>
+
+  <!-- 非表示ファイル入力 -->
+  <input type="file" accept="image/*" class="hidden-input" id="imageInput">
 
   <nav class="nav-bottom">
-    <a href="07-mission.html" class="btn btn-secondary">← 前へ</a>
+    <a href="07-mission.html" class="btn btn-secondary">&#x2190; 前へ</a>
     <a href="../index.html" class="btn btn-secondary" style="font-size:0.85rem;">目次</a>
-    <a href="09-life-manual.html" class="btn btn-primary">次へ →</a>
+    <a href="09-life-manual.html" class="btn btn-primary">次へ &#x2192;</a>
   </nav>
 
   <script>
-    const PAGE_KEY = 'selfUnderstanding_become';
-    function toggleComplete() {
-      const checked = document.getElementById('pageComplete').checked;
-      if (checked) {
-        localStorage.setItem(PAGE_KEY, JSON.stringify({ completed: true, timestamp: new Date().toISOString() }));
+    var STORAGE_KEY = 'selfUnderstanding_become';
+    var PAGE_KEY = STORAGE_KEY;
+    var PERIODS = ['5year', '3year', '1year', 'half'];
+    var SLOTS_PER_BOARD = 15;
+    var currentSlotIndex = -1;
+    var currentSlotPeriod = '';
+    var saveTimer = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+      initBoards();
+      loadData();
+      updateCheckUI();
+      updateProgress();
+    });
+
+    function initBoards() {
+      PERIODS.forEach(function(period) {
+        var board = document.getElementById('board-' + period);
+        board.innerHTML = '';
+        for (var i = 0; i < SLOTS_PER_BOARD; i++) {
+          var slot = document.createElement('div');
+          slot.className = 'vision-slot';
+          slot.setAttribute('data-period', period);
+          slot.setAttribute('data-index', String(i));
+          slot.innerHTML = '<span class="slot-icon">+</span><button class="slot-remove">\u00d7</button>';
+          board.appendChild(slot);
+        }
+        board.addEventListener('click', function(e) {
+          var slot = e.target.closest('.vision-slot');
+          if (!slot) return;
+          var p = slot.getAttribute('data-period');
+          var idx = parseInt(slot.getAttribute('data-index'));
+          if (e.target.classList.contains('slot-remove')) {
+            removeImage(p, idx);
+          } else {
+            openImagePicker(p, idx);
+          }
+        });
+      });
+    }
+
+    function switchPeriod(period) {
+      document.querySelectorAll('.period-tab').forEach(function(t) {
+        t.classList.toggle('active', t.getAttribute('data-period') === period);
+      });
+      document.querySelectorAll('.period-section').forEach(function(s) {
+        s.classList.toggle('active', s.id === 'section-' + period);
+      });
+    }
+
+    function openImagePicker(period, index) {
+      currentSlotPeriod = period;
+      currentSlotIndex = index;
+      document.getElementById('imageInput').click();
+    }
+
+    document.getElementById('imageInput').addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        resizeImage(ev.target.result, 400, function(dataUrl) {
+          setSlotImage(currentSlotPeriod, currentSlotIndex, dataUrl);
+          autoSave();
+        });
+      };
+      reader.readAsDataURL(file);
+      e.target.value = '';
+    });
+
+    function resizeImage(dataUrl, maxSize, callback) {
+      var img = new Image();
+      img.onload = function() {
+        var w = img.width, h = img.height;
+        if (w > maxSize || h > maxSize) {
+          var ratio = Math.min(maxSize / w, maxSize / h);
+          w = Math.round(w * ratio);
+          h = Math.round(h * ratio);
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        callback(canvas.toDataURL('image/jpeg', 0.7));
+      };
+      img.src = dataUrl;
+    }
+
+    function setSlotImage(period, index, dataUrl) {
+      var board = document.getElementById('board-' + period);
+      var slot = board.children[index];
+      if (!slot) return;
+      var existingImg = slot.querySelector('img');
+      if (existingImg) {
+        existingImg.src = dataUrl;
       } else {
-        localStorage.removeItem(PAGE_KEY);
+        var img = document.createElement('img');
+        img.src = dataUrl;
+        slot.insertBefore(img, slot.firstChild);
       }
+      slot.classList.add('has-image');
+    }
+
+    function removeImage(period, index) {
+      var board = document.getElementById('board-' + period);
+      var slot = board.children[index];
+      if (!slot) return;
+      var img = slot.querySelector('img');
+      if (img) slot.removeChild(img);
+      slot.classList.remove('has-image');
+      autoSave();
+    }
+
+    function autoSave() {
+      if (saveTimer) clearTimeout(saveTimer);
+      saveTimer = setTimeout(function() {
+        saveData();
+        showSaveIndicator();
+        updateProgress();
+      }, 500);
+    }
+
+    function saveData() {
+      var data = { completed: document.getElementById('pageComplete').checked };
+      PERIODS.forEach(function(period) {
+        var textEl = document.getElementById('text-' + period);
+        var reasonEl = document.getElementById('reason-' + period);
+        data['text_' + period] = textEl ? textEl.value : '';
+        data['reason_' + period] = reasonEl ? reasonEl.value : '';
+        var images = [];
+        var board = document.getElementById('board-' + period);
+        for (var i = 0; i < SLOTS_PER_BOARD; i++) {
+          var img = board.children[i] ? board.children[i].querySelector('img') : null;
+          images.push(img ? img.src : null);
+        }
+        data['images_' + period] = images;
+      });
+      data.timestamp = new Date().toISOString();
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch(e) {
+        PERIODS.forEach(function(period) { delete data['images_' + period]; });
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch(e2) {}
+        alert('\u4fdd\u5b58\u5bb9\u91cf\u304c\u8db3\u308a\u307e\u305b\u3093\u3002\u753b\u50cf\u306f\u4fdd\u5b58\u3055\u308c\u307e\u305b\u3093\u3067\u3057\u305f\u3002');
+      }
+    }
+
+    function loadData() {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      try {
+        var data = JSON.parse(raw);
+        PERIODS.forEach(function(period) {
+          var textEl = document.getElementById('text-' + period);
+          var reasonEl = document.getElementById('reason-' + period);
+          if (textEl && data['text_' + period]) textEl.value = data['text_' + period];
+          if (reasonEl && data['reason_' + period]) reasonEl.value = data['reason_' + period];
+          var images = data['images_' + period];
+          if (images) {
+            for (var i = 0; i < images.length && i < SLOTS_PER_BOARD; i++) {
+              if (images[i]) setSlotImage(period, i, images[i]);
+            }
+          }
+        });
+        if (data.completed) {
+          document.getElementById('pageComplete').checked = true;
+        }
+      } catch(e) { console.error('Failed to load data:', e); }
+    }
+
+    function showSaveIndicator() {
+      var el = document.getElementById('saveIndicator');
+      el.classList.add('show');
+      setTimeout(function() { el.classList.remove('show'); }, 1500);
+    }
+
+    function updateProgress() {
+      var total = PERIODS.length * 2;
+      var filled = 0;
+      PERIODS.forEach(function(period) {
+        var t = document.getElementById('text-' + period);
+        var r = document.getElementById('reason-' + period);
+        if (t && t.value.trim()) filled++;
+        if (r && r.value.trim()) filled++;
+      });
+      var pct = Math.round(filled / total * 100);
+      document.getElementById('progressBar').style.width = pct + '%';
+      document.getElementById('progressText').textContent = pct + '%';
+    }
+
+    function toggleComplete() {
+      autoSave();
       updateCheckUI();
     }
+
     function updateCheckUI() {
-      const data = localStorage.getItem(PAGE_KEY);
-      const el = document.getElementById('completionCheck');
-      const cb = document.getElementById('pageComplete');
-      if (data) { el.classList.add('checked'); el.querySelector('.checkmark').textContent = '\u2714'; cb.checked = true; }
-      else { el.classList.remove('checked'); el.querySelector('.checkmark').textContent = ''; cb.checked = false; }
+      var data = localStorage.getItem(STORAGE_KEY);
+      var el = document.getElementById('completionCheck');
+      var cb = document.getElementById('pageComplete');
+      var isComplete = false;
+      if (data) {
+        try { isComplete = JSON.parse(data).completed; } catch(e) {}
+      }
+      if (isComplete) {
+        el.classList.add('checked');
+        el.querySelector('.checkmark').textContent = '\u2714';
+        cb.checked = true;
+      } else {
+        el.classList.remove('checked');
+        el.querySelector('.checkmark').textContent = '';
+        cb.checked = false;
+      }
     }
-    document.addEventListener('DOMContentLoaded', updateCheckUI);
   </script>
 </body>
 </html>
