@@ -43,14 +43,21 @@ export default async function handler(req, res) {
   try {
     const token = await getAccessToken();
 
-    // Build the Lark API path from the catch-all route
-    const pathSegments = req.query.path;
-    const apiPath = Array.isArray(pathSegments) ? pathSegments.join('/') : pathSegments;
+    // Build the Lark API path
+    // Mode 1: lark_path query param (for deep paths that cause 404 with catch-all)
+    // Mode 2: catch-all path segments (legacy)
+    let apiPath;
+    if (req.query.lark_path) {
+      apiPath = req.query.lark_path;
+    } else {
+      const pathSegments = req.query.path;
+      apiPath = Array.isArray(pathSegments) ? pathSegments.join('/') : pathSegments;
+    }
 
-    // Build query string
+    // Build query string (exclude internal params)
     const queryParams = new URLSearchParams();
     Object.keys(req.query).forEach(key => {
-      if (key !== 'path') {
+      if (key !== 'path' && key !== 'lark_path') {
         queryParams.append(key, req.query[key]);
       }
     });

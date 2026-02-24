@@ -9,7 +9,7 @@ const LarkAPI = {
     appId: '',
     appSecret: '',
     baseUrl: 'https://open.larksuite.com/open-apis',
-    proxyUrl: '/api/lark-proxy', // 単一エンドポイントプロキシ
+    proxyUrl: '/api/lark/proxy', // catch-all route経由のプロキシ
     useProxy: true, // プロキシを使用するか
     appToken: '', // Lark Base App Token
     tableIds: {
@@ -46,7 +46,7 @@ const LarkAPI = {
    */
   getApiUrl(apiPath, extraParams) {
     if (this.config.useProxy) {
-      var params = new URLSearchParams({ path: apiPath });
+      var params = new URLSearchParams({ lark_path: apiPath });
       if (extraParams) {
         Object.keys(extraParams).forEach(function(key) {
           params.append(key, extraParams[key]);
