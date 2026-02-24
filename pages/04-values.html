@@ -25,6 +25,7 @@
       transition: all 0.2s;
       white-space: nowrap;
     }
+    .value-tag.tag-sm { font-size: 0.62rem; }
     .value-tag:hover {
       border-color: var(--primary-orange);
     }
@@ -677,7 +678,7 @@
         if (container) {
           valuesData[category].forEach(value => {
             const tag = document.createElement('div');
-            tag.className = 'value-tag';
+            tag.className = 'value-tag' + (value.length >= 6 ? ' tag-sm' : '');
             tag.textContent = value;
             tag.onclick = () => toggleValue(value, tag);
             container.appendChild(tag);
