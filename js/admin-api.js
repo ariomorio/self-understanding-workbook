@@ -83,6 +83,25 @@ const AdminAPI = {
       throw new Error(err.error || 'プロンプトの保存に失敗しました');
     }
     return response.json();
+  },
+
+  /**
+   * メンバーのパスワードをリセット
+   * @param {string} coachId
+   * @param {string} memberId
+   * @returns {Promise<{success: boolean, newPassword: string, memberName: string}>}
+   */
+  async resetPassword(coachId, memberId) {
+    const response = await fetch('/api/admin/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'reset_password', coach_id: coachId, member_id: memberId })
+    });
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error || 'パスワードリセットに失敗しました');
+    }
+    return response.json();
   }
 };
 

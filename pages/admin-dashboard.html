@@ -105,6 +105,62 @@
       color: #bbb;
       font-size: 1.2rem;
     }
+    .member-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .reset-pw-btn {
+      padding: 6px 10px;
+      border: 1px solid #e57373;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: #e57373;
+      cursor: pointer;
+      font-size: 0.75rem;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .reset-pw-btn:hover {
+      background: #ffebee;
+      border-color: #d32f2f;
+      color: #d32f2f;
+    }
+    .reset-pw-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .pw-result {
+      background: #fff3e0;
+      border: 2px solid #ff9800;
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md);
+      margin-top: var(--spacing-md);
+    }
+    .pw-result .pw-label {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-bottom: 6px;
+    }
+    .pw-result .pw-value {
+      font-family: monospace;
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #e65100;
+      background: #fff;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      text-align: center;
+      letter-spacing: 2px;
+      user-select: all;
+      cursor: pointer;
+    }
+    .pw-result .pw-hint {
+      font-size: 0.8rem;
+      color: #e65100;
+      margin-top: 8px;
+      text-align: center;
+    }
     .empty-state {
       text-align: center;
       padding: var(--spacing-xl);
@@ -394,6 +450,24 @@
     </div>
   </div>
 
+  <!-- パスワードリセット結果モーダル -->
+  <div class="modal-overlay" id="resetPwModal">
+    <div class="modal">
+      <h3 id="resetPwTitle">パスワードリセット</h3>
+      <div id="resetPwBody">
+        <div class="pw-result">
+          <div class="pw-label">新しいパスワード</div>
+          <div class="pw-value" id="resetPwValue" title="タップしてコピー"></div>
+          <div class="pw-hint">タップでコピーできます。メンバーにお伝えください。</div>
+        </div>
+      </div>
+      <div class="modal-actions" style="margin-top:var(--spacing-md);">
+        <button class="modal-submit" onclick="copyPassword()">コピー</button>
+        <button class="modal-cancel" onclick="closeResetModal()">閉じる</button>
+      </div>
+    </div>
+  </div>
+
   <script src="../js/admin-auth.js"></script>
   <script src="../js/admin-api.js"></script>
   <script>
@@ -448,14 +522,19 @@
       }
 
       listEl.innerHTML = members.map(m => `
-        <a class="member-card" href="admin-member-view.html?member_id=${encodeURIComponent(m.userId)}">
-          <div class="member-avatar">&#x1F9D1;</div>
-          <div class="member-info">
-            <div class="name">${escapeHtml(m.name)}</div>
-            <div class="email">${escapeHtml(m.email)}</div>
+        <div class="member-card" style="cursor:default;">
+          <a href="admin-member-view.html?member_id=${encodeURIComponent(m.userId)}" style="display:flex;align-items:center;gap:var(--spacing-md);flex:1;text-decoration:none;color:inherit;min-width:0;">
+            <div class="member-avatar">&#x1F9D1;</div>
+            <div class="member-info">
+              <div class="name">${escapeHtml(m.name)}</div>
+              <div class="email">${escapeHtml(m.email)}</div>
+            </div>
+          </a>
+          <div class="member-actions">
+            <button class="reset-pw-btn" onclick="resetPassword('${escapeHtml(m.userId)}', '${escapeHtml(m.name)}', event)">PW初期化</button>
           </div>
-          <div class="member-arrow">&#x203A;</div>
-        </a>
+          <a href="admin-member-view.html?member_id=${encodeURIComponent(m.userId)}" style="text-decoration:none;color:#bbb;font-size:1.2rem;">&#x203A;</a>
+        </div>
       `).join('');
     }
 
@@ -667,6 +746,58 @@
       toast.textContent = message;
       toast.className = 'toast ' + (type || 'success') + ' show';
       setTimeout(function() { toast.classList.remove('show'); }, 3000);
+    }
+
+    // ── パスワードリセット ──
+    var lastResetPassword = '';
+
+    async function resetPassword(memberId, memberName, event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (!confirm(memberName + ' さんのパスワードを初期化しますか？')) return;
+
+      var btn = event.target;
+      btn.disabled = true;
+      btn.textContent = '処理中...';
+
+      try {
+        var result = await AdminAPI.resetPassword(coach.userId, memberId);
+        lastResetPassword = result.newPassword;
+
+        document.getElementById('resetPwTitle').textContent = result.memberName + ' さんのパスワードをリセットしました';
+        document.getElementById('resetPwValue').textContent = result.newPassword;
+        document.getElementById('resetPwModal').classList.add('active');
+      } catch (error) {
+        showToast('リセット失敗: ' + error.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'PW初期化';
+      }
+    }
+
+    function copyPassword() {
+      if (!lastResetPassword) return;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(lastResetPassword).then(function() {
+          showToast('パスワードをコピーしました');
+        });
+      } else {
+        // fallback
+        var el = document.getElementById('resetPwValue');
+        var range = document.createRange();
+        range.selectNodeContents(el);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        document.execCommand('copy');
+        showToast('パスワードをコピーしました');
+      }
+    }
+
+    function closeResetModal() {
+      document.getElementById('resetPwModal').classList.remove('active');
+      lastResetPassword = '';
     }
 
     // 初期化

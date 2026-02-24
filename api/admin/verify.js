@@ -1,7 +1,13 @@
-// コーチ認証検証 + AIプロンプト設定エンドポイント
+// コーチ認証検証 + AIプロンプト設定 + パスワードリセット
 // POST /api/admin/verify { userId }              → コーチ認証検証
 // POST /api/admin/verify { action: "save_prompt", coach_id, prompt } → プロンプト保存
+// POST /api/admin/verify { action: "reset_password", coach_id, member_id } → パスワードリセット
 // GET  /api/admin/verify?coach_id=xxx            → プロンプト取得
+
+import { scrypt, randomBytes } from 'crypto';
+import { promisify } from 'util';
+
+const scryptAsync = promisify(scrypt);
 
 const LARK_CONFIG = {
   appId: process.env.LARK_APP_ID || 'cli_a9f3f7c00538de1b',
@@ -122,6 +128,53 @@ async function handleSavePrompt(req, res) {
   return res.status(200).json({ success: true, message: 'プロンプトを保存しました' });
 }
 
+// POST: パスワードリセット
+async function handleResetPassword(req, res) {
+  const { coach_id, member_id } = req.body || {};
+  if (!coach_id) return res.status(400).json({ error: 'coach_id は必須です' });
+  if (!member_id) return res.status(400).json({ error: 'member_id は必須です' });
+
+  const token = await getTenantAccessToken();
+
+  // コーチ権限チェック
+  const coaches = await searchUserById(token, coach_id);
+  if (coaches.length === 0) return res.status(404).json({ error: 'コーチが見つかりません' });
+  const coachRole = getFieldValue(coaches[0].fields.role);
+  if (coachRole !== 'coach') return res.status(403).json({ error: 'コーチ権限がありません' });
+
+  // メンバー検索
+  const members = await searchUserById(token, member_id);
+  if (members.length === 0) return res.status(404).json({ error: 'メンバーが見つかりません' });
+
+  // 新パスワード生成（8文字ランダム）
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+  let newPassword = '';
+  const bytes = randomBytes(8);
+  for (let i = 0; i < 8; i++) {
+    newPassword += chars[bytes[i] % chars.length];
+  }
+
+  // ハッシュ化
+  const salt = randomBytes(16).toString('hex');
+  const derivedKey = await scryptAsync(newPassword, salt, 64);
+  const hash = salt + ':' + derivedKey.toString('hex');
+
+  // Lark Baseを更新
+  const recordId = members[0].record_id;
+  await updateRecord(token, recordId, { password_hash: hash });
+
+  const memberName = getFieldValue(members[0].fields.name);
+  const memberEmail = getFieldValue(members[0].fields.email);
+
+  return res.status(200).json({
+    success: true,
+    memberName,
+    memberEmail,
+    newPassword,
+    message: `${memberName}さんのパスワードをリセットしました`
+  });
+}
+
 // POST: コーチ認証検証
 async function handleVerify(req, res) {
   const { userId } = req.body || {};
@@ -167,8 +220,10 @@ export default async function handler(req, res) {
     if (req.method === 'POST') {
       const { action } = req.body || {};
       if (action === 'save_prompt') {
-        // POST with action=save_prompt: プロンプト保存
         return await handleSavePrompt(req, res);
+      }
+      if (action === 'reset_password') {
+        return await handleResetPassword(req, res);
       }
       // POST without action: コーチ認証検証（既存機能）
       return await handleVerify(req, res);
