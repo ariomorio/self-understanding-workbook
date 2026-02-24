@@ -66,6 +66,9 @@ const DataSync = {
     if (syncCount > 0) {
       console.log(`Auto-synced ${syncCount} work types to Lark Base`);
     }
+
+    // 進捗も同期
+    await this._syncProgressToLarkBase();
   },
 
   /**
@@ -490,6 +493,106 @@ const DataSync = {
   },
 
   /**
+   * ページ完了状態を保存（ローカル + Lark Base usersテーブル）
+   * @param {string} pageKey - ページキー（例: 'osaru-ai', 'about', 'become'）
+   * @param {boolean} completed - 完了フラグ
+   */
+  async savePageCompletion(pageKey, completed) {
+    // ローカルストレージに保存
+    const localKey = `selfUnderstanding_${pageKey}`;
+    if (completed) {
+      const existing = localStorage.getItem(localKey);
+      let data;
+      try { data = existing ? JSON.parse(existing) : {}; } catch(e) { data = {}; }
+      data.completed = true;
+      if (!data.timestamp) data.timestamp = new Date().toISOString();
+      localStorage.setItem(localKey, JSON.stringify(data));
+    } else {
+      localStorage.removeItem(localKey);
+    }
+
+    // Lark Base usersテーブルに進捗を同期
+    await this._syncProgressToLarkBase();
+  },
+
+  /**
+   * 全ページの完了状態をLark Base usersテーブルに同期
+   */
+  async _syncProgressToLarkBase() {
+    if (!window.LarkAPI || !window.LARK_CONFIG) return;
+
+    const tableId = window.LARK_CONFIG.tableIds.users;
+    if (!tableId) return;
+
+    // 全ページの完了状態を収集
+    const allPages = ['osaru-ai', 'about', 'personality', 'values', 'talent', 'passion', 'mission', 'become', 'life-manual'];
+    const progress = {};
+    allPages.forEach(page => {
+      const data = localStorage.getItem(`selfUnderstanding_${page}`);
+      progress[page] = !!data;
+    });
+
+    const fields = {
+      user_id: this.userId,
+      progress_json: JSON.stringify(progress),
+      updated_at: Date.now()
+    };
+
+    // ユーザー名も保存
+    const larkUser = localStorage.getItem('selfUnderstanding_larkUser');
+    if (larkUser) {
+      try {
+        const user = JSON.parse(larkUser);
+        if (user.name) fields.user_name = user.name;
+        if (user.email) fields.email = user.email;
+      } catch(e) {}
+    }
+
+    try {
+      const existing = await window.LarkAPI.getRecords(tableId, `CurrentValue.[user_id]="${this.userId}"`);
+      if (existing.length > 0) {
+        await window.LarkAPI.updateRecord(tableId, existing[0].record_id, fields);
+      } else {
+        await window.LarkAPI.createRecord(tableId, fields);
+      }
+      console.log('Progress synced to Lark Base');
+    } catch (error) {
+      console.error('Failed to sync progress to Lark Base:', error);
+    }
+  },
+
+  /**
+   * Lark Baseから全ページ完了状態を復元
+   * @returns {object|null} 復元された進捗データ
+   */
+  async loadProgressFromLarkBase() {
+    if (!window.LarkAPI || !window.LARK_CONFIG) return null;
+
+    const tableId = window.LARK_CONFIG.tableIds.users;
+    if (!tableId) return null;
+
+    try {
+      const records = await window.LarkAPI.getRecords(tableId, `CurrentValue.[user_id]="${this.userId}"`);
+      if (records.length > 0 && records[0].fields.progress_json) {
+        const progress = JSON.parse(records[0].fields.progress_json);
+        // ローカルにないページの完了状態を復元
+        const readOnlyPages = ['osaru-ai', 'about'];
+        readOnlyPages.forEach(page => {
+          const localKey = `selfUnderstanding_${page}`;
+          if (progress[page] && !localStorage.getItem(localKey)) {
+            localStorage.setItem(localKey, JSON.stringify({ completed: true, timestamp: new Date().toISOString() }));
+            console.log(`Restored completion for ${page} from Lark Base`);
+          }
+        });
+        return progress;
+      }
+    } catch (error) {
+      console.error('Failed to load progress from Lark Base:', error);
+    }
+    return null;
+  },
+
+  /**
    * ログイン後の自動同期
    * - Lark Baseに既存データがあれば復元
    * - ローカルにデータがあればアップロード
@@ -501,6 +604,9 @@ const DataSync = {
     }
 
     console.log('Starting post-login sync for user:', this.userId);
+
+    // 進捗データを復元
+    await this.loadProgressFromLarkBase();
 
     // まずクラウドからデータを復元
     const restoredCount = await this.restoreFromLarkBase();
