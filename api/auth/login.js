@@ -2,7 +2,7 @@
 // GET  /api/auth/login → Lark OAuth URL返却
 // POST /api/auth/login → email/password認証
 
-import { scrypt, timingSafeEqual } from 'crypto';
+import { scrypt, timingSafeEqual, randomBytes } from 'crypto';
 import { promisify } from 'util';
 
 const scryptAsync = promisify(scrypt);
@@ -85,11 +85,61 @@ export default async function handler(req, res) {
     return res.status(200).json({ url: authUrl });
   }
 
-  // POST: email/password認証
+  // POST: email/password認証 or パスワードリセット
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const { email, password } = req.body || {};
+    const { email, password, action } = req.body || {};
+
+    // パスワードリセット
+    if (action === 'reset_password') {
+      if (!email) {
+        return res.status(400).json({ error: 'メールアドレスを入力してください' });
+      }
+
+      const token = await getTenantAccessToken();
+      const users = await searchUserByEmail(token, email);
+
+      if (users.length === 0) {
+        return res.status(404).json({ error: 'このメールアドレスのアカウントが見つかりません' });
+      }
+
+      const user = users[0];
+      const fields = user.fields;
+      const userName = getFieldValue(fields.name);
+
+      // 新パスワード生成（8文字ランダム）
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+      let newPassword = '';
+      const bytes = randomBytes(8);
+      for (let i = 0; i < 8; i++) {
+        newPassword += chars[bytes[i] % chars.length];
+      }
+
+      // ハッシュ化して保存
+      const salt = randomBytes(16).toString('hex');
+      const derivedKey = await scryptAsync(newPassword, salt, 64);
+      const hash = salt + ':' + derivedKey.toString('hex');
+
+      const recordId = user.record_id;
+      const updateUrl = `https://open.larksuite.com/open-apis/bitable/v1/apps/${LARK_CONFIG.appToken}/tables/${LARK_CONFIG.usersTableId}/records/${recordId}`;
+      const updateRes = await fetch(updateUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ fields: { password_hash: hash } })
+      });
+      const updateData = await updateRes.json();
+      if (updateData.code !== 0) throw new Error('パスワード更新に失敗しました');
+
+      return res.status(200).json({
+        success: true,
+        name: userName,
+        newPassword
+      });
+    }
 
     if (!email || !password) {
       return res.status(400).json({ error: 'メールアドレスとパスワードを入力してください' });

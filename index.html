@@ -173,6 +173,33 @@
       margin-bottom: 16px;
       display: none;
     }
+    .reset-result {
+      background: #fff3e0;
+      border: 2px solid #ff9800;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .reset-result .pw-display {
+      font-family: monospace;
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #e65100;
+      background: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      letter-spacing: 2px;
+      margin: 8px 0;
+      user-select: all;
+      cursor: pointer;
+    }
+    .reset-result .pw-hint {
+      font-size: 0.8rem;
+      color: #e65100;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -200,7 +227,30 @@
         </div>
         <button id="loginBtn" class="auth-btn">ログイン</button>
         <div class="auth-switch">
+          <a id="showReset" style="font-size:0.85rem;">パスワードを忘れた方はこちら</a>
+        </div>
+        <div class="auth-switch" style="margin-top:8px;">
           アカウントをお持ちでない方は<br><a id="showRegister">アカウント作成</a>
+        </div>
+      </div>
+
+      <!-- パスワードリセットフォーム -->
+      <div id="resetForm" class="login-card" style="display: none;">
+        <h2>パスワード初期化</h2>
+        <p>登録済みのメールアドレスを入力してください。<br>新しいパスワードが発行されます。</p>
+        <div id="resetError" class="auth-error"></div>
+        <div id="resetResult" class="reset-result">
+          <div style="font-size:0.85rem; color:var(--text-light); margin-bottom:4px;">新しいパスワード</div>
+          <div class="pw-display" id="resetPwDisplay" title="タップしてコピー"></div>
+          <div class="pw-hint">このパスワードでログインしてください。<br>タップでコピーできます。</div>
+        </div>
+        <div class="form-group">
+          <label for="resetEmail">メールアドレス</label>
+          <input type="email" id="resetEmail" placeholder="example@mail.com" autocomplete="email">
+        </div>
+        <button id="resetBtn" class="auth-btn" style="background: linear-gradient(135deg, #e57373, #ef5350);">パスワードを初期化する</button>
+        <div class="auth-switch">
+          <a id="backToLogin">ログインに戻る</a>
         </div>
       </div>
 
@@ -421,8 +471,47 @@
 
       document.getElementById('showLogin').addEventListener('click', function() {
         document.getElementById('registerForm').style.display = 'none';
+        document.getElementById('resetForm').style.display = 'none';
         document.getElementById('loginForm').style.display = 'block';
         clearErrors();
+      });
+
+      // パスワードリセット画面切り替え
+      document.getElementById('showReset').addEventListener('click', function() {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('resetForm').style.display = 'block';
+        clearErrors();
+      });
+
+      document.getElementById('backToLogin').addEventListener('click', function() {
+        document.getElementById('resetForm').style.display = 'none';
+        document.getElementById('loginForm').style.display = 'block';
+        clearErrors();
+      });
+
+      // パスワードリセットボタン
+      document.getElementById('resetBtn').addEventListener('click', handleResetPassword);
+      document.getElementById('resetEmail').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') handleResetPassword();
+      });
+
+      // リセット後のパスワードコピー
+      document.getElementById('resetPwDisplay').addEventListener('click', function() {
+        var pw = this.textContent;
+        if (!pw) return;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(pw).then(function() {
+            alert('パスワードをコピーしました');
+          });
+        } else {
+          var range = document.createRange();
+          range.selectNodeContents(document.getElementById('resetPwDisplay'));
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+          document.execCommand('copy');
+          alert('パスワードをコピーしました');
+        }
       });
 
       // ログインボタン
@@ -570,11 +659,62 @@
       }
     }
 
+    // パスワードリセット処理
+    async function handleResetPassword() {
+      const email = document.getElementById('resetEmail').value.trim();
+      const errorEl = document.getElementById('resetError');
+      const resultEl = document.getElementById('resetResult');
+      const btn = document.getElementById('resetBtn');
+
+      errorEl.style.display = 'none';
+      resultEl.style.display = 'none';
+
+      if (!email) {
+        errorEl.textContent = 'メールアドレスを入力してください';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      if (!confirm('パスワードを初期化しますか？\n現在のパスワードは使えなくなります。')) return;
+
+      btn.disabled = true;
+      btn.textContent = '処理中...';
+
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'reset_password', email })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          errorEl.textContent = data.error || 'パスワード初期化に失敗しました';
+          errorEl.style.display = 'block';
+          return;
+        }
+
+        // 成功 - 新パスワードを表示
+        document.getElementById('resetPwDisplay').textContent = data.newPassword;
+        resultEl.style.display = 'block';
+
+      } catch (error) {
+        errorEl.textContent = 'ネットワークエラーが発生しました';
+        errorEl.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'パスワードを初期化する';
+      }
+    }
+
     // エラーメッセージをクリア
     function clearErrors() {
       document.getElementById('loginError').style.display = 'none';
       document.getElementById('registerError').style.display = 'none';
       document.getElementById('registerSuccess').style.display = 'none';
+      document.getElementById('resetError').style.display = 'none';
+      document.getElementById('resetResult').style.display = 'none';
     }
 
     // 同期中オーバーレイ表示
