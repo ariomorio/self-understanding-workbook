@@ -17,14 +17,18 @@
       border-radius: var(--radius-sm);
     }
     .value-tag {
-      padding: 8px 12px;
+      padding: 6px 4px;
       background: var(--white);
       border: 2px solid #e0e0e0;
       border-radius: 20px;
-      font-size: 0.85rem;
+      font-size: 0.72rem;
       cursor: pointer;
       text-align: center;
       transition: all 0.2s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.4;
     }
     .value-tag:hover {
       border-color: var(--primary-orange);
