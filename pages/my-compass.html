@@ -29,7 +29,7 @@
     <!-- ヘッダー -->
     <div class="compass-header">
       <a href="../index.html">&#9664; 目次</a>
-      <span class="compass-page-indicator" id="pageIndicator">1 / 8</span>
+      <span class="compass-page-indicator" id="pageIndicator">1 / 15</span>
     </div>
 
     <!-- ページエリア -->
@@ -46,13 +46,34 @@
       <button class="compass-arrow" id="nextBtn">&#9654;</button>
     </nav>
 
+    <!-- 一括ダウンロード -->
+    <div style="text-align: center; padding: var(--spacing-md); margin-bottom: var(--spacing-md);">
+      <p style="color: var(--primary-brown, #8b5a2b); margin-bottom: var(--spacing-sm); font-weight: bold;">&#128229; ワークシートをダウンロード</p>
+      <div style="display: flex; gap: var(--spacing-sm); justify-content: center; flex-wrap: wrap;">
+        <button onclick="downloadAllPDF()" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: linear-gradient(135deg, #8b5a2b, #c49a6c); color: white; border: none; border-radius: 20px; font-size: 0.95rem; font-weight: bold; cursor: pointer; box-shadow: 0 2px 8px rgba(139,90,43,0.3);">
+          &#128196; 全ワーク一括PDF
+        </button>
+      </div>
+      <div id="downloadProgress" style="display:none; margin-top: var(--spacing-sm); max-width: 300px; margin-left: auto; margin-right: auto;">
+        <div style="background: #e0e0e0; border-radius: 10px; height: 8px; overflow: hidden;">
+          <div id="downloadProgressBar" style="height: 100%; background: linear-gradient(90deg, #ff9800, #ffb74d); border-radius: 10px; width: 0%; transition: width 0.3s;"></div>
+        </div>
+        <p id="downloadProgressText" style="font-size: 0.85rem; color: #666; margin-top: 4px;">準備中...</p>
+      </div>
+    </div>
+
     <!-- ダウンロードFAB -->
-    <button class="compass-download-fab" id="downloadBtn" title="この画像を壁紙として保存">
+    <button class="compass-download-fab" id="downloadBtn" title="この画像を壁紙として保存" style="bottom: 120px;">
       &#11015;
+    </button>
+    <!-- PDF FAB -->
+    <button class="compass-download-fab compass-pdf-fab" id="pdfBtn" title="全ページをPDFで保存">
+      PDF
     </button>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
   <script src="../js/my-compass.js"></script>
 </body>
 </html>

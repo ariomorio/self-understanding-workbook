@@ -216,6 +216,7 @@
       </div>
     </div>
 
+    <div id="captureArea">
     <!-- 診断結果 -->
     <div class="result-section" id="result-section" style="display: none;">
       <p>あなたの性格タイプは...</p>
@@ -275,6 +276,22 @@
         <img id="type-img-2" src="" alt="" />
       </div>
     </div>
+    </div><!-- /captureArea -->
+
+    <!-- ダウンロードボタン -->
+    <div class="download-section" id="download-section" style="display: none;">
+      <div style="text-align: center; margin-top: var(--spacing-lg);">
+        <p style="color: var(--primary-brown); margin-bottom: var(--spacing-sm);"><strong>診断結果を保存しよう！</strong></p>
+        <div style="display: flex; gap: var(--spacing-sm); justify-content: center; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="downloadResultPNG()" style="display: inline-flex; align-items: center; gap: 8px;">
+            <span>📷</span> 画像で保存（PNG）
+          </button>
+          <button class="btn btn-secondary" onclick="downloadResultPDF()" style="display: inline-flex; align-items: center; gap: 8px;">
+            <span>📄</span> PDFで保存
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- 下部ナビゲーション -->
@@ -285,6 +302,10 @@
   </nav>
 
   <div class="toast" id="toast"></div>
+
+  <!-- ダウンロード機能ライブラリ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
 
   <!-- Lark API連携 -->
   <script src="../js/lark-api.js"></script>
@@ -435,8 +456,69 @@
       img2.alt = typeName + ' 解説2';
       imgSection.classList.add('show');
 
+      // ダウンロードボタンを表示
+      document.getElementById('download-section').style.display = 'block';
+
       // スクロール
       resultSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ダウンロード機能
+    async function downloadResultPNG() {
+      var captureEl = document.getElementById('captureArea');
+      if (!captureEl) return;
+
+      showToast('画像を生成中...', 'info');
+
+      try {
+        var canvas = await html2canvas(captureEl, {
+          scale: 2,
+          backgroundColor: '#f5f0e8',
+          useCORS: true,
+          logging: false
+        });
+
+        var link = document.createElement('a');
+        var typeName = document.getElementById('result-type').textContent || '性格診断';
+        link.download = '性格診断_' + typeName + '.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast('ダウンロードしました！', 'success');
+      } catch(e) {
+        console.error('PNG generation failed:', e);
+        showToast('ダウンロードに失敗しました', 'error');
+      }
+    }
+
+    async function downloadResultPDF() {
+      var captureEl = document.getElementById('captureArea');
+      if (!captureEl) return;
+
+      showToast('PDF生成中...', 'info');
+
+      try {
+        var canvas = await html2canvas(captureEl, {
+          scale: 2,
+          backgroundColor: '#f5f0e8',
+          useCORS: true,
+          logging: false
+        });
+
+        var imgData = canvas.toDataURL('image/jpeg', 0.92);
+        var pdf = new jspdf.jsPDF({
+          orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
+          unit: 'px',
+          format: [canvas.width, canvas.height]
+        });
+        pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
+
+        var typeName = document.getElementById('result-type').textContent || '性格診断';
+        pdf.save('性格診断_' + typeName + '.pdf');
+        showToast('PDFをダウンロードしました！', 'success');
+      } catch(e) {
+        console.error('PDF generation failed:', e);
+        showToast('PDF生成に失敗しました', 'error');
+      }
     }
 
     // データ保存

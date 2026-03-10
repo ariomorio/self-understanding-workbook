@@ -279,3 +279,258 @@
   }
 
 })();
+
+
+// ── 全ワーク一括PDFダウンロード（グローバル関数） ──
+async function downloadAllPDF() {
+  var progressEl = document.getElementById('downloadProgress');
+  var progressBar = document.getElementById('downloadProgressBar');
+  var progressText = document.getElementById('downloadProgressText');
+  progressEl.style.display = 'block';
+  progressBar.style.width = '0%';
+  progressText.textContent = 'PDF生成を準備中...';
+
+  // jsPDF がまだ読み込まれていない場合は動的に読み込む
+  if (typeof jspdf === 'undefined') {
+    var script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js';
+    document.head.appendChild(script);
+    await new Promise(function(resolve, reject) {
+      script.onload = resolve;
+      script.onerror = function() { reject(new Error('jsPDF の読み込みに失敗しました')); };
+    });
+  }
+
+  var pageWidth = 210;
+  var pageHeight = 297;
+  var margin = 15;
+  var contentWidth = pageWidth - margin * 2;
+  var y = margin;
+
+  // ワーク定義
+  var WORK_KEYS = [
+    { key: 'selfUnderstanding_personality', title: '性格診断', emoji: '🐰' },
+    { key: 'selfUnderstanding_values',      title: '価値観ワーク', emoji: '❤️' },
+    { key: 'selfUnderstanding_talent',      title: '才能ワーク', emoji: '🌟' },
+    { key: 'selfUnderstanding_passion',     title: '情熱ワーク', emoji: '🔥' },
+    { key: 'selfUnderstanding_mission',     title: '使命ワーク', emoji: '🧭' },
+    { key: 'selfUnderstanding_become',      title: 'なりたい自分ワーク', emoji: '🫶' },
+    { key: 'selfUnderstanding_life-manual', title: '人生の説明書', emoji: '🌱' }
+  ];
+
+  var totalSteps = WORK_KEYS.length;
+  var userName = localStorage.getItem('selfUnderstanding_userName') || '';
+
+  try {
+    var pdf = new jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+    // ── 表紙ページ ──
+    pdf.setFontSize(26);
+    pdf.setTextColor(93, 78, 55);
+    pdf.text('マイコンパス', pageWidth / 2, 80, { align: 'center' });
+    pdf.setFontSize(13);
+    pdf.setTextColor(140, 123, 107);
+    pdf.text('ー迷わない自分の作り方ー', pageWidth / 2, 92, { align: 'center' });
+
+    if (userName) {
+      pdf.setFontSize(14);
+      pdf.setTextColor(93, 78, 55);
+      pdf.text(userName + ' さん', pageWidth / 2, 118, { align: 'center' });
+    }
+
+    pdf.setFontSize(12);
+    pdf.setTextColor(140, 123, 107);
+    pdf.text('自己理解ワーク 全記録', pageWidth / 2, 132, { align: 'center' });
+
+    var dateStr = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
+    pdf.setFontSize(10);
+    pdf.text('出力日: ' + dateStr, pageWidth / 2, 148, { align: 'center' });
+
+    // 表紙のセパレーター線
+    pdf.setDrawColor(200, 180, 140);
+    pdf.setLineWidth(0.5);
+    pdf.line(margin + 20, 104, pageWidth - margin - 20, 104);
+
+    // ── 各ワークページ ──
+    for (var wi = 0; wi < WORK_KEYS.length; wi++) {
+      var work = WORK_KEYS[wi];
+      var pct = Math.round(((wi + 1) / totalSteps) * 100);
+      progressBar.style.width = pct + '%';
+      progressText.textContent = work.title + ' を処理中... (' + (wi + 1) + '/' + totalSteps + ')';
+
+      // データ取得
+      var raw = localStorage.getItem(work.key);
+      if (!raw) continue;
+
+      var data;
+      try { data = JSON.parse(raw); } catch (e) { continue; }
+
+      // 新規ページ
+      pdf.addPage();
+      y = margin;
+
+      // セクションタイトル
+      pdf.setFontSize(16);
+      pdf.setTextColor(93, 78, 55);
+      pdf.text(work.title, margin, y + 8);
+      y += 16;
+
+      // アクセント線
+      pdf.setDrawColor(255, 200, 100);
+      pdf.setLineWidth(1.5);
+      pdf.line(margin, y, pageWidth - margin, y);
+      y += 8;
+
+      // コンテンツ出力
+      pdf.setFontSize(10);
+      pdf.setTextColor(60, 60, 60);
+
+      // 性格診断は特別処理
+      if (work.key === 'selfUnderstanding_personality') {
+        if (data.resultType) {
+          pdf.setFontSize(13);
+          pdf.setTextColor(200, 130, 30);
+          pdf.text('タイプ: ' + data.resultType, margin, y + 6);
+          y += 14;
+          pdf.setFontSize(10);
+          pdf.setTextColor(60, 60, 60);
+        }
+        if (data.scores) {
+          var scoreItems = [
+            { label: 'うさぎ（短期集中型）', val: data.scores.usagi || 0 },
+            { label: 'かめ（長期分散型）',   val: data.scores.kame || 0 },
+            { label: 'キリギリス（快楽追求型）', val: data.scores.kirigirisu || 0 },
+            { label: 'アリ（リスク回避型）', val: data.scores.ari || 0 }
+          ];
+          scoreItems.forEach(function(s) {
+            pdf.setTextColor(93, 78, 55);
+            pdf.text(s.label + ':', margin, y + 4);
+            pdf.setTextColor(60, 60, 60);
+            pdf.text(String(s.val) + '/25', margin + 80, y + 4);
+            y += 8;
+          });
+        }
+        continue;
+      }
+
+      // 汎用処理: データのキーを順番に出力
+      var keys = Object.keys(data).filter(function(k) {
+        // 除外キー
+        if (k === 'timestamp' || k === 'updated_at' || k === 'user_id') return false;
+        if (k.startsWith('images_') || k.startsWith('imageTokens_')) return false;
+        return true;
+      });
+
+      keys.forEach(function(key) {
+        var val = data[key];
+
+        // 空値スキップ
+        if (val === null || val === undefined || val === '' || val === '[]' || val === '{}') return;
+
+        // 配列・オブジェクトは文字列化
+        if (typeof val === 'object') {
+          try {
+            // 配列の場合は箇条書き風に
+            if (Array.isArray(val)) {
+              var filtered = val.filter(function(v) { return v && String(v).trim(); });
+              if (filtered.length === 0) return;
+              val = filtered.map(function(v, i) { return (i + 1) + '. ' + String(v); }).join('\n');
+            } else {
+              val = JSON.stringify(val, null, 1);
+            }
+          } catch (e) { val = String(val); }
+        }
+        val = String(val).trim();
+        if (!val) return;
+
+        // 長すぎる値はカット
+        if (val.length > 600) val = val.substring(0, 600) + '...';
+
+        // ラベル（キー名を読みやすく変換）
+        var labelMap = {
+          q1: 'Q1', q2: 'Q2', q3: 'Q3', q4: 'Q4', q5: 'Q5',
+          q6: 'Q6', q7: 'Q7', q8: 'Q8', q9: 'Q9', q10: 'Q10',
+          q11: 'Q11', q12: 'Q12', q13: 'Q13', q14: 'Q14',
+          summary: 'まとめ', finalManual: '最終版: 人生の説明書',
+          resultType: 'タイプ', scores: 'スコア',
+          valley_summary: '谷のまとめ', mountain_summary: '山のまとめ',
+          core_words: 'コアワード', verbalize: '言語化',
+          life_purpose: '人生の目的', life_mission: '人生の使命',
+          life_compass: '人生のコンパス',
+          text_5year: '5年後', reason_5year: '5年後の理由',
+          text_3year: '3年後', reason_3year: '3年後の理由',
+          text_1year: '1年後', reason_1year: '1年後の理由',
+          text_half: '半年後', reason_half: '半年後の理由'
+        };
+        var labelText = labelMap[key] || key.replace(/_/g, ' ');
+
+        // ページ溢れチェック
+        if (y > pageHeight - margin - 15) {
+          pdf.addPage();
+          y = margin;
+          // 継続ヘッダー
+          pdf.setFontSize(11);
+          pdf.setTextColor(140, 123, 107);
+          pdf.text(work.title + '（続き）', margin, y + 5);
+          y += 12;
+          pdf.setDrawColor(220, 200, 160);
+          pdf.setLineWidth(0.5);
+          pdf.line(margin, y, pageWidth - margin, y);
+          y += 6;
+          pdf.setFontSize(10);
+          pdf.setTextColor(60, 60, 60);
+        }
+
+        // ラベル出力
+        pdf.setFontSize(8.5);
+        pdf.setTextColor(140, 123, 107);
+        pdf.text(labelText, margin, y + 4);
+        y += 7;
+
+        // 値出力（複数行対応）
+        pdf.setFontSize(10);
+        pdf.setTextColor(50, 50, 50);
+        var lines = pdf.splitTextToSize(val, contentWidth);
+        lines.forEach(function(line) {
+          if (y > pageHeight - margin - 10) {
+            pdf.addPage();
+            y = margin;
+            pdf.setFontSize(11);
+            pdf.setTextColor(140, 123, 107);
+            pdf.text(work.title + '（続き）', margin, y + 5);
+            y += 12;
+            pdf.setDrawColor(220, 200, 160);
+            pdf.setLineWidth(0.5);
+            pdf.line(margin, y, pageWidth - margin, y);
+            y += 6;
+            pdf.setFontSize(10);
+            pdf.setTextColor(50, 50, 50);
+          }
+          pdf.text(line, margin + 3, y + 4);
+          y += 5.5;
+        });
+
+        y += 4; // アイテム間スペース
+      });
+    }
+
+    // 保存
+    progressBar.style.width = '100%';
+    progressText.textContent = 'ダウンロード中...';
+
+    var fileName = 'マイコンパス_全ワーク';
+    if (userName) fileName += '_' + userName;
+    fileName += '.pdf';
+    pdf.save(fileName);
+
+    progressText.textContent = 'ダウンロード完了！';
+    setTimeout(function() {
+      progressEl.style.display = 'none';
+    }, 2500);
+
+  } catch (err) {
+    console.error('全ワークPDF生成エラー:', err);
+    progressEl.style.display = 'none';
+    alert('PDFの生成に失敗しました。\n' + err.message);
+  }
+}

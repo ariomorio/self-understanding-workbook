@@ -147,7 +147,10 @@
       <h1 id="memberName">読み込み中...</h1>
       <p id="memberEmail"></p>
     </div>
+    <button class="back-btn" onclick="refreshData()" id="refreshBtn" style="display:none;">&#x1F504; 更新</button>
+    <button class="back-btn" onclick="downloadMemberPDF()" id="downloadBtn" style="display:none;">&#x1F4C4; PDF</button>
   </div>
+  <div class="refresh-indicator" id="refreshIndicator" style="text-align:right; padding: 4px 16px; font-size:0.8rem; color:var(--text-light);">最終更新: <span id="lastRefreshTime">-</span></div>
 
   <div class="container" id="content">
     <div class="loading" id="loadingState">メンバーデータを読み込み中...</div>
@@ -569,9 +572,66 @@
         document.getElementById('memberName').textContent = data.memberName || 'メンバー';
         document.getElementById('memberEmail').textContent = data.memberEmail || '';
         renderWorkData(data);
+        document.getElementById('refreshBtn').style.display = '';
+        document.getElementById('downloadBtn').style.display = '';
+        document.getElementById('lastRefreshTime').textContent = new Date().toLocaleTimeString('ja-JP');
       } catch (error) {
         document.getElementById('loadingState').innerHTML = `<div class="error-state">${esc(error.message)}</div>`;
       }
+    }
+
+    async function refreshData() {
+      const btn = document.getElementById('refreshBtn');
+      btn.textContent = '&#x1F504; 更新中...';
+      try {
+        const coach = AdminAuth.getCoach();
+        const params = new URLSearchParams(window.location.search);
+        const memberId = params.get('member_id');
+        const data = await AdminAPI.getMemberData(coach.userId, memberId);
+        renderWorkData(data);
+        document.getElementById('lastRefreshTime').textContent = new Date().toLocaleTimeString('ja-JP');
+      } catch (error) {
+        alert('データの更新に失敗しました: ' + error.message);
+      }
+      btn.textContent = '&#x1F504; 更新';
+    }
+
+    async function downloadMemberPDF() {
+      const btn = document.getElementById('downloadBtn');
+      btn.textContent = '生成中...';
+      try {
+        if (typeof html2canvas === 'undefined') {
+          await new Promise(function(resolve, reject) {
+            var s = document.createElement('script');
+            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+            s.onload = resolve; s.onerror = reject;
+            document.head.appendChild(s);
+          });
+        }
+        if (typeof jspdf === 'undefined') {
+          await new Promise(function(resolve, reject) {
+            var s = document.createElement('script');
+            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js';
+            s.onload = resolve; s.onerror = reject;
+            document.head.appendChild(s);
+          });
+        }
+        // Open all accordions for capture
+        document.querySelectorAll('.accordion').forEach(function(a) { a.classList.add('open'); });
+        const content = document.getElementById('content');
+        const canvas = await html2canvas(content, { scale: 1.5, backgroundColor: '#fff', useCORS: true, logging: false });
+        const imgData = canvas.toDataURL('image/jpeg', 0.85);
+        const pdf = new jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        const pdfW = pdf.internal.pageSize.getWidth();
+        const pdfH = (canvas.height * pdfW) / canvas.width;
+        pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH);
+        const name = document.getElementById('memberName').textContent || 'member';
+        pdf.save(name + '_データ.pdf');
+      } catch(e) {
+        console.error('PDF生成に失敗:', e);
+        alert('PDF生成に失敗しました');
+      }
+      btn.textContent = '&#x1F4C4; PDF';
     }
 
     init();

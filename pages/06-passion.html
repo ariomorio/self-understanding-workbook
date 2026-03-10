@@ -5,55 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>情熱ワーク | マイコンパス</title>
   <link rel="stylesheet" href="../css/style.css">
-  <style>
-    .passion-check-item {
-      display: flex; flex-wrap: wrap;
-      align-items: flex-start;
-      gap: var(--spacing-sm);
-      padding: var(--spacing-sm);
-      background: var(--white);
-      border: 2px solid #e0e0e0;
-      border-radius: var(--radius-sm);
-      margin-bottom: var(--spacing-xs);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .passion-check-item:hover { border-color: var(--primary-orange); background: var(--light-orange); }
-    .passion-check-item.selected { border-color: var(--primary-orange); background: var(--light-orange); }
-    .passion-check-item .num {
-      width: 28px; height: 28px;
-      background: var(--gray-light);
-      color: var(--text-dark);
-      border-radius: var(--radius-full);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.85rem; font-weight: bold; flex-shrink: 0;
-    }
-    .passion-check-item.selected .num { background: var(--primary-orange); color: var(--white); }
-    .passion-check-item select {
-      margin-left: 36px;
-      padding: 8px;
-      border: 2px solid #e0e0e0;
-      border-radius: var(--radius-sm);
-      width: calc(100% - 36px);
-    }
-    .diagnosis-result {
-      padding: var(--spacing-md);
-      border-radius: var(--radius-md);
-      text-align: center;
-      margin-top: var(--spacing-md);
-    }
-    .diagnosis-result.passion { background: linear-gradient(135deg, #ff6b35, #f7931e); color: white; }
-    .diagnosis-result.seed { background: linear-gradient(135deg, #7cb342, #aed581); color: white; }
-    .diagnosis-result.admiration { background: linear-gradient(135deg, #90caf9, #64b5f6); color: white; }
-    .diagnosis-result h3 { font-size: 1.5rem; margin-bottom: var(--spacing-sm); }
-    .yes-count {
-      font-size: 3rem;
-      font-weight: bold;
-      color: var(--primary-orange);
-      display: block;
-      margin: var(--spacing-sm) 0;
-    }
-  </style>
 </head>
 <body>
   <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
@@ -82,11 +33,17 @@
           「やりたい」よりも「やらずにはいられない」感覚。<br>
           エネルギーが自然と湧いてくる活動領域。
         </p>
+        <p style="margin-top: var(--spacing-sm);">
+          <a href="https://www.canva.com/design/DAG6blHZsek/hBPr1qZb_6sTUX5_dg-pUw/edit?utm_content=DAG6blHZsek&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" target="_blank" style="color: var(--primary-orange);">＼もっと詳しく知りたい方はこちら／</a>
+        </p>
       </div>
     </div>
 
-    <!-- Q1 -->
+    <!-- Q1-Q7: 小さな興味のタネに気づく -->
     <div class="section">
+      <h2 class="section-title">ー小さな興味のタネに気づくー</h2>
+
+      <!-- Q1 -->
       <div class="question-card">
         <div class="question-text"><span class="question-number">Q1</span>何気なく見てしまうYouTube・雑誌・SNSは？</div>
         <div class="question-hint">「情報を集めたくなる対象＝興味のタネ」</div>
@@ -108,10 +65,10 @@
     <!-- Q3 -->
     <div class="section">
       <div class="question-card">
-        <div class="question-text"><span class="question-number">Q3</span>お金にならなくても続けていることは？</div>
+        <div class="question-text"><span class="question-number">Q3</span>やらなきゃじゃなくて、やりたくて続けていることは？（お金・評価・結果を気にしなくてもやりたい／疲れててもやっちゃう）</div>
         <div class="question-hint">「打算抜きで続けられること＝本物の情熱」</div>
         <div class="question-example">相談に乗ってあげること</div>
-        <textarea id="q3" placeholder="お金に関係なく続けていることは..."></textarea>
+        <textarea id="q3" placeholder="やりたくて続けていることは..."></textarea>
       </div>
     </div>
 
@@ -138,83 +95,132 @@
     <!-- Q6 -->
     <div class="section">
       <div class="question-card">
-        <div class="question-text"><span class="question-number">Q6</span>この1ヶ月で「気づいたら検索してたこと」は？</div>
+        <div class="question-text"><span class="question-number">Q6</span>最近、他にもやる事あったのに、いつの間にか優先的にやってしまっていた事は？（用事や義務じゃなくてOK。小さくてもOK）</div>
         <div class="question-hint">無意識の検索行動は、心が向いている方向</div>
         <div class="question-example">自己理解の深め方</div>
-        <textarea id="q6" placeholder="気づいたら検索していたことは..."></textarea>
+        <textarea id="q6" placeholder="気づいたら優先的にやっていたことは..."></textarea>
       </div>
     </div>
 
-    <!-- Q7 情熱チェック -->
+    <!-- Q7 -->
     <div class="section">
-      <h2 class="section-title">それ、情熱？それとも憧れ？</h2>
-      <p style="margin-bottom: var(--spacing-md);">ここまで情熱を探してきたけど【落とし穴】が…<br>それ、情熱じゃないかも…</p>
-
       <div class="question-card">
-        <div class="question-text"><span class="question-number">Q7</span>それ情熱？憧れ？ どちらかチェックしてみよう</div>
-        <div class="question-hint">以下の質問に直感で答えてみよう。YESが多ければ「情熱」です</div>
-
-        <div id="passionChecklist">
-          <!-- 10個のチェック項目 -->
-        </div>
-
-        <div style="text-align: center; margin-top: var(--spacing-md);">
-          <span class="yes-count" id="yesCount">0</span>
-          <span>/ 10 個がYES</span>
-        </div>
-
-        <div id="diagnosisResult" class="diagnosis-result" style="display: none;">
-          <h3 id="resultTitle"></h3>
-          <p id="resultDesc"></p>
-        </div>
-
-        <div style="background: var(--gray-light); padding: var(--spacing-md); border-radius: var(--radius-sm); margin-top: var(--spacing-md);">
-          <p><strong>🔍 診断結果の見方</strong></p>
-          <p>・YESが<strong>7個以上</strong> → 🔥「情熱」の可能性が高い</p>
-          <p>・YESが<strong>4〜6個</strong> → 🌱「興味のタネ」の段階</p>
-          <p>・YESが<strong>3個以下</strong> → 💭「憧れ」の可能性あり</p>
-        </div>
+        <div class="question-text"><span class="question-number">Q7</span>頼まれていないのに、つい時間や意識を使ってしまうことは？（人のためでも／自分のためでもOK。調べる・考える・整える・観察する・比べる なども含みます）</div>
+        <div class="question-hint">「役に立つこと」じゃなくてOKです。得にならないのにやってしまう行動は、あなたの「自然なエネルギーの使い方」です</div>
+        <div class="question-example">フォロワーさんからのDM相談に、気づくと長文で返している</div>
+        <textarea id="q7" placeholder="つい時間や意識を使ってしまうことは..."></textarea>
       </div>
     </div>
 
     <!-- Q8 -->
     <div class="section">
-      <h2 class="section-title">行動で確信に変える</h2>
       <div class="question-card">
-        <div class="question-text"><span class="question-number">Q8</span>その「好き」にまつわる体験を4つ以上書き出そう</div>
-        <div class="question-hint">情熱を"思い込み"から"確信"に変えるステップ</div>
-        <div class="question-example">「旅行が好き」→①小学生のとき家族旅行が嬉しかった②地理の授業が面白かった③旅Vlogばかり見てる④海外ボランティアに憧れた</div>
-        <textarea id="q8" placeholder="好きなことにまつわる体験を書き出してみましょう..." style="min-height: 150px;"></textarea>
+        <div class="question-text"><span class="question-number">Q8</span>Q1〜Q7で出た「直感で１番気になったもの」を1つ選んでみよう</div>
+        <div class="question-hint">理由はまだ分からなくて大丈夫です。情熱は"説明できるもの"ではなく、あとから意味が分かることが多いです</div>
+        <div class="question-example">自己理解</div>
+        <textarea id="q8" placeholder="一番気になったものは..."></textarea>
       </div>
     </div>
 
     <!-- Q9 -->
     <div class="section">
       <div class="question-card">
-        <div class="question-text"><span class="question-number">Q9</span>この情熱で「誰の悩み」を解決したい？</div>
-        <div class="question-hint">誰の人生に届けたい？どんな時に助けになれそう？</div>
-        <div class="question-example">インスタでマネタイズできてない人</div>
-        <textarea id="q9" placeholder="誰のどんな悩みを解決したいですか..."></textarea>
+        <div class="question-text"><span class="question-number">Q9</span>その「気になるもの」にまつわる具体的な出来事を3つ書き出そう（過去でも最近でもOK／数分の出来事でもOK）</div>
+        <div class="question-hint">大きな体験である必要はありません。小さい場面ほど、あなたの「素の反応」が出ています</div>
+        <div class="question-example">価値観を理解したときにスッキリしたと言ってもらえた</div>
+        <textarea id="q9" placeholder="具体的な出来事を3つ書き出してみよう..."></textarea>
       </div>
     </div>
 
     <!-- Q10 -->
     <div class="section">
       <div class="question-card">
-        <div class="question-text"><span class="question-number">Q10</span>この情熱を「仕事」にするなら、どんなカタチ？</div>
-        <div class="question-hint">商品化・発信・ライフワーク化など、理想の未来を妄想してOK！</div>
-        <div class="question-example">コーチング講座を開いて、自分軸で発信したい人、満足いくマネタイズがしたい人を救いたい</div>
-        <textarea id="q10" placeholder="どんな形で仕事にしたいですか..."></textarea>
+        <div class="question-text"><span class="question-number">Q10</span>この3つの共通点（＝いちばん大事な要素）は何？</div>
+        <div class="question-hint">「楽しい」「嬉しい」などの感情ではなく、その場面で【何が起きていたか】に注目してください</div>
+        <div class="question-example">整理される／理解が深まる／変化が起きる／安心する</div>
+        <textarea id="q10" placeholder="3つの共通点は..."></textarea>
       </div>
     </div>
 
     <!-- Q11 -->
     <div class="section">
       <div class="question-card">
-        <div class="question-text"><span class="question-number">Q11</span>あなたの情熱を一言で表すと？</div>
-        <textarea id="q11" placeholder="例：「誰かの"夢中"を応援するのが好き」「人の変化に寄り添うのがたまらない」"></textarea>
+        <div class="question-text"><span class="question-number">Q11</span>ここまでから「私らしさ」を表すキーワードを3〜5個出してみよう（名詞・感情・形容詞どれでもOK）</div>
+        <div class="question-hint">「上手い言葉を探さなくて大丈夫です。違和感のない言葉の方が、本当の輪郭に近いです</div>
+        <div class="question-example">言葉／整理／共感／安心／気づき</div>
+        <textarea id="q11" placeholder="私らしさを表すキーワードは..."></textarea>
       </div>
+    </div>
 
+    <!-- Q12 -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text"><span class="question-number">Q12</span>そのキーワードが満たされているとき、あなたはどんな状態だと思いますか？</div>
+        <div class="question-hint">ここは「理想の自分」ではなく、「自然に近いときの自分」を書いてみてください</div>
+        <div class="question-example">フラットな状態で前向きになれる</div>
+        <textarea id="q12" placeholder="キーワードが満たされているときの状態は..."></textarea>
+      </div>
+    </div>
+
+    <!-- Q13 -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text"><span class="question-number">Q13</span>その状態が少し増えたら、毎日はどう変わりそう？</div>
+        <div class="question-hint">情熱は大きな夢より、日常の変化に現れます。生活の質がどう変わるかをイメージしてみてください</div>
+        <div class="question-example">より自分に自信を持って生きていけそう</div>
+        <textarea id="q13" placeholder="毎日はどう変わりそう..."></textarea>
+      </div>
+    </div>
+
+    <!-- Q14 -->
+    <div class="section">
+      <div class="question-card">
+        <div class="question-text"><span class="question-number">Q14</span>この情熱を"カタチ"にするとしたら？（妄想でOK）</div>
+        <div class="question-hint">現実的かどうかは考えなくてOKです。ここは「できるか」ではなく「しっくりくるか」を大事にしてください</div>
+        <div class="question-example">コーチング、カウンセリング</div>
+        <textarea id="q14" placeholder="情熱をカタチにするとしたら..."></textarea>
+      </div>
+    </div>
+
+    <!-- 情熱の説明書 -->
+    <div class="section">
+      <h2 class="section-title">情熱の説明書を作ってみよう</h2>
+      <div class="question-card">
+        <div class="question-text">「自分の情熱の説明書」を作ろう（まとめワーク）</div>
+        <div style="margin-top: var(--spacing-md);">
+          <p style="margin-bottom: var(--spacing-sm);"><strong>私は、</strong></p>
+          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: var(--spacing-sm); flex-wrap: wrap;">
+            <input type="text" id="summary1a" placeholder="＿＿＿＿" style="flex:1; min-width:120px; padding:8px; border:2px solid #e0e0e0; border-radius:8px;">
+            <span>を</span>
+            <input type="text" id="summary1b" placeholder="＿＿＿＿" style="flex:1; min-width:120px; padding:8px; border:2px solid #e0e0e0; border-radius:8px;">
+            <span>するのがたまらない</span>
+          </div>
+          <p style="margin-bottom: var(--spacing-sm);"><strong>私は、</strong></p>
+          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: var(--spacing-sm); flex-wrap: wrap;">
+            <input type="text" id="summary2" placeholder="＿＿＿＿" style="flex:1; min-width:200px; padding:8px; border:2px solid #e0e0e0; border-radius:8px;">
+            <span>な状態を増やすことにワクワクする</span>
+          </div>
+          <p style="margin-bottom: var(--spacing-sm);"><strong>私は、</strong></p>
+          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: var(--spacing-sm); flex-wrap: wrap;">
+            <input type="text" id="summary3" placeholder="＿＿＿＿" style="flex:1; min-width:200px; padding:8px; border:2px solid #e0e0e0; border-radius:8px;">
+            <span>を深めることが好き</span>
+          </div>
+          <p style="margin-bottom: var(--spacing-sm);"><strong>私は「</strong></p>
+          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: var(--spacing-sm); flex-wrap: wrap;">
+            <input type="text" id="summary4" placeholder="＿＿＿＿" style="flex:1; min-width:200px; padding:8px; border:2px solid #e0e0e0; border-radius:8px;">
+            <span>」があると満たされる</span>
+          </div>
+          <p style="margin-bottom: var(--spacing-sm);"><strong>私は「</strong></p>
+          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: var(--spacing-sm); flex-wrap: wrap;">
+            <input type="text" id="summary5" placeholder="＿＿＿＿" style="flex:1; min-width:200px; padding:8px; border:2px solid #e0e0e0; border-radius:8px;">
+            <span>」に惹かれてつい動いてしまう</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 締めのメッセージ -->
+    <div class="section">
       <div style="background: var(--light-green); padding: var(--spacing-md); border-radius: var(--radius-md); margin-top: var(--spacing-md);">
         <p style="font-size: 1.1rem; color: #2e7d32;"><strong>ワークお疲れ様でした！</strong></p>
         <p style="margin-top: var(--spacing-sm);">
@@ -241,88 +247,23 @@
   <script src="../js/data-sync.js"></script>
 
   <script>
-    const passionQuestions = [
-      "誰に頼まれなくても、自然とやってしまうことがある",
-      "それについて話し出すと、つい熱く語ってしまう",
-      "それをやっていると、時間を忘れて没頭できる",
-      "お金や評価がなくても続けていたいと思える",
-      "気づいたらそのジャンルについて調べている",
-      "疲れていても、ついやってしまうことがある",
-      "他の人が興味なさそうでも、なぜか気になる",
-      "発信・表現せずにはいられない衝動がある",
-      "「やらなきゃ」より「やりたくて仕方ない」が勝っている",
-      "これを使って誰かの役に立てたら最高だと思う"
-    ];
-
-    let passionAnswers = Array(10).fill(null);
-
-    function renderPassionChecklist() {
-      const container = document.getElementById('passionChecklist');
-      container.innerHTML = passionQuestions.map((q, i) => `
-        <div class="passion-check-item" data-index="${i}">
-          <div class="num">${i + 1}</div>
-          <div style="flex: 1 1 calc(100% - 44px); font-size: 0.95rem; line-height: 1.6;">${q}</div>
-          <select onchange="updateAnswer(${i}, this.value)">
-            <option value="">選んでください</option>
-            <option value="yes">YES</option>
-            <option value="no">NO</option>
-          </select>
-        </div>
-      `).join('');
-    }
-
-    function updateAnswer(index, value) {
-      passionAnswers[index] = value;
-      const item = document.querySelector(`[data-index="${index}"]`);
-      item.classList.toggle('selected', value === 'yes');
-
-      const yesCount = passionAnswers.filter(a => a === 'yes').length;
-      document.getElementById('yesCount').textContent = yesCount;
-
-      // 結果表示
-      const resultEl = document.getElementById('diagnosisResult');
-      const answeredCount = passionAnswers.filter(a => a !== null).length;
-
-      if (answeredCount === 10) {
-        resultEl.style.display = 'block';
-        const titleEl = document.getElementById('resultTitle');
-        const descEl = document.getElementById('resultDesc');
-
-        if (yesCount >= 7) {
-          resultEl.className = 'diagnosis-result passion';
-          titleEl.textContent = '🔥 「情熱」の可能性が高い！';
-          descEl.textContent = '行動や没頭から生まれた"本物の熱"があなたの中にあります！';
-        } else if (yesCount >= 4) {
-          resultEl.className = 'diagnosis-result seed';
-          titleEl.textContent = '🌱 「興味のタネ」の段階';
-          descEl.textContent = '行動しながら確かめていくと、情熱に育つ可能性大！';
-        } else {
-          resultEl.className = 'diagnosis-result admiration';
-          titleEl.textContent = '💭 「憧れ」の可能性あり';
-          descEl.textContent = 'まだ"やってみたい"のイメージが先行してるかも？焦らず、いろんな【興味】を見つけて本当の情熱に出会いましょう🔥';
-        }
-      } else {
-        resultEl.style.display = 'none';
-      }
-
-      updateProgress();
-    }
-
     function updateProgress() {
-      const fields = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q8', 'q9', 'q10', 'q11'];
+      const fields = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10', 'q11', 'q12', 'q13', 'q14'];
+      const summaryFields = ['summary1a', 'summary1b', 'summary2', 'summary3', 'summary4', 'summary5'];
       let filled = 0;
       fields.forEach(id => {
         const el = document.getElementById(id);
         if (el && el.value.trim()) filled++;
       });
-      const answeredChecks = passionAnswers.filter(a => a !== null).length;
-      filled += answeredChecks > 0 ? 1 : 0;
-
-      const progress = (filled / (fields.length + 1)) * 100;
+      summaryFields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.value.trim()) filled++;
+      });
+      const progress = (filled / (fields.length + summaryFields.length)) * 100;
       document.getElementById('progressBar').style.width = progress + '%';
     }
 
-    function saveData() {
+    async function saveData() {
       const data = {
         q1: document.getElementById('q1').value,
         q2: document.getElementById('q2').value,
@@ -330,14 +271,32 @@
         q4: document.getElementById('q4').value,
         q5: document.getElementById('q5').value,
         q6: document.getElementById('q6').value,
-        q7: passionAnswers,
+        q7: document.getElementById('q7').value,
         q8: document.getElementById('q8').value,
         q9: document.getElementById('q9').value,
         q10: document.getElementById('q10').value,
         q11: document.getElementById('q11').value,
+        q12: document.getElementById('q12').value,
+        q13: document.getElementById('q13').value,
+        q14: document.getElementById('q14').value,
+        summary1a: document.getElementById('summary1a').value,
+        summary1b: document.getElementById('summary1b').value,
+        summary2: document.getElementById('summary2').value,
+        summary3: document.getElementById('summary3').value,
+        summary4: document.getElementById('summary4').value,
+        summary5: document.getElementById('summary5').value,
         timestamp: new Date().toISOString()
       };
-      localStorage.setItem('selfUnderstanding_passion', JSON.stringify(data));
+      if (window.DataSync) {
+        try {
+          await window.DataSync.saveWorkData('passion', data);
+        } catch (error) {
+          console.error('Lark sync failed:', error);
+          localStorage.setItem('selfUnderstanding_passion', JSON.stringify(data));
+        }
+      } else {
+        localStorage.setItem('selfUnderstanding_passion', JSON.stringify(data));
+      }
       showToast('保存しました！', 'success');
     }
 
@@ -345,29 +304,14 @@
       const saved = localStorage.getItem('selfUnderstanding_passion');
       if (saved) {
         const data = JSON.parse(saved);
-        document.getElementById('q1').value = data.q1 || '';
-        document.getElementById('q2').value = data.q2 || '';
-        document.getElementById('q3').value = data.q3 || '';
-        document.getElementById('q4').value = data.q4 || '';
-        document.getElementById('q5').value = data.q5 || '';
-        document.getElementById('q6').value = data.q6 || '';
-        document.getElementById('q8').value = data.q8 || '';
-        document.getElementById('q9').value = data.q9 || '';
-        document.getElementById('q10').value = data.q10 || '';
-        document.getElementById('q11').value = data.q11 || '';
-
-        if (data.q7) {
-          passionAnswers = data.q7;
-          passionAnswers.forEach((answer, i) => {
-            if (answer) {
-              const select = document.querySelector(`[data-index="${i}"] select`);
-              if (select) {
-                select.value = answer;
-                updateAnswer(i, answer);
-              }
-            }
-          });
-        }
+        ['q1','q2','q3','q4','q5','q6','q7','q8','q9','q10','q11','q12','q13','q14'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el && data[id] !== undefined) el.value = data[id];
+        });
+        ['summary1a','summary1b','summary2','summary3','summary4','summary5'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el && data[id] !== undefined) el.value = data[id];
+        });
         updateProgress();
       }
     }
@@ -379,13 +323,44 @@
       setTimeout(() => toast.classList.remove('show'), 3000);
     }
 
-    document.querySelectorAll('textarea').forEach(el => {
-      el.addEventListener('input', updateProgress);
-    });
+    function collectFormData() {
+      return {
+        q1: document.getElementById('q1').value,
+        q2: document.getElementById('q2').value,
+        q3: document.getElementById('q3').value,
+        q4: document.getElementById('q4').value,
+        q5: document.getElementById('q5').value,
+        q6: document.getElementById('q6').value,
+        q7: document.getElementById('q7').value,
+        q8: document.getElementById('q8').value,
+        q9: document.getElementById('q9').value,
+        q10: document.getElementById('q10').value,
+        q11: document.getElementById('q11').value,
+        q12: document.getElementById('q12').value,
+        q13: document.getElementById('q13').value,
+        q14: document.getElementById('q14').value,
+        summary1a: document.getElementById('summary1a').value,
+        summary1b: document.getElementById('summary1b').value,
+        summary2: document.getElementById('summary2').value,
+        summary3: document.getElementById('summary3').value,
+        summary4: document.getElementById('summary4').value,
+        summary5: document.getElementById('summary5').value
+      };
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
-      renderPassionChecklist();
       loadData();
+
+      document.querySelectorAll('textarea').forEach(el => {
+        el.addEventListener('input', updateProgress);
+      });
+
+      ['summary1a','summary1b','summary2','summary3','summary4','summary5'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', updateProgress);
+      });
+
+      AutoSave.register('selfUnderstanding_passion', collectFormData);
     });
   </script>
 </body>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ワーク完了 | マイコンパス</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .congrats-hero {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      background: linear-gradient(135deg, #ff9800 0%, #ffb74d 50%, #ffe082 100%);
+      border-radius: 0 0 30px 30px;
+      margin-bottom: 2rem;
+      color: white;
+    }
+    .congrats-hero h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.15);
+    }
+    .congrats-hero p {
+      font-size: 1.1rem;
+      opacity: 0.95;
+      line-height: 1.8;
+    }
+    .congrats-emoji {
+      font-size: 4rem;
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    .message-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      line-height: 1.9;
+    }
+    .message-card h2 {
+      color: #5d4e37;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #ffe082;
+      padding-bottom: 0.5rem;
+    }
+
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .service-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      border: 2px solid #f0ebe3;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .service-card:hover {
+      border-color: #ff9800;
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    .service-icon {
+      font-size: 2.5rem;
+      display: block;
+      margin-bottom: 0.75rem;
+    }
+    .service-card h3 {
+      color: #5d4e37;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+    .service-card p {
+      color: #8c7b6b;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .service-card .arrow {
+      display: inline-block;
+      margin-top: 0.75rem;
+      color: #ff9800;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .final-message {
+      text-align: center;
+      padding: 2rem;
+      margin-top: 1rem;
+      background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+      border-radius: 16px;
+    }
+    .final-message p {
+      color: #2e7d32;
+      font-size: 1.05rem;
+      line-height: 1.9;
+    }
+  </style>
+</head>
+<body>
+  <div class="congrats-hero">
+    <span class="congrats-emoji">🎉</span>
+    <h1>自己理解ワーク、お疲れ様でした！</h1>
+    <p>あなただけの「マイコンパス」が完成しました</p>
+  </div>
+
+  <div class="container">
+    <!-- メッセージ -->
+    <div class="message-card">
+      <h2>ここまで本当にお疲れ様でした</h2>
+      <p>
+        性格・価値観・才能・情熱・使命…<br>
+        たくさんの問いに向き合い、自分自身と対話してきましたね。
+      </p>
+      <p style="margin-top: 1rem;">
+        自己理解は、一度やって終わりではありません。<br>
+        あなたの人生が進むにつれて、新しい発見や変化が生まれていきます。
+      </p>
+      <p style="margin-top: 1rem;">
+        このワークで見つけた「あなたらしさ」を羅針盤に、<br>
+        <strong>自分だけの道を、自信を持って歩んでいってください。</strong>
+      </p>
+    </div>
+
+    <!-- 次のステップ -->
+    <div class="message-card">
+      <h2>次のステップへ</h2>
+      <p>
+        自己理解をさらに深めたい方、<br>
+        この学びを活かして次のステージに進みたい方へ。
+      </p>
+      <p style="margin-top: 0.5rem;">
+        あなたの成長をサポートするサービスをご用意しています。
+      </p>
+    </div>
+
+    <!-- サービスカード -->
+    <div class="service-grid">
+      <a href="#" class="service-card" id="service-session">
+        <span class="service-icon">🎯</span>
+        <h3>コーチングセッション</h3>
+        <p>自己理解の結果を元に、プロのコーチと一緒に「次の一歩」を明確にします。</p>
+        <span class="arrow">詳しく見る →</span>
+      </a>
+
+      <a href="#" class="service-card" id="service-course">
+        <span class="service-icon">📚</span>
+        <h3>コーチング講座</h3>
+        <p>自分自身をさらに深く理解し、セルフコーチングのスキルを身につけます。</p>
+        <span class="arrow">詳しく見る →</span>
+      </a>
+
+      <a href="#" class="service-card" id="service-training">
+        <span class="service-icon">🏅</span>
+        <h3>コーチ養成講座</h3>
+        <p>自己理解のスキルを活かして、人の人生をサポートするコーチになりませんか。</p>
+        <span class="arrow">詳しく見る →</span>
+      </a>
+
+      <a href="#" class="service-card" id="service-encourage">
+        <span class="service-icon">💡</span>
+        <h3>エンカレッジ</h3>
+        <p>旧マネラボ。仲間と一緒に学び、成長し続けるコミュニティです。</p>
+        <span class="arrow">詳しく見る →</span>
+      </a>
+    </div>
+
+    <!-- 最後のメッセージ -->
+    <div class="final-message" style="margin-top: 2rem;">
+      <p>
+        <strong>あなたの情熱は、"心が震えた瞬間"の中にあります。</strong><br><br>
+        焦らず、思考よりも"行動"を重ねていくことで、<br>
+        その火は、きっと本物の炎になっていきます。<br><br>
+        情熱は、あなたがあなたらしく輝ける場所を教えてくれます。<br>
+        その火を信じて、あなただけの道を歩んでいこう🌱
+      </p>
+    </div>
+  </div>
+
+  <nav class="nav-bottom">
+    <a href="10-ai-analysis.html" class="btn btn-secondary">← 前へ</a>
+    <a href="../index.html" class="btn btn-primary">目次に戻る</a>
+  </nav>
+</body>
+</html>
